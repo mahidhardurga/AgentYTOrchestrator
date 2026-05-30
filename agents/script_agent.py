@@ -14,7 +14,30 @@ class Scene(BaseModel):
     scene_number: int = Field(description="The sequential number of the scene.")
     visual_prompt: str = Field(description="Detailed prompt for an AI image/video generator to create the background visual. Be descriptive about lighting, subject, and style.")
     narration: str = Field(description="The exact text the voiceover will speak during this scene.")
-    captions: List[str] = Field(description="The complete narration broken down into a list of short, sequential phrases (2-4 words max each). Every word from the narration must be included across these phrases.")
+    captions: List[str] = Field(description=
+                                """
+                                Break the entire narration verbatim into a sequence of short on-screen captions.
+
+                                Requirements:
+                                - Every single word from the narration MUST be included in the captions.
+                                - Do NOT skip any filler words, connectors, or punctuation.
+                                - The captions, when read in sequence, must exactly recreate the full narration.
+                                - Each caption should contain 2 to 5 words.
+                                - Do NOT overlap words between consecutive captions.
+                                - Break the text naturally at pauses, commas, or logical groupings.
+
+                                Example:
+                                Narration:
+                                "Artificial intelligence started as a simple research project."
+
+                                Captions:
+                                [
+                                    "Artificial intelligence",
+                                    "started as",
+                                    "a simple",
+                                    "research project."
+                                ]
+                                """)
 
 class ShortScript(BaseModel):
     title: str = Field(description="A catchy title for the YouTube Short.")
@@ -25,11 +48,11 @@ def generate_script(topic: str) -> ShortScript:
     """
     Generates a structured YouTube short script based on a given topic.
     """
-    # Initialize the LLM (Using Gemini 2.0 Flash Experimental Free via OpenRouter)
+    # Initialize the LLM (Using Gemini directly via OpenAI-compatible endpoint)
     llm = ChatOpenAI(
-        model="deepseek/deepseek-v4-flash", 
+        model="gemini-3.5-flash", 
         api_key=os.getenv("OPENAI_API_KEY"),
-        base_url=os.getenv("OPENAI_API_BASE", "https://openrouter.ai/api/v1"),
+        base_url=os.getenv("OPENAI_API_BASE", "https://generativelanguage.googleapis.com/v1beta/openai/"),
         temperature=0.7
     )
     
@@ -42,7 +65,7 @@ def generate_script(topic: str) -> ShortScript:
     Your goal is to write a highly engaging, fast-paced 60-second video script based on the user's topic.
     The script must be divided into a series of short scenes. 
     Each scene should have a distinct 'visual_prompt' optimized for an AI image generator to create visually appealing, high-quality images that accurately match the scene content. Focus on vibrant colors, clear subjects, and an engaging composition.
-    Each scene must also include 'captions', which is the complete narration split into a list of short, sequential phrases (2-4 words max each). Every word spoken in the narration must appear in the captions so they sync perfectly with the voiceover.
+    Each scene must also include 'captions', which is the complete narration split into sequential chunks of 2-5 words. You must include EVERY word from the narration without skipping filler words, so the captions perfectly reconstruct the voiceover for exact audio synchronization. Do not overlap words between consecutive captions.
     Keep the hook strong and ensure the total narration takes no more than 60 seconds (approx. 130-150 words total).
     """
     

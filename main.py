@@ -4,6 +4,8 @@ from agents.script_agent import generate_script
 from agents.audio_agent import generate_audio
 from agents.visual_agent import generate_visuals
 from utils.video_editor import edit_video
+from agents.review_agent import send_for_review
+from utils.youtube_uploader import upload_video
 
 def clear_output_directory(directory: str = "output_assets"):
     if os.path.exists(directory):
@@ -49,8 +51,21 @@ def main():
         final_video_path = edit_video(script, image_paths, audio_paths)
         print(f"\nSUCCESS! Your final YouTube Short is ready at: {final_video_path}")
 
+        # Step 6: Send for review
+        print("\n--- STEP 6: SENDING FOR WHATSAPP REVIEW ---")
+        send_for_review(final_video_path, script.title)
+        
+        user_approval = input("\nDid you review the video on WhatsApp? Type 'yes' to approve and proceed to YouTube upload: ")
+        if user_approval.strip().lower() in ['yes', 'y']:
+            print("\nVideo approved! We are ready for Step 7 (YouTube Upload).")
+            print("\n--- STEP 7: UPLOADING TO YOUTUBE ---")
+            # Tags can be extracted dynamically from description later, adding some defaults for now
+            upload_video(final_video_path, script.title, script.description, privacy_status="public", token_file="token_channel2.pickle")
+        else:
+            print("\nVideo rejected. Process aborted.")
+
     except Exception as e:
-        print(f"An error occurred while generating the script: {e}")
+        print(f"\n❌ Pipeline aborted. An error occurred: {e}")
 
 if __name__ == "__main__":
     main()
