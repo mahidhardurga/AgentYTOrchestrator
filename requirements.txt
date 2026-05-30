@@ -1,0 +1,8 @@
+langchain
+langchain-openai
+pydantic
+python-dotenv
+edge-tts
+requests
+moviepy
+pillow
