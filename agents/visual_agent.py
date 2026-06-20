@@ -32,8 +32,9 @@ def generate_visuals(script: ShortScript, output_dir: str = "output_assets") -> 
         max_retries = 3
         for attempt in range(max_retries):
             try:
+                model = os.getenv("VISUAL_MODEL", "gemini-2.5-flash-image")
                 interaction = client.interactions.create(
-                    model="gemini-2.5-flash-image",
+                    model=model,
                     input=prompt,
                     response_format={
                         "type": "image",

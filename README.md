@@ -67,6 +67,12 @@ TWILIO_ACCOUNT_SID=your_twilio_account_sid_here
 TWILIO_AUTH_TOKEN=your_twilio_auth_token_here
 TWILIO_WHATSAPP_NUMBER=whatsapp:+14155238886
 YOUR_WHATSAPP_NUMBER=whatsapp:+your_mobile_number_here
+
+# Configurable Models (Optional - defaults will be used if omitted)
+SCRIPT_MODEL=gemini-3.5-flash
+VISUAL_MODEL=gemini-2.5-flash-image
+AUDIO_MODEL=eleven_multilingual_v2
+AUDIO_VOICE_ID=pNInz6obpgDQGcFmaJgB
 ```
 
 ---

@@ -49,8 +49,9 @@ def generate_script(topic: str) -> ShortScript:
     Generates a structured YouTube short script based on a given topic.
     """
     # Initialize the LLM (Using Gemini directly via OpenAI-compatible endpoint)
+    model = os.getenv("SCRIPT_MODEL", "gemini-3.5-flash")
     llm = ChatOpenAI(
-        model="gemini-3.5-flash", 
+        model=model, 
         api_key=os.getenv("OPENAI_API_KEY"),
         base_url=os.getenv("OPENAI_API_BASE", "https://generativelanguage.googleapis.com/v1beta/openai/"),
         temperature=0.7

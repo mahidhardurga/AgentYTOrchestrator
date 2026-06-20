@@ -21,7 +21,7 @@ def generate_audio(script: ShortScript, output_dir: str = "output_assets") -> li
         raise RuntimeError("ELEVENLABS_API_KEY is missing from .env")
 
     # Voice ID for "Adam" - a very popular, natural, and energetic voice for Shorts
-    voice_id = "pNInz6obpgDQGcFmaJgB" 
+    voice_id = os.getenv("AUDIO_VOICE_ID", "pNInz6obpgDQGcFmaJgB")
     url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
 
     headers = {
@@ -38,7 +38,7 @@ def generate_audio(script: ShortScript, output_dir: str = "output_assets") -> li
         try:
             payload = {
                 "text": scene.narration,
-                "model_id": "eleven_multilingual_v2",
+                "model_id": os.getenv("AUDIO_MODEL", "eleven_multilingual_v2"),
                 "voice_settings": {
                     "stability": 0.5,
                     "similarity_boost": 0.75
