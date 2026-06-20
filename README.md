@@ -55,9 +55,9 @@ pip install -r requirements.txt
 ### 3. Configure `.env`
 Create a `.env` file in the root directory (based on the template below) and add your keys:
 ```env
-# Gemini API Settings (Used for script and image generation)
-OPENAI_API_KEY=your_gemini_api_key_here
-OPENAI_API_BASE=https://generativelanguage.googleapis.com/v1beta/openai/
+# Gemini API Key (Required for both Script and Image Generation)
+GEMINI_API_KEY=your_gemini_api_key_here
+# GEMINI_API_BASE=https://generativelanguage.googleapis.com/v1beta/openai/
 
 # ElevenLabs Settings
 ELEVENLABS_API_KEY=your_elevenlabs_api_key_here

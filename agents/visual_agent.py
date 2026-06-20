@@ -12,7 +12,10 @@ def generate_visuals(script: ShortScript, output_dir: str = "output_assets") -> 
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
-    client = genai.Client(api_key=os.environ["OPENAI_API_KEY"])
+    gemini_key = os.environ.get("GEMINI_API_KEY")
+    if not gemini_key:
+        raise RuntimeError("GEMINI_API_KEY is missing from environment variables")
+    client = genai.Client(api_key=gemini_key)
 
     print(f"\n--- GENERATING VISUALS FOR {len(script.scenes)} SCENES ---")
     image_files = []

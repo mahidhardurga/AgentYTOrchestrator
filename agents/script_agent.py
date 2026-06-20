@@ -50,10 +50,13 @@ def generate_script(topic: str) -> ShortScript:
     """
     # Initialize the LLM (Using Gemini directly via OpenAI-compatible endpoint)
     model = os.getenv("SCRIPT_MODEL", "gemini-3.5-flash")
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        raise RuntimeError("GEMINI_API_KEY is missing from environment variables")
     llm = ChatOpenAI(
         model=model, 
-        api_key=os.getenv("OPENAI_API_KEY"),
-        base_url=os.getenv("OPENAI_API_BASE", "https://generativelanguage.googleapis.com/v1beta/openai/"),
+        api_key=api_key,
+        base_url=os.getenv("GEMINI_API_BASE", "https://generativelanguage.googleapis.com/v1beta/openai/"),
         temperature=0.7
     )
     
