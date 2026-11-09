@@ -1,0 +1,828 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Content Agent Solution Pack</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Layout: sticky section nav on top, one reading column (68ch) with wider tables and code. Utilitarian guide, two parts: explainer, then plan. */
+:root{
+  --bg:#F5F7FA; --surface:#FFFFFF; --surface2:#ECF0F6; --fg:#171C26; --muted:#566074; --line:#D9DFE9;
+  --accent:#2A55C5; --accent-soft:#E3EAFB; --good:#17794A; --good-soft:#DFF3E8; --warn:#A8460C; --warn-soft:#FBEBDD;
+  --code-bg:#101826; --code-fg:#DCE6F7;
+  --f-body:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-head:'Space Grotesk','Inter',system-ui,sans-serif;
+  --f-mono:'JetBrains Mono',ui-monospace,'SFMono-Regular',Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0F141D; --surface:#171E2A; --surface2:#1F2837; --fg:#E6EBF4; --muted:#9AA6BC; --line:#2B3547;
+  --accent:#7FA2F5; --accent-soft:#1D2A4A; --good:#5CCB92; --good-soft:#143525; --warn:#F0A06A; --warn-soft:#3A2412;
+  --code-bg:#0A0F18; --code-fg:#DCE6F7; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F141D; --surface:#171E2A; --surface2:#1F2837; --fg:#E6EBF4; --muted:#9AA6BC; --line:#2B3547;
+  --accent:#7FA2F5; --accent-soft:#1D2A4A; --good:#5CCB92; --good-soft:#143525; --warn:#F0A06A; --warn-soft:#3A2412;
+  --code-bg:#0A0F18; --code-fg:#DCE6F7; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.65;margin:0;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
+.wrap{max-width:900px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-head);line-height:1.2;text-wrap:balance;margin:0}
+h1{font-size:clamp(1.9rem,5vw,2.8rem);font-weight:700;letter-spacing:-.02em}
+h2{font-size:1.65rem;font-weight:700;letter-spacing:-.01em;margin-bottom:14px}
+h3{font-size:1.1rem;font-weight:500;margin:26px 0 8px}
+p{margin:0 0 14px;max-width:68ch} ul,ol{margin:0 0 14px;padding-left:1.3em;max-width:68ch} li{margin-bottom:6px}
+a{color:var(--accent)} a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+code{font-family:var(--f-mono);font-size:.86em;background:var(--surface2);padding:1px 5px;border-radius:4px}
+nav.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);
+  margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:10px max(16px,env(safe-area-inset-left,0px));overflow-x:auto;white-space:nowrap}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+nav.top a{display:inline-block;font-size:.85rem;color:var(--muted);text-decoration:none;padding:4px 10px;border-radius:6px;margin-right:2px}
+nav.top a:hover{background:var(--surface2);color:var(--fg)}
+nav.top .part{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 6px 0 12px}
+header.hero{padding:44px 0 28px}
+.eyebrow{font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:10px}
+.lede{font-size:1.15rem;color:var(--muted);max-width:60ch;margin-top:14px}
+section{padding:40px 0 8px;border-top:1px solid var(--line)}
+section.first{border-top:0}
+.partbar{margin-top:36px;padding:18px 20px;background:var(--accent-soft);border-radius:10px}
+.partbar b{font-family:var(--f-head);font-size:1.15rem}
+.partbar span{display:block;color:var(--muted);font-size:.92rem;margin-top:2px}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));margin:16px 0 20px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;min-width:0}
+.card h3{margin:0 0 6px;font-size:1.02rem}
+.card p{margin:0;font-size:.94rem;color:var(--muted)}
+.card .tag{font-family:var(--f-mono);font-size:.74rem;color:var(--accent);display:block;margin-bottom:6px}
+.callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:12px 16px;border-radius:0 8px 8px 0;margin:18px 0;max-width:72ch}
+.callout.warn{border-color:var(--warn);background:var(--warn-soft)}
+.callout.good{border-color:var(--good);background:var(--good-soft)}
+.callout p{margin:0 0 8px} .callout p:last-child{margin:0} .callout b.t{display:block;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+.tw{overflow-x:auto;margin:16px 0 22px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:.92rem}
+th,td{text-align:left;vertical-align:top;padding:10px 14px;border-bottom:1px solid var(--line)}
+th{font-size:.74rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);background:var(--surface2);font-weight:600}
+tr:last-child td{border-bottom:0}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+pre{background:var(--code-bg);color:var(--code-fg);font-family:var(--f-mono);font-size:.82rem;line-height:1.6;padding:16px 18px;border-radius:10px;overflow-x:auto;margin:14px 0 20px}
+pre .c{color:#7E8CA6}
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch;margin:18px 0 22px}
+.flow .box{flex:1 1 150px;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:.9rem}
+.flow .box b{display:block;font-family:var(--f-head);font-size:.98rem;margin-bottom:2px}
+.flow .box small{color:var(--muted);display:block;line-height:1.45}
+.flow .box.hl{border-color:var(--accent);background:var(--accent-soft)}
+.flow .arr{flex:0 0 auto;align-self:center;color:var(--muted);font-size:1.2rem}
+@media (max-width:640px){.flow .arr{display:none}}
+.pill{display:inline-block;font-size:.72rem;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--surface2);color:var(--muted);white-space:nowrap}
+.pill.g{background:var(--good-soft);color:var(--good)} .pill.w{background:var(--warn-soft);color:var(--warn)} .pill.a{background:var(--accent-soft);color:var(--accent)}
+dl.steps{margin:0 0 18px;padding:0;counter-reset:s;max-width:72ch}
+dl.steps dt{font-weight:600;margin-top:12px;counter-increment:s}
+dl.steps dt::before{content:counter(s)". ";color:var(--accent);font-family:var(--f-mono)}
+dl.steps dd{margin:2px 0 0;color:var(--muted)}
+.phase{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:16px 18px;margin:12px 0}
+.phase header{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:baseline;justify-content:space-between;margin-bottom:6px}
+.phase h3{margin:0}
+.phase ul{margin:6px 0 0}
+.phase .done{color:var(--good);font-size:.9rem;margin:8px 0 0}
+footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:.85rem}
+.lanes{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));margin:16px 0}
+.lane{border:1px dashed var(--line);border-radius:12px;padding:14px;background:var(--bg);min-width:0}
+.lane>h3{margin:0 0 10px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.lane .item{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:.9rem}
+.lane .item:last-child{margin-bottom:0}.lane .item b{display:block;font-family:var(--f-head)}.lane .item small{color:var(--muted);display:block;line-height:1.45}
+.lane .item.hl{border-color:var(--accent);background:var(--accent-soft)}
+tr.hl td{background:var(--accent-soft)}
+section{scroll-margin-top:56px}
+.verdict{background:var(--surface);border:1px solid var(--accent);border-radius:12px;padding:22px 24px;margin:8px 0 18px}
+.verdict h2{font-size:1.45rem}
+.pill.ma{background:var(--accent-soft);color:var(--accent)} .pill.bd{background:var(--warn-soft);color:var(--warn)}
+table.cmp{min-width:860px} table.cmp td:first-child{width:15%} table.cmp td:last-child{white-space:nowrap}
+tr.grp td{background:var(--surface2);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--muted);padding:7px 14px}
+table.score{min-width:720px} table.score td.why{color:var(--muted);font-size:.85rem}
+table.score tfoot td{background:var(--surface2);border-bottom:0}
+input.w{width:64px;font:inherit;font-variant-numeric:tabular-nums;text-align:right;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 12px}
+.presets button{font:inherit;font-size:.88rem;padding:7px 14px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+.presets button:hover{border-color:var(--accent);color:var(--accent)}
+.bars{display:grid;gap:8px;max-width:560px;margin:10px 0 20px}
+.bar{display:grid;grid-template-columns:130px 1fr;gap:10px;align-items:center;font-size:.88rem;color:var(--muted)}
+.bar i{display:block;height:12px;background:var(--surface2);border-radius:6px;overflow:hidden}
+.bar b{display:block;height:100%;background:var(--accent);border-radius:6px} .bar b.bd{background:var(--warn)}
+
+.layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:40px;max-width:1260px;margin:0 auto}
+aside#toc{position:sticky;top:0;align-self:start;height:100vh;overflow-y:auto;padding:28px 6px 28px 0;font-size:.9rem}
+aside#toc .brand{font-family:var(--f-head);font-weight:700;font-size:1.05rem;margin-bottom:4px}
+aside#toc .sub{color:var(--muted);font-size:.8rem;margin-bottom:18px}
+aside#toc .tg{font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;font-weight:600;color:var(--accent);margin:18px 0 6px}
+aside#toc a{display:block;color:var(--muted);text-decoration:none;padding:5px 10px;border-radius:6px;border-left:2px solid transparent;margin-bottom:1px}
+aside#toc a:hover{background:var(--surface2);color:var(--fg)}
+aside#toc a.active{color:var(--accent);background:var(--accent-soft);border-left-color:var(--accent);font-weight:500}
+main.main{min-width:0;padding-bottom:40px}
+#menu,#scrim{display:none}
+section{scroll-margin-top:16px}
+@media (max-width:900px){
+  .layout{display:block}
+  #menu{display:block;position:fixed;z-index:25;top:calc(env(safe-area-inset-top,0px) + 10px);left:max(12px,env(safe-area-inset-left,0px));font:inherit;font-size:.88rem;padding:7px 14px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+  aside#toc{position:fixed;z-index:30;top:0;left:0;bottom:0;height:auto;width:min(300px,86vw);background:var(--surface);padding:calc(env(safe-area-inset-top,0px) + 20px) 14px 24px max(16px,env(safe-area-inset-left,0px));transform:translateX(-105%);transition:transform .2s;box-shadow:2px 0 18px rgba(0,0,0,.25)}
+  aside#toc.open{transform:none}
+  #scrim.show{display:block;position:fixed;inset:0;z-index:28;background:rgba(0,0,0,.4)}
+  main.main{padding-top:52px}
+}
+@media (prefers-reduced-motion:reduce){aside#toc{transition:none}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+
+</head>
+<body>
+<button type="button" id="menu" aria-label="Open contents">Contents</button><div id="scrim"></div>
+<div class="layout">
+<aside id="toc" aria-label="Contents"><div class="brand">Content Agent Solution Pack</div><div class="sub">Explainer, design, decision</div><div class="tg">Part 1 · Explainer</div><a href="#what">What it is</a><a href="#pieces">The four pieces</a><a href="#tools">What an agent can do</a><a href="#extras">Features that matter</a><a href="#compare">How it differs</a><a href="#pricing">What it costs</a><div class="tg">Part 2 · Solution design</div><a href="#plan-summary">Summary</a><a href="#plan-why">Why Managed Agents</a><a href="#plan-arch">Architecture</a><a href="#plan-components">Components</a><a href="#plan-topics">Topics</a><a href="#plan-safety">Safety and control</a><a href="#plan-phases">Delivery plan</a><a href="#plan-cost">Cost and measures</a><a href="#plan-risks">Risks</a><a href="#plan-open">Decisions</a><div class="tg">Part 3 · Platform decision</div><a href="#d-verdict">Verdict</a><a href="#d-options">The options</a><a href="#d-path-a">Path A: Managed Agents</a><a href="#d-path-b">Path B: Bedrock</a><a href="#d-compare">Side by side</a><a href="#d-cost">Cost</a><a href="#d-scorecard">Weighted scorecard</a><a href="#d-identity">Acting as the VP</a><a href="#d-readiness">Production readiness</a><a href="#d-risks">Risks</a><a href="#d-next">Next steps</a></aside>
+<main class="main">
+<header class="hero"><div class="eyebrow">Requirement 1 · Content writing agent</div>
+<h1>Content writing agent on Claude: explainer, solution design and platform decision</h1>
+<p class="lede">Everything in one place. Part 1 explains Claude Managed Agents in plain language. Part 2 is the solution design. Part 3 compares Managed Agents with Amazon Bedrock, gives a verdict, and sets guardrails for acting as a VP.</p></header>
+<div class="partbar"><b>Part 1 · The explainer</b><span>No prior knowledge needed.</span></div>
+
+<section class="first" id="what">
+  <h2>What are Claude Managed Agents?</h2>
+  <p>An <b>AI agent</b> is Claude working through a job in several steps. It reads, searches, writes files, checks its own work, and keeps going until it is done. Normally you have to build the machinery around that: a loop that calls the model, a safe computer where its commands run, somewhere to keep its files, and a way to watch it.</p>
+  <p><b>Claude Managed Agents</b> is Anthropic's hosted version of that machinery. You describe the agent once (which model, what instructions, which tools). Anthropic runs the loop and gives each run its own sandboxed computer. You start a run, watch what it does, and collect the files it produces.</p>
+  <div class="callout">
+    <b class="t">Plain analogy</b>
+    <p>Building your own agent is like setting up an office, buying a laptop and hiring a person. Managed Agents is hiring a remote contractor who arrives with their own laptop and a written job description. You hand over a task and get the finished work back.</p>
+  </div>
+  <p>It launched in public beta in April 2026, so details can still change. Every call carries a beta header (the official SDK adds it for you).</p>
+</section>
+
+<section id="pieces">
+  <h2>The four pieces</h2>
+  <p>Everything in Managed Agents comes down to four things. Learn these and the rest of the docs read easily.</p>
+  <div class="grid">
+    <div class="card"><span class="tag">/v1/agents</span><h3>Agent</h3><p>The job description. Model, system prompt, tools, skills. Saved and versioned. You create it once and reuse it.</p></div>
+    <div class="card"><span class="tag">/v1/environments</span><h3>Environment</h3><p>The template for the computer. Which packages are installed and which websites it may reach.</p></div>
+    <div class="card"><span class="tag">/v1/sessions</span><h3>Session</h3><p>One run. It pairs an agent with an environment and a first instruction, then keeps its own conversation and files.</p></div>
+    <div class="card"><span class="tag">event stream</span><h3>Events</h3><p>Everything that happens in a session, as a live feed: your messages, the agent's replies, each tool call, status changes.</p></div>
+  </div>
+  <h3>How one run goes</h3>
+  <dl class="steps">
+    <dt>Create the agent (once)</dt><dd>Model, instructions and tools are saved. You keep the agent ID. Editing the agent later creates a new version, and old runs keep the version they started with.</dd>
+    <dt>Create the environment (once)</dt><dd>Choose networking. <code>limited</code> blocks everything except the sites you list. <code>unrestricted</code> allows all.</dd>
+    <dt>Start a session</dt><dd>Reference the agent and environment. Optionally attach files, a GitHub repo or a memory store, and set a spending cap.</dd>
+    <dt>Send a task and watch events</dt><dd>You send a <code>user.message</code>. The agent works, and the stream shows each step. The session goes <code>running</code>, then <code>idle</code> when it needs you or is finished.</dd>
+    <dt>Collect the outputs</dt><dd>Files the agent saves in <code>/mnt/session/outputs/</code> can be downloaded through the Files API.</dd>
+  </dl>
+  <p>A <b>container</b> is the sandboxed computer where the agent's commands and file edits actually run. The thinking happens on Anthropic's side and acts on the container through tools.</p>
+</section>
+
+<section id="tools">
+  <h2>What can an agent do?</h2>
+  <p>Agents act through tools. There are three kinds.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Kind</th><th>Examples</th><th>Who runs it</th></tr></thead>
+    <tbody>
+      <tr><td><b>Built-in toolset</b></td><td><code>bash</code>, <code>read</code>, <code>write</code>, <code>edit</code>, <code>glob</code>, <code>grep</code>, <code>web_search</code>, <code>web_fetch</code></td><td>Anthropic, in the session's container (web tools run on Anthropic's servers)</td></tr>
+      <tr><td><b>MCP servers</b></td><td>Connections to outside services such as GitHub or Asana</td><td>Anthropic's orchestration layer, using credentials you store in a vault</td></tr>
+      <tr><td><b>Custom tools</b></td><td>"Post to LinkedIn", "look up this customer"</td><td>You. The agent asks, your code answers</td></tr>
+    </tbody></table></div>
+  <h3>Permissions</h3>
+  <p>Each tool has a policy. <code>always_allow</code> runs it. <code>always_ask</code> pauses the session until your code approves or denies. <code>auto</code> lets the server judge each call: run it, deny it as high-risk, or pause for you. Anything that publishes or spends money should stay behind a person.</p>
+  <div class="callout warn"><b class="t">Good habit</b><p>A bare toolset turns on all eight tools, web search and fetch included. Switch off what the job does not need and list the sites it may read.</p></div>
+</section>
+
+<section id="extras">
+  <h2>Features that matter for real work</h2>
+  <div class="grid">
+    <div class="card"><h3>Memory stores</h3><p>Sessions forget everything when they end. A memory store is a folder of small text files that persists across runs, so the agent can remember which topics it already used.</p></div>
+    <div class="card"><h3>Outcomes</h3><p>You write a rubric. A separate grader scores the agent's work against it and sends back what is missing, until it passes or hits a retry limit. Good for "keep going until it is right".</p></div>
+    <div class="card"><h3>Scheduled deployments</h3><p>A cron schedule that starts a session on its own, such as every Tuesday and Thursday morning. Each firing is logged as a run.</p></div>
+    <div class="card"><h3>Vaults</h3><p>Safe storage for API keys and OAuth tokens. They are filled in when the agent makes a request, so the sandbox never holds the real secret.</p></div>
+    <div class="card"><h3>Session budgets</h3><p>A hard dollar cap on one session. At the cap it pauses instead of running on.</p></div>
+    <div class="card"><h3>Multi-agent and skills</h3><p>An agent can hand parts of a job to helper agents. Skills are reusable instruction packs, such as a house style guide.</p></div>
+  </div>
+  <p>Some of these were gated behind an access request early in the beta. Confirm your account has outcomes and memory stores before relying on them (this is Phase 1 of the plan).</p>
+</section>
+
+<section id="compare">
+  <h2>How it differs from the other ways to use Claude</h2>
+  <div class="tw"><table>
+    <thead><tr><th>Option</th><th>What you write</th><th>Who runs the loop</th><th>Who hosts the computer</th><th>Pick it when</th></tr></thead>
+    <tbody>
+      <tr><td><b>Messages API</b></td><td>One request, one reply (or your own loop)</td><td>You</td><td>You</td><td>Single tasks: summarize, classify, extract</td></tr>
+      <tr><td><b>Tool Runner</b> (in the API SDK)</td><td>Your tool functions</td><td>The SDK, on your server</td><td>You</td><td>A custom-tool agent without writing the loop</td></tr>
+      <tr><td><b>Agent SDK</b></td><td>A prompt and options</td><td>The SDK (Claude Code engine), on your server</td><td>You</td><td>A coding or file agent on your own infrastructure</td></tr>
+      <tr class="hl"><td><b>Managed Agents</b></td><td>An agent config and your tool results</td><td>Anthropic</td><td>Anthropic (or yours, with self-hosted sandboxes)</td><td>Long-running, scheduled or file-heavy agents you do not want to host</td></tr>
+    </tbody></table></div>
+  <p>Anthropic's own guidance is to prototype with the Agent SDK and move to Managed Agents for production. For a job that runs twice a week on a schedule, Managed Agents means no server of ours has to be awake to run the loop.</p>
+</section>
+
+<section id="pricing">
+  <h2>What it costs</h2>
+  <ul>
+    <li><b>Tokens</b> at the normal Claude API price for the model you choose. Batch discounts do not apply.</li>
+    <li><b>Session time</b> at $0.08 per hour, counted only while the session is actually running. Waiting for you is free.</li>
+    <li><b>Web search</b> at $10 per 1,000 searches, on top of the tokens the results use.</li>
+  </ul>
+  <div class="tw"><table style="min-width:420px">
+    <thead><tr><th>Model</th><th class="n">Input per 1M tokens</th><th class="n">Output per 1M tokens</th></tr></thead>
+    <tbody>
+      <tr><td>Claude Haiku 5.5</td><td class="n">$0.10</td><td class="n">$0.50</td></tr>
+      <tr><td>Claude Sonnet 5.5</td><td class="n">$2.00</td><td class="n">$10.00</td></tr>
+      <tr><td>Claude Opus 5.5</td><td class="n">$4.00</td><td class="n">$20.00</td></tr>
+    </tbody></table></div>
+  <p>Prices are from the Claude API reference at the time of writing. Check Anthropic's pricing page before budgeting, since this is a beta product.</p>
+</section>
+
+<div class="partbar" style="margin-top:56px"><b>Part 2 · Solution design: Content writing agent on Claude Managed Agents</b><span>Draft for lead review. Topics are deliberately left open and plug in later (see Topics).</span></div>
+
+<section class="first" id="plan-summary" style="border-top:0">
+  <h2>Summary for review</h2>
+  <p><b>What we are building.</b> An agent that, twice a week, finds a timely topic inside a brief we give it, researches it with sources, writes three LinkedIn drafts in the owner's voice, and checks them against a quality rubric. A person approves one on their phone, and only then is it posted.</p>
+  <p><b>The shape.</b> Anthropic hosts the thinking and the sandbox. We host one small service that handles everything with side effects: approval messages, source checks, publishing and state. The agent can read the web and write drafts. It cannot post, and it holds no credentials.</p>
+  <div class="grid">
+    <div class="card"><h3>Built on</h3><p>Scheduled deployment, session with outcome and grader, memory store for voice and history, limited-network sandbox.</p></div>
+    <div class="card"><h3>Our code</h3><p>One small webhook service, a state table, a claims checker, an approval channel adapter, a publisher adapter.</p></div>
+    <div class="card"><h3>Effort</h3><p>About 10 working days to a working pilot, then a 2-week shadow period where nothing posts without review.</p></div>
+    <div class="card"><h3>Run cost</h3><p>Roughly $0.50 to $1.50 per approved post. Under $10 a month at two posts a week (estimate, to be measured).</p></div>
+  </div>
+  <div class="callout good"><b class="t">Decisions needed from the lead</b>
+    <p>Six, all in the last section with a recommended default each: approval channel, publish method, model, topic mode, who owns the LinkedIn app, and monthly budget cap.</p></div>
+</section>
+
+<section id="plan-why">
+  <h2>Why Managed Agents, and what it does not remove</h2>
+  <p>The Medium article is a good reference for the pipeline: pick a topic, research, draft three, score, approve by message, post. Its author runs it as a script on a timer. We keep that pipeline and change how it runs.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Option</th><th>What we would host</th><th>Fit</th></tr></thead>
+    <tbody>
+      <tr><td><b>Script on a timer</b> (the article)</td><td>Cron, the model loop, search, scoring loop, state</td><td>Cheapest to start. We own every moving part and the scoring loop is hand-built.</td></tr>
+      <tr><td><b>Agent SDK on a server</b></td><td>The runtime, the sandbox, a scheduler</td><td>Good for coding agents. More to operate than this job needs.</td></tr>
+      <tr class="hl"><td><b>Managed Agents</b></td><td>One small webhook service</td><td>Scheduling, sandbox, grader loop, memory and versioning come from the platform.</td></tr>
+    </tbody></table></div>
+  <p><b>What Managed Agents gives us here.</b> The schedule and run log come from deployments. The draft, grade and revise loop comes from outcomes, with the grader in a separate context so it does not mark its own homework. Voice samples and the posting history live in a memory store that a person can edit. Every agent edit is a new version we can pin or roll back.</p>
+  <p><b>What it does not remove.</b> We still need a small always-on endpoint for webhooks, a place to keep state, and the code that talks to the approval channel and LinkedIn. It is also in beta and Claude-only. A plain script would be cheaper for a pipeline this linear, so the case for Managed Agents rests on less to operate and on the grader and memory features, and we should review that after the pilot.</p>
+</section>
+
+<section id="plan-arch">
+  <h2>Architecture</h2>
+  <div class="lanes">
+    <div class="lane"><h3>Anthropic hosts</h3>
+      <div class="item"><b>Deployment</b><small>Cron schedule. Starts a session each firing and logs a run.</small></div>
+      <div class="item hl"><b>Session</b><small>The writer agent plus a sandbox. Runs the outcome loop: draft, grade, revise.</small></div>
+      <div class="item"><b>Memory store</b><small>Voice guide, sample posts, topic brief, posting history, reviewer feedback. Mounted read-only.</small></div>
+      <div class="item"><b>Session outputs</b><small><code>drafts.json</code> and <code>sources.json</code>, saved by the agent.</small></div>
+    </div>
+    <div class="lane"><h3>We host</h3>
+      <div class="item hl"><b>Orchestrator service</b><small>Receives Anthropic and approval-channel webhooks. One small HTTPS app.</small></div>
+      <div class="item"><b>Claims checker</b><small>Plain code, no model. Confirms each quoted source exists on an allowed site.</small></div>
+      <div class="item"><b>Approval adapter</b><small>Sends drafts to the approver, reads the reply: pick 1, 2 or 3, revise, skip.</small></div>
+      <div class="item"><b>Publisher adapter</b><small>Manual (paste it yourself) or LinkedIn API. Holds the only posting credentials.</small></div>
+      <div class="item"><b>State table</b><small>One row per run: session ID, status, message IDs, timestamps.</small></div>
+    </div>
+  </div>
+  <p>The agent never calls LinkedIn or the approval channel. Everything with an outside effect sits on our side, behind a person.</p>
+
+  <h3>One run, step by step</h3>
+  <dl class="steps">
+    <dt>The deployment fires</dt><dd>Tuesday and Thursday at the chosen time. Start can drift a few minutes, so drafting happens well before the intended posting time.</dd>
+    <dt>The agent reads its memory</dt><dd>Voice guide, sample posts, topic brief, last 60 days of topics, and the reviewer's past edits.</dd>
+    <dt>It finds and researches a topic</dt><dd>Searches the allowed sites, shortlists five, picks one that fits the brief and has not been used. Saves quotes and URLs to <code>sources.json</code>.</dd>
+    <dt>It writes three drafts and the grader scores them</dt><dd>Three different hooks. The independent grader checks each rubric criterion and sends back gaps until it passes or hits the retry limit.</dd>
+    <dt>The session goes idle and our webhook fires</dt><dd>The orchestrator checks the stop reason, downloads the outputs, and runs the claims checker.</dd>
+    <dt>A person approves</dt><dd>Drafts and sources go to the approver. They reply with a pick, a revision note, or skip.</dd>
+    <dt>Revisions go back into the same session</dt><dd>A note such as "shorter, less formal" is sent as a message to the idle session. The agent still has its research and files, so it revises without starting over.</dd>
+    <dt>Approved text is published, then recorded</dt><dd>The publisher posts it. The orchestrator writes the topic and the reviewer's edits to the memory store so the next run starts better.</dd>
+  </dl>
+
+  <h3>Life of one post</h3>
+  <div class="flow">
+    <div class="box"><b>Drafting</b><small>Session running</small></div><div class="arr">→</div>
+    <div class="box"><b>Checking</b><small>Claims checker</small></div><div class="arr">→</div>
+    <div class="box hl"><b>Awaiting approval</b><small>Idle, no cost while waiting</small></div><div class="arr">→</div>
+    <div class="box"><b>Approved</b><small>Publisher runs</small></div><div class="arr">→</div>
+    <div class="box"><b>Published</b><small>Memory updated</small></div>
+  </div>
+  <p>Side exits: <span class="pill">Revise</span> loops back to Drafting in the same session. <span class="pill">Skipped</span> ends the run and logs the topic. <span class="pill w">Failed</span> alerts the owner.</p>
+</section>
+
+<section id="plan-components">
+  <h2>Components in detail</h2>
+  <h3>The writer agent</h3>
+  <ul>
+    <li><b>Model:</b> Claude Sonnet 5.5 to start. It is a one-field change to try Opus 5.5 during the pilot.</li>
+    <li><b>Tools:</b> file read and write, glob, grep, bash (for counting characters and checking today's date), web search and web fetch limited to the allowed sites. No publishing tool, no outside MCP servers.</li>
+    <li><b>Network:</b> limited. Only the allowed news sites are reachable. The sandbox holds no secrets.</li>
+    <li><b>Prompt:</b> short and stable. Role, output files and format, and "read the memory store first". The voice and rules live in memory files so a person can change them without touching the agent.</li>
+    <li><b>Later option:</b> a cheaper Haiku 5.5 research helper for reading-heavy topics. Add it only if measurements show the main agent is spending most of its tokens reading.</li>
+  </ul>
+
+  <h3>The outcome and grader</h3>
+  <p>The kickoff event is an outcome whose deliverable is the drafts file. The grader runs in its own context and has no web access, so it judges form and voice and checks that each claim points to a quote in <code>sources.json</code>. Whether the quote is real is checked afterwards by our code.</p>
+  <p>Starter rubric (tuned during the pilot):</p>
+  <ul>
+    <li>Three drafts that differ in hook and structure.</li>
+    <li>Each is 900 to 1,300 characters, with an opening line under 140 characters that makes a specific claim.</li>
+    <li>Each factual claim maps to an entry in <code>sources.json</code> with a URL and a verbatim quote.</li>
+    <li>No phrases from the banned list. Sentence length, person and formality match the voice guide.</li>
+    <li>One concrete example, number or story per draft.</li>
+    <li>Ends with one question or one takeaway, never both.</li>
+    <li>The topic is not in the last 60 days of history.</li>
+  </ul>
+
+  <h3>Memory store layout</h3>
+<pre>/voice/style-guide.md          tone, structure, do and don't
+/voice/samples/01.md ...       15-20 of the owner's best posts
+/brief/topics.md               what to write about (supplied by the lead)
+/brief/angles.md               points of view and no-go areas
+/history/topics.md             every topic used, with date and result
+/feedback/YYYY-MM-DD.md        what the reviewer changed and why</pre>
+  <p>Mounted read-only so the agent cannot rewrite its own history. The orchestrator is the only writer, through the memory API. Memory files are limited to 100KB each, so many small files is the right shape. Nothing secret is ever stored there.</p>
+
+  <h3>Orchestrator service</h3>
+  <ul>
+    <li>A small HTTPS app on any serverless host, with two endpoints: one for Anthropic webhooks, one for the approval channel.</li>
+    <li>Webhooks are registered in the Anthropic Console and are signed. The SDK verifies the signature.</li>
+    <li>The idle webhook also fires when a session is waiting on a tool approval or has hit its budget, so the handler checks the stop reason before treating it as "drafts ready".</li>
+    <li>Webhooks can arrive twice, out of order, or be dropped after three failed attempts. So handlers dedupe on event ID, read state from the session, and a sweeper job every 15 minutes lists recent runs and picks up anything missed.</li>
+  </ul>
+<pre><span class="c"># on session.status_idled  (sketch, confirm field names in Phase 1)</span>
+session = client.beta.sessions.retrieve(event.data.id)
+stop = latest_idle_stop_reason(client, session.id)   <span class="c"># list events, read newest idle</span>
+if stop == "end_turn":
+    files = client.beta.files.list(scope_id=session.id,
+                                   betas=["managed-agents-2026-04-01"])
+    drafts, sources = load(files)
+    report = check_claims(sources)                   <span class="c"># plain code, no model call</span>
+    send_for_approval(drafts, sources, report)       <span class="c"># Telegram or WhatsApp adapter</span>
+    state.set(session.id, "awaiting_approval")
+elif stop == "budget_reached":
+    alert_owner(session.id)
+
+<span class="c"># on approver reply "revise 2: shorter and less formal"</span>
+client.beta.sessions.events.send(
+    session_id=sid,
+    events=[{"type": "user.message",
+             "content": [{"type": "text", "text": "Revise draft 2: shorter and less formal."}]}],
+)</pre>
+
+  <h3>Claims checker (no model)</h3>
+  <p>For each entry in <code>sources.json</code> it confirms the URL is on an allowed site, fetches the page, and confirms the quoted text appears. Drafts with a failed claim go to the approver flagged, with the failing claim shown. This catches invented sources without paying for a second model call.</p>
+
+  <h3>Approval channel</h3>
+  <p>A thin adapter with three actions: pick a draft, request a revision, skip. Recommended default is a Telegram bot, because it supports buttons and has no template rules. The repo already sends review messages over WhatsApp with Twilio. The Twilio sandbox needs the recipient to re-join periodically, and messages we start outside a 24-hour reply window need approved templates, so confirm those rules with Twilio before choosing it for a twice-weekly job.</p>
+
+  <h3>Publisher</h3>
+  <p>Two implementations behind one interface. <b>Manual:</b> the final text is sent to the owner to paste into LinkedIn. <b>API:</b> the orchestrator posts through LinkedIn's posting API using a member token. Ship Manual first so the agent is useful before API access is approved. LinkedIn access tokens are short-lived (about 60 days at the time of writing), so the API publisher needs an expiry alert. Check LinkedIn's current API terms and token rules when building. Posting to a company page needs an additional LinkedIn approval.</p>
+
+  <h3>Agent definition as files</h3>
+  <p>Keep the agent, environment and deployment as version-controlled files in the repo and sync them with the <code>ant</code> CLI, so the control plane is reviewed like code. The orchestrator uses the SDK for runtime calls only.</p>
+<pre>managed-agents/
+  writer/agent.yaml        model, tools, allowed domains
+  writer/system.md         the short system prompt
+  writer/rubric.md         the grader rubric
+  env/environment.yaml     limited networking and allowed hosts
+  schedule/deployment.yaml cron, budget, kickoff outcome
+orchestrator/              webhook service, adapters, claims checker
+memory-seed/               voice, brief and sample files to load</pre>
+</section>
+
+<section id="plan-topics">
+  <h2>Topics: kept open on purpose</h2>
+  <p>Nothing in the design depends on the subject area. The brief is a file in the memory store, so changing focus means editing a file and not rebuilding anything. Three modes are supported:</p>
+  <div class="tw"><table>
+    <thead><tr><th>Mode</th><th>How it works</th><th>Best for</th></tr></thead>
+    <tbody>
+      <tr><td><b>Discover</b></td><td>The agent searches the allowed sites and picks a topic that fits the brief</td><td>Timely, news-driven posts</td></tr>
+      <tr><td><b>Assigned</b></td><td>We start a session with a specific topic and angle</td><td>Product launches, events, requests</td></tr>
+      <tr><td><b>Backlog</b></td><td>The agent works through a queue of ideas in the brief</td><td>Evergreen series</td></tr>
+    </tbody></table></div>
+  <p><b>What we need when the topics are decided:</b></p>
+  <ul>
+    <li>The focus areas and the audience.</li>
+    <li>The point of view or angle we want to be known for, and topics to avoid.</li>
+    <li>5 to 10 sites the agent may read.</li>
+    <li>15 to 20 past posts we like, and any banned phrases.</li>
+  </ul>
+</section>
+
+<section id="plan-safety">
+  <h2>Safety and control</h2>
+  <ul>
+    <li><b>Human approval on every post.</b> There is no path from the agent to LinkedIn that skips a person.</li>
+    <li><b>No secrets in the sandbox.</b> Posting and approval credentials stay in the orchestrator's secret store. This design needs no vault.</li>
+    <li><b>Web content is untrusted.</b> Only allowed sites are readable, the agent cannot act on the outside world, and the claims checker plus the human see every source.</li>
+    <li><b>Spend caps.</b> A budget on each scheduled run, a retry limit on the outcome, and an alert when a run pauses at its cap.</li>
+    <li><b>Pinned versions.</b> The deployment pins an agent version, so a prompt change goes live only when we choose.</li>
+    <li><b>Audit trail.</b> Every session has a viewable trace in the Anthropic Console, and every memory change is versioned.</li>
+  </ul>
+</section>
+
+<section id="plan-phases">
+  <h2>Delivery plan</h2>
+  <p>Effort is a rough estimate for one developer.</p>
+  <div class="phase"><header><h3>Phase 0 · Align</h3><span class="pill">1 day</span></header>
+    <p>Settle the six decisions below. Confirm the account has outcomes, memory stores and deployments. Create the API key and workspace.</p><p class="done">Done when: the lead signs off the design and access is confirmed.</p></div>
+  <div class="phase"><header><h3>Phase 1 · Spike by hand</h3><span class="pill">1 day</span></header>
+    <p>Create the environment, agent and a memory store with placeholder voice files. Run one session from a script and watch it in the Console. Confirm SDK field names, how long an idle session stays resumable, and how files are downloaded.</p><p class="done">Done when: one session returns three drafts plus sources, and a revision message works in the same session.</p></div>
+  <div class="phase"><header><h3>Phase 2 · Writer quality</h3><span class="pill">3 days</span></header>
+    <p>Load real voice samples and the brief. Write and tune the rubric. Build a small test set of 10 topics and rate drafts blind against real posts. Compare Sonnet 5.5 with Opus 5.5.</p><p class="done">Done when: you would post at least 6 of 10 with light edits.</p></div>
+  <div class="phase"><header><h3>Phase 3 · Orchestrator and approval</h3><span class="pill">3 days</span></header>
+    <p>Build the webhook service, state table, claims checker and approval adapter. Add the sweeper job. Test duplicate, late and missing webhooks on purpose.</p><p class="done">Done when: a run reaches your phone, a revision works, and a skipped run is logged.</p></div>
+  <div class="phase"><header><h3>Phase 4 · Schedule and publish</h3><span class="pill">2 days</span></header>
+    <p>Create the deployment with a budget and run it manually once. Ship the manual publisher. Add the LinkedIn API publisher if access is ready. Add alerts for failed runs, budget pauses and token expiry.</p><p class="done">Done when: an unattended Tuesday run produces an approvable post.</p></div>
+  <div class="phase"><header><h3>Phase 5 · Pilot</h3><span class="pill">2 weeks</span></header>
+    <p>Run twice a week with every post reviewed. Track the numbers below, then decide on Opus versus Sonnet and on adding the research helper.</p><p class="done">Done when: approval rate and cost meet the targets for two weeks running.</p></div>
+</section>
+
+<section id="plan-cost">
+  <h2>Cost and success measures</h2>
+  <p>Planning estimate for one run: about 150,000 input tokens, 15,000 output tokens, 10 minutes of running time and 3 searches. Idle waiting for approval costs nothing. Revisions add a few thousand tokens each. Caching should lower the input figure. We replace these numbers with measured ones in Phase 1.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Model</th><th class="n">Tokens</th><th class="n">Running time</th><th class="n">Search</th><th class="n">Per run</th><th class="n">Per month (8 runs)</th></tr></thead>
+    <tbody>
+      <tr><td>Sonnet 5.5</td><td class="n">$0.45</td><td class="n">$0.01</td><td class="n">$0.03</td><td class="n"><b>~$0.49</b></td><td class="n">~$3.90</td></tr>
+      <tr><td>Opus 5.5</td><td class="n">$0.90</td><td class="n">$0.01</td><td class="n">$0.03</td><td class="n"><b>~$0.94</b></td><td class="n">~$7.50</td></tr>
+    </tbody></table></div>
+  <p>Add the orchestrator host, normally a few dollars a month on serverless.</p>
+  <div class="tw"><table style="min-width:480px">
+    <thead><tr><th>Measure</th><th>Target by week 4</th></tr></thead>
+    <tbody>
+      <tr><td>Approval rate (a draft is picked)</td><td>60% or more</td></tr>
+      <tr><td>Share of picked drafts posted with only light edits</td><td>Rising week on week</td></tr>
+      <tr><td>Claims checker pass rate</td><td>95% or more of claims verified</td></tr>
+      <tr><td>Grader iterations per run</td><td>2 or fewer on average</td></tr>
+      <tr><td>Cost per approved post</td><td>Under $1.50</td></tr>
+    </tbody></table></div>
+</section>
+
+<section id="plan-risks">
+  <h2>Risks</h2>
+  <div class="tw"><table>
+    <thead><tr><th>Risk</th><th>Level</th><th>Mitigation</th></tr></thead>
+    <tbody>
+      <tr><td>A draft states something false</td><td><span class="pill w">High</span></td><td>Quote per claim, claims checker, sources shown to the approver, human approval.</td></tr>
+      <tr><td>Posts sound generic</td><td><span class="pill w">High</span></td><td>Real voice samples, banned phrases, reviewer edits fed back to memory, voice graded in the rubric.</td></tr>
+      <tr><td>Managed Agents is in beta</td><td><span class="pill a">Medium</span></td><td>Pin agent versions, keep definitions in files, keep the orchestrator thin and the publisher and channel swappable.</td></tr>
+      <tr><td>Dropped or duplicate webhooks</td><td><span class="pill a">Medium</span></td><td>Dedupe on event ID, state read from the session, 15-minute sweeper.</td></tr>
+      <tr><td>LinkedIn API access or token expiry</td><td><span class="pill a">Medium</span></td><td>Manual publisher first, expiry alerts, company page treated as a later phase.</td></tr>
+      <tr><td>A pending approval goes stale</td><td><span class="pill a">Medium</span></td><td>Reminder after a set time, auto-skip after a limit, topic logged either way. Confirm how long an idle session stays resumable.</td></tr>
+      <tr><td>Feature access (outcomes, memory) not on the account</td><td><span class="pill a">Medium</span></td><td>Checked in Phase 0. Fallback: a client-side draft and score loop in the orchestrator.</td></tr>
+      <tr><td>Cost drift</td><td><span class="pill g">Low</span></td><td>Budget per run, retry limit, alert at the cap.</td></tr>
+    </tbody></table></div>
+</section>
+
+<section id="plan-open">
+  <h2>Decisions for the lead</h2>
+  <div class="tw"><table>
+    <thead><tr><th>Decision</th><th>Options</th><th>Recommended default</th></tr></thead>
+    <tbody>
+      <tr><td>Approval channel</td><td>Telegram, WhatsApp (existing), email</td><td>Telegram for v1. WhatsApp stays possible behind the same adapter.</td></tr>
+      <tr><td>Publish method</td><td>Manual paste, LinkedIn API</td><td>Manual first, API once access is approved.</td></tr>
+      <tr><td>Model</td><td>Sonnet 5.5, Opus 5.5</td><td>Sonnet 5.5, with an Opus comparison in the pilot.</td></tr>
+      <tr><td>Topic mode</td><td>Discover, assigned, backlog</td><td>Discover, with assigned runs on demand. Final brief to follow.</td></tr>
+      <tr><td>LinkedIn account</td><td>Personal profile, company page</td><td>Personal profile first. A company page needs extra approval.</td></tr>
+      <tr><td>Budget</td><td>Monthly cap and per-run cap</td><td>$3 per run cap and a $25 monthly alert, to be revised with measured cost.</td></tr>
+    </tbody></table></div>
+  <p>Once these are agreed, Phase 0 and Phase 1 can start without waiting for the topics.</p>
+</section>
+
+<div class="partbar" style="margin-top:56px"><b>Part 3 · Platform decision: Claude Managed Agents or Amazon Bedrock</b><span>The best solution for each path, a side-by-side comparison, a verdict and guardrails for acting as a VP.</span></div>
+<section class="first" id="d-verdict" style="border-top:0;padding-top:8px">
+  <div class="verdict">
+    <div class="eyebrow">Verdict</div>
+    <h2 style="margin-bottom:8px">Choose Claude Managed Agents, with approval, publishing and secrets running in our own AWS account.</h2>
+    <p>It gets us to a working pilot in about 10 working days against about 19 for Bedrock, with fewer parts to maintain. It has the two features this job needs and Bedrock lacks: built-in web research and a grader that scores drafts against a rubric. Monthly run cost is about the same on both, so people time and risk decide.</p>
+    <p><b>The score is close:</b> 3.7 for Managed Agents and 3.5 for Bedrock out of 5. Managed Agents wins on speed, fit and upkeep. Bedrock wins on security controls, data handling and maturity. Which one comes out ahead depends on what the company values most.</p>
+    <p><b>Pick Bedrock instead if any one of these is a hard rule:</b></p>
+    <ul>
+      <li>Prompts and outputs must stay inside our AWS boundary, including private network only.</li>
+      <li>A new outside data processor cannot be approved in time.</li>
+      <li>Beta services are not allowed in production.</li>
+      <li>A managed content policy engine (Bedrock Guardrails) is mandated.</li>
+    </ul>
+    <p><b>If AWS billing and IAM are required</b> but a beta service is acceptable, use <b>Claude Platform on AWS</b>. It is operated by Anthropic, exposes the same API including Managed Agents, and signs in with AWS IAM and bills through AWS Marketplace. Treat it as a variant of Path A.</p>
+  </div>
+  <div class="callout warn"><b class="t">Most important guardrail</b>
+    <p>The agent never holds or sees the VP's credentials, and the VP never shares a password. The VP grants LinkedIn access once through LinkedIn's own consent screen, and nothing is posted without the VP's or a named delegate's approval of the exact text. Details in <a href="#d-identity">Executive identity</a>.</p></div>
+</section>
+
+<section id="d-options">
+  <h2>The options</h2>
+  <div class="grid">
+    <div class="card"><span class="tag">Path A</span><h3>Claude Managed Agents</h3><p>Anthropic runs the agent loop, sandbox, schedule, grader and memory. We run a small service for approval, publishing and state.</p></div>
+    <div class="card"><span class="tag">Path A2</span><h3>Managed Agents via Claude Platform on AWS</h3><p>Same as A, reached through AWS IAM and billed through AWS Marketplace. Anthropic still operates it.</p></div>
+    <div class="card"><span class="tag">Path B</span><h3>Amazon Bedrock</h3><p>AWS runs the model. We build the workflow, research tools, grader, memory and scheduling from AWS services.</p></div>
+  </div>
+  <div class="callout">
+    <b class="t">Why this is not a like-for-like choice</b>
+    <p>According to Anthropic's platform availability matrix, Managed Agents, the built-in web search and web fetch tools, code execution, the Files API and Message Batches are not offered through Bedrock. Bedrock does support tool use, prompt caching, structured outputs, thinking and citations. So on Bedrock we build the pieces that Managed Agents provides, and we get AWS's security and compliance tooling in return.</p></div>
+</section>
+
+<section id="d-path-a">
+  <h2>Path A: the best Managed Agents solution</h2>
+  <p>This is the design from the earlier page, tightened for the VP scenario.</p>
+  <div class="lanes">
+    <div class="lane"><h3>Anthropic hosts</h3>
+      <div class="item"><b>Deployment</b><small>Tuesday and Thursday schedule, with a spend cap per run.</small></div>
+      <div class="item hl"><b>Writer agent session</b><small>Searches allow-listed sites, drafts three posts, graded against the rubric.</small></div>
+      <div class="item"><b>Memory store</b><small>Voice guide, sample posts, topic brief, posting history.</small></div>
+      <div class="item"><b>Sandbox</b><small>Limited network. Holds no secrets.</small></div>
+    </div>
+    <div class="lane"><h3>We host, in our AWS account</h3>
+      <div class="item hl"><b>Orchestrator</b><small>Lambda behind API Gateway. Receives Anthropic and approval-channel webhooks.</small></div>
+      <div class="item"><b>Claims checker</b><small>Plain code. Confirms quoted sources exist on allowed sites.</small></div>
+      <div class="item"><b>Approval and publish</b><small>Approver allow-list, text-bound approval, LinkedIn token in Secrets Manager.</small></div>
+      <div class="item"><b>State and audit</b><small>DynamoDB, CloudTrail, alarms, kill switch.</small></div>
+    </div>
+  </div>
+  <p>Putting the orchestrator in our AWS account gives us the company's identity, secrets, audit and alerting for everything that has an outside effect, while Anthropic handles the thinking. Effort: about 10 working days to a pilot (11 to 12 for Path A2).</p>
+</section>
+
+<section id="d-path-b">
+  <h2>Path B: the best Bedrock solution</h2>
+  <p>The pipeline is linear, so the best Bedrock design is a durable workflow that calls the model at specific steps, not a free-roaming agent. It is easier to test, cheaper and easier to audit.</p>
+  <div class="flow">
+    <div class="box"><b>EventBridge Scheduler</b><small>Cron and time zone</small></div><div class="arr">→</div>
+    <div class="box hl"><b>Step Functions workflow</b><small>One execution per post</small></div><div class="arr">→</div>
+    <div class="box"><b>Lambda steps</b><small>Load, research, draft, validate, judge</small></div><div class="arr">→</div>
+    <div class="box"><b>Bedrock Converse</b><small>Claude plus Guardrails</small></div>
+  </div>
+  <div class="tw"><table>
+    <thead><tr><th>Step</th><th>How it is built on AWS</th></tr></thead>
+    <tbody>
+      <tr><td>Load context</td><td>Lambda reads voice guide, brief and history from S3 and DynamoDB.</td></tr>
+      <tr><td>Research</td><td>Claude with tool use calls two Lambdas, <code>search_feed</code> and <code>fetch_page</code>, limited to allow-listed domains. Bedrock has no built-in web search, so we use RSS and sitemaps from trusted sites, or add a paid search API (a new vendor and key).</td></tr>
+      <tr><td>Draft</td><td>Claude on Bedrock returns three drafts as structured JSON.</td></tr>
+      <tr><td>Validate</td><td>Deterministic Lambda: length, banned phrases, secret and PII patterns, and a check that each quote appears on its source page.</td></tr>
+      <tr><td>Judge and revise</td><td>A second Claude call scores drafts against the rubric. A Step Functions loop with a maximum count sends gaps back to the writer. We build this loop ourselves.</td></tr>
+      <tr><td>Guardrails</td><td>Bedrock Guardrails on model calls: denied topics, word filters, PII filters, and a grounding check against the source text. Confirm availability for the chosen model and region.</td></tr>
+      <tr><td>Approval wait</td><td>The workflow pauses on a task token while the approver decides. A callback endpoint verifies the approver and resumes it. Standard workflows can wait for a long time, and cost depends on state transitions, not waiting.</td></tr>
+      <tr><td>Publish and record</td><td>Publisher Lambda with the only permission to read the LinkedIn secret. History and feedback written to DynamoDB and S3.</td></tr>
+      <tr><td>Operate</td><td>CDK or Terraform for everything, separate dev and prod accounts, CloudWatch alarms, CloudTrail, KMS keys, least-privilege IAM per Lambda.</td></tr>
+    </tbody></table></div>
+  <p><b>Options considered and set aside.</b> <i>Bedrock Agents (classic):</i> console-configured agents with action groups and guardrails. Less control over the grader loop, and scheduling would still be built separately. <i>AgentCore:</i> AWS's agent runtime with memory, identity and observability. Worth adopting if we later run many agents, but it adds cost and learning for one linear job. Effort: about 19 working days to a pilot.</p>
+</section>
+
+<section id="d-compare">
+  <h2>Side by side, factor by factor</h2>
+  <p>Edge shows which path is better on that factor for this job. Items marked "verify" come from general knowledge or secondary sources and should be checked in current vendor documents.</p>
+  <div class="tw wide"><table class="cmp">
+    <thead><tr><th>Factor</th><th>Claude Managed Agents</th><th>Amazon Bedrock</th><th>Edge</th></tr></thead>
+    <tbody>
+      <tr class="grp"><td colspan="4">Implementation</td></tr>
+      <tr><td><b>Effort to pilot</b></td><td>Agent config, environment, deployment, one webhook service, adapters. About 10 days.</td><td>Research tools, draft and judge loop, workflow, memory, scheduling, IaC. About 19 days.</td><td><span class="pill ma">Managed Agents</span></td></tr>
+      <tr><td><b>First working draft</b></td><td>About 1 day: create the agent and start a session.</td><td>About 1 week: tools and loop must exist first.</td><td><span class="pill ma">Managed Agents</span></td></tr>
+      <tr><td><b>Skills needed</b></td><td>Python, SDK, a small webhook service.</td><td>Python plus Step Functions, IAM, Lambda, CDK or Terraform.</td><td><span class="pill">Depends on team</span></td></tr>
+      <tr><td><b>Web research</b></td><td>Built-in web search and fetch with domain allow-lists.</td><td>Not a Bedrock server tool. Build fetch and feed Lambdas, or add a search vendor.</td><td><span class="pill ma">Managed Agents</span></td></tr>
+      <tr><td><b>Draft, grade, revise loop</b></td><td>Outcomes: independent grader against our rubric. Confirm the account has access.</td><td>Build the judge call and the loop.</td><td><span class="pill ma">Managed Agents</span></td></tr>
+      <tr><td><b>Memory for voice and history</b></td><td>Memory store mounted as versioned files.</td><td>S3 or DynamoDB loaded into prompts, or AgentCore Memory.</td><td><span class="pill ma">Managed Agents</span></td></tr>
+      <tr><td><b>Scheduling</b></td><td>Scheduled deployments with run records.</td><td>EventBridge Scheduler, mature and flexible.</td><td><span class="pill">Tie</span></td></tr>
+      <tr><td><b>Wait for human approval</b></td><td>Session sits idle at no running cost. Revisions reuse the same context.</td><td>Workflow pauses on a task token. We store the context ourselves.</td><td><span class="pill">Tie</span></td></tr>
+      <tr><td><b>Length and format checks</b></td><td>Sandbox with bash, plus our own checker.</td><td>Validator Lambda, deterministic and testable.</td><td><span class="pill">Tie</span></td></tr>
+      <tr class="grp"><td colspan="4">Infrastructure and maintenance</td></tr>
+      <tr><td><b>What we run</b></td><td>One small serverless service and a state table.</td><td>About 8 to 10 AWS services, all serverless, all owned by our IaC.</td><td><span class="pill ma">Managed Agents</span></td></tr>
+      <tr><td><b>Maintenance per month</b></td><td>About 2 to 4 hours: rubric and prompt tuning, beta changelog, LinkedIn re-consent.</td><td>About 6 to 10 hours: also runtime and dependency upgrades, tool code, IaC drift, model retirements.</td><td><span class="pill ma">Managed Agents</span></td></tr>
+      <tr><td><b>Versioning and rollback</b></td><td>Agent versions can be pinned and rolled back.</td><td>IaC, Lambda aliases and state machine versions.</td><td><span class="pill">Tie</span></td></tr>
+      <tr><td><b>Maturity and SLA</b></td><td>Beta since April 2026. API can change. Confirm SLA and support terms.</td><td>Generally available AWS services with published SLAs.</td><td><span class="pill bd">Bedrock</span></td></tr>
+      <tr><td><b>Scale and limits</b></td><td>Two posts a week is far below any limit.</td><td>Same. Model quotas may need a request.</td><td><span class="pill">Tie</span></td></tr>
+      <tr class="grp"><td colspan="4">Security and compliance</td></tr>
+      <tr><td><b>Human access</b></td><td>Claude Console roles and workspaces. With Path A2, AWS IAM.</td><td>IAM Identity Center, roles, SCPs, MFA. The company standard.</td><td><span class="pill bd">Bedrock</span></td></tr>
+      <tr><td><b>Secrets</b></td><td>The agent holds none. Our service keeps them in Secrets Manager.</td><td>Secrets Manager and KMS, one IAM role per Lambda.</td><td><span class="pill">Tie</span></td></tr>
+      <tr><td><b>Network</b></td><td>Calls go over the internet to Anthropic. The sandbox only reaches allow-listed hosts.</td><td>PrivateLink and VPC endpoints keep traffic on the AWS network.</td><td><span class="pill bd">Bedrock</span></td></tr>
+      <tr><td><b>Data handling</b></td><td>Prompts, outputs and session history are stored by Anthropic under its retention terms. Sessions are stateful. Confirm DPA and any zero-retention eligibility.</td><td>AWS states prompts are not used to train models or shared with model providers. Verify, and decide whether to enable invocation logs.</td><td><span class="pill bd">Bedrock</span></td></tr>
+      <tr><td><b>Data location</b></td><td>US or global inference choice on the first-party API.</td><td>Choose the AWS region and inference profile.</td><td><span class="pill bd">Bedrock</span></td></tr>
+      <tr><td><b>Certifications</b></td><td>Anthropic's attestations. Confirm whether beta features are in scope.</td><td>Inherits the company's AWS compliance posture. Verify per model and region.</td><td><span class="pill bd">Bedrock</span></td></tr>
+      <tr><td><b>Content guardrails</b></td><td>Rubric, grader, claims checker and human approval. No managed policy filter.</td><td>Bedrock Guardrails: denied topics, word and PII filters, grounding check.</td><td><span class="pill bd">Bedrock</span></td></tr>
+      <tr><td><b>Prompt injection from web pages</b></td><td>Sandbox has no secrets, only allow-listed sites, and no publishing tool.</td><td>Lambdas limited by least-privilege IAM, so blast radius is small.</td><td><span class="pill">Tie</span></td></tr>
+      <tr class="grp"><td colspan="4">Operations and governance</td></tr>
+      <tr><td><b>Observability and audit</b></td><td>Console trace of every tool call and message. Our service logs to CloudWatch and CloudTrail.</td><td>CloudWatch, X-Ray, CloudTrail, optional model invocation logs. Fits existing security monitoring.</td><td><span class="pill">Tie</span></td></tr>
+      <tr><td><b>Spend controls</b></td><td>Hard dollar budget per session and per deployment, then the run pauses.</td><td>AWS Budgets alarms and our own limits. No native hard stop on model spend.</td><td><span class="pill ma">Managed Agents</span></td></tr>
+      <tr><td><b>Model access</b></td><td>New Claude models at launch, with pinned agent versions.</td><td>Claude models after AWS enables them. Other vendors' models available for judge or fallback.</td><td><span class="pill">Tie</span></td></tr>
+      <tr class="grp"><td colspan="4">Strategy</td></tr>
+      <tr><td><b>Lock-in</b></td><td>Anthropic-specific, beta API. Our orchestrator and memory files are portable.</td><td>AWS-specific orchestration. Model choice is flexible.</td><td><span class="pill bd">Bedrock</span></td></tr>
+      <tr><td><b>Procurement and billing</b></td><td>New vendor, or AWS Marketplace through Path A2.</td><td>Existing AWS agreement and committed spend.</td><td><span class="pill bd">Bedrock</span></td></tr>
+      <tr><td><b>Switching later</b></td><td>Moving to Bedrock means re-implementing the loop and tools. Voice and history files carry over.</td><td>Same in reverse. About 1 to 2 weeks either way.</td><td><span class="pill">Tie</span></td></tr>
+    </tbody></table></div>
+</section>
+
+<section id="d-cost">
+  <h2>Cost</h2>
+  <p>Estimates for 8 runs a month on Claude Sonnet 5.5, about 150,000 input and 15,000 output tokens per run. Replace with measured numbers after the first spike. Bedrock token prices are AWS's own and may differ from Anthropic's list, so check the AWS pricing page.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Item</th><th class="n">Managed Agents</th><th class="n">Bedrock</th></tr></thead>
+    <tbody>
+      <tr><td>Model tokens</td><td class="n">~$3.60</td><td class="n">~$3.60 (verify)</td></tr>
+      <tr><td>Session running time ($0.08 per hour)</td><td class="n">~$0.10</td><td class="n">not applicable</td></tr>
+      <tr><td>Web search ($10 per 1,000)</td><td class="n">~$0.24</td><td class="n">$0 with feeds, or roughly $5 to $20 with a paid search API</td></tr>
+      <tr><td>Grader or judge</td><td class="n">inside session tokens</td><td class="n">~$0.50 to $1</td></tr>
+      <tr><td>Orchestration compute and API gateway</td><td class="n">$1 to $5</td><td class="n">under $3</td></tr>
+      <tr><td>State, storage, secrets and keys</td><td class="n">$2 to $4</td><td class="n">$2 to $4</td></tr>
+      <tr><td>Logging and alarms</td><td class="n">$1 to $3</td><td class="n">$2 to $5</td></tr>
+      <tr><td>Guardrails</td><td class="n">not applicable</td><td class="n">pennies at this volume</td></tr>
+      <tr><td>Private networking (optional)</td><td class="n">not applicable</td><td class="n">+$15 to $45</td></tr>
+      <tr><td><b>Monthly total</b></td><td class="n"><b>~$7 to $15</b></td><td class="n"><b>~$8 to $20</b> (~$25 to $65 with private networking)</td></tr>
+      <tr><td><b>One-time build</b></td><td class="n"><b>~10 days</b> (A2: 11 to 12)</td><td class="n"><b>~19 days</b></td></tr>
+      <tr><td><b>Upkeep</b></td><td class="n"><b>~2 to 4 h per month</b></td><td class="n"><b>~6 to 10 h per month</b></td></tr>
+    </tbody></table></div>
+  <div class="callout good"><b class="t">What this means</b>
+    <p>Run cost is a rounding error on both paths. The real cost difference is about 9 extra build days and a few extra hours of upkeep every month on Bedrock. AgentCore Runtime, if added later, bills per vCPU-hour of active use. Published rates vary by source and generation, so check AWS's current pricing page.</p></div>
+</section>
+
+<section id="d-scorecard">
+  <h2>Weighted scorecard</h2>
+  <p>Scores run from 1 (weak) to 5 (strong) for this job. Change the weights to match what the company values and the totals update. The verdict flips when security and compliance weigh most.</p>
+  <div class="presets">
+    <button type="button" id="p-default">This project</button>
+    <button type="button" id="p-speed">Speed first</button>
+    <button type="button" id="p-comp">Compliance first</button>
+  </div>
+  <div class="tw"><table class="score">
+    <thead><tr><th>Factor</th><th class="n">Weight</th><th class="n">Managed Agents</th><th class="n">Bedrock</th><th>Why</th></tr></thead>
+    <tbody id="score-body"></tbody>
+    <tfoot><tr><td><b>Weighted score out of 5</b></td><td class="n" id="wsum"></td><td class="n"><b id="tot-a"></b></td><td class="n"><b id="tot-b"></b></td><td id="lead"></td></tr></tfoot>
+  </table></div>
+  <div class="bars" aria-hidden="true">
+    <div class="bar"><span>Managed Agents</span><i><b id="bar-a"></b></i></div>
+    <div class="bar"><span>Bedrock</span><i><b id="bar-b" class="bd"></b></i></div>
+  </div>
+</section>
+
+<section id="d-identity">
+  <h2>Guardrails for acting as the VP</h2>
+  <p>Content posted from a VP's profile speaks for the VP and the company. The rules below apply on either path.</p>
+
+  <div class="callout warn"><b class="t">Do not use the VP's own logins</b>
+    <p>Using the VP's personal Claude, AWS or LinkedIn login or password is the wrong shortcut. Actions are attributed to the VP personally, secrets spread across laptops and chat, access outlives the project, MFA is bypassed, and the VP cannot take access back without losing their own. Use delegated access instead.</p></div>
+
+  <h3>1. Credential map</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Credential</th><th>Owner</th><th>Stored in</th><th>Who can read it</th><th>If compromised</th></tr></thead>
+    <tbody>
+      <tr><td><b>Platform access</b> (Claude Console or AWS)</td><td>Company-owned workspace or account and a service identity. Not the VP's personal account.</td><td>Humans sign in with SSO and MFA. Runtime key or IAM role in Secrets Manager.</td><td>The runtime only. Rotate every 90 days.</td><td>Revoke the key or role, rotate, review logs.</td></tr>
+      <tr><td><b>LinkedIn authorization</b></td><td>The VP grants it once on LinkedIn's consent screen to a company-owned app, with posting permission only.</td><td>Secrets Manager with a customer-managed KMS key.</td><td>The publisher role only. Developers cannot read it. Expires about every 60 days, so the VP re-consents.</td><td>The VP revokes the app in LinkedIn settings, we rotate and pause the schedule.</td></tr>
+      <tr><td><b>Approval channel bot</b> (Telegram or similar)</td><td>Company-owned bot.</td><td>Secrets Manager.</td><td>Orchestrator only.</td><td>Rotate the token, review recent approvals.</td></tr>
+      <tr><td><b>Webhook signing secret</b></td><td>Company.</td><td>Secrets Manager.</td><td>Orchestrator only.</td><td>Rotate in the Anthropic Console and update.</td></tr>
+      <tr><td><b>Search or feed API keys</b> (if any)</td><td>Company.</td><td>Secrets Manager.</td><td>Research Lambda only.</td><td>Rotate.</td></tr>
+    </tbody></table></div>
+  <p>LinkedIn's access tokens last about 60 days, and refresh tokens are limited to approved programs, so plan a recurring re-consent. LinkedIn's API terms likely forbid credential sharing and unofficial automation, so use only the official posting API and have legal confirm.</p>
+
+  <h3>2. Approval and authority</h3>
+  <ul>
+    <li><b>Written delegation.</b> The VP confirms in writing who may approve on their behalf, and the allow-list of approver IDs is enforced in code.</li>
+    <li><b>Approval is bound to the exact text.</b> Approving draft 2 stores a hash of that text. Any edit voids the approval, and only the approved hash can be published.</li>
+    <li><b>Approvals expire</b> after 24 hours and are recorded with who approved, when and the hash.</li>
+    <li><b>Hard limits in code:</b> at most two posts a week, a fixed posting window, and no publishing from a failed or unchecked run.</li>
+    <li><b>Kill switch.</b> One flag pauses everything, and the approver can also reply "pause" to the bot.</li>
+    <li><b>Dry-run mode.</b> For the first 2 to 4 weeks drafts go to the VP, who posts manually. Nothing auto-posts.</li>
+  </ul>
+
+  <h3>3. Content policy</h3>
+  <ul>
+    <li>Banned topics list approved by comms and legal: unreleased products, customers and deals, financials and forward-looking statements, M&amp;A, legal and HR matters, politics, and anything that could be material non-public information.</li>
+    <li>Every factual claim needs a source and a verbatim quote, checked by our code before the approver sees it.</li>
+    <li>Pattern checks for secrets, personal data and internal names before sending a draft.</li>
+    <li>Short quotes only, with a similarity check against the source so nothing is copied.</li>
+    <li>A decision on whether posts disclose AI assistance, aligned with company policy.</li>
+  </ul>
+
+  <h3>4. Team access and audit</h3>
+  <ul>
+    <li><b>Four roles:</b> Developer, Operator, Publisher and Approver. The role that can publish cannot edit code, and developers cannot read the LinkedIn secret.</li>
+    <li>Separate dev and prod, MFA for everyone, and access reviewed monthly.</li>
+    <li>Log every run, draft, approval and publish with IDs. Keep logs in write-once storage for the retention period the company requires.</li>
+    <li>Alert on any post outside the window, an approval from an unknown ID, any secret read outside the publisher, and spend spikes.</li>
+    <li>Incident steps written in advance: delete the post, revoke the LinkedIn authorization, pause the schedule, then review.</li>
+  </ul>
+
+  <h3>5. Sign-off before launch</h3>
+  <p>Security review, legal and comms approval of the content policy, vendor review of the model provider, and the VP's written delegation. Name an owner and a backup, and review a sample of posts monthly.</p>
+
+  <div class="callout"><b class="t">Repository note</b>
+    <p>This repository currently tracks <code>client_secret.json</code> in git. That must be removed and rotated before any executive credentials are involved, and no secret should ever sit in a <code>.env</code> file on a laptop for this project.</p></div>
+
+  <h3>Who provides each guardrail</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Guardrail</th><th>Managed Agents</th><th>Bedrock</th></tr></thead>
+    <tbody>
+      <tr><td>Topic, word and PII filtering</td><td>We build it: rubric plus pattern checks</td><td>Bedrock Guardrails, plus our checks</td></tr>
+      <tr><td>Grounding in sources</td><td>Claims checker, grader, human</td><td>Guardrails grounding check, claims checker, human</td></tr>
+      <tr><td>Approver allow-list and text-bound approval</td><td>We build it</td><td>We build it</td></tr>
+      <tr><td>Spend cap</td><td>Native hard budget</td><td>Alarms plus our limits</td></tr>
+      <tr><td>Kill switch and rate limit</td><td>Pause deployment, plus our flag</td><td>Disable schedule, plus our flag</td></tr>
+      <tr><td>Immutable audit</td><td>CloudTrail and our log, plus Console traces</td><td>CloudTrail, CloudWatch, S3 object lock</td></tr>
+    </tbody></table></div>
+</section>
+
+<section id="d-readiness">
+  <h2>Production readiness checklist</h2>
+  <div class="tw"><table>
+    <thead><tr><th>Item</th><th>Managed Agents</th><th>Bedrock</th></tr></thead>
+    <tbody>
+      <tr><td>Infrastructure as code and CI/CD</td><td>Agent, environment and deployment files synced with the <code>ant</code> CLI. Orchestrator in CDK or Terraform.</td><td>Everything in CDK or Terraform.</td></tr>
+      <tr><td>Environments</td><td>Separate workspace for dev and prod.</td><td>Separate AWS accounts for dev and prod.</td></tr>
+      <tr><td>Test set and evaluation</td><td>10 topics rated blind. Replay on each agent version.</td><td>Same, for each workflow release.</td></tr>
+      <tr><td>Failure handling</td><td>Sweeper job for dropped webhooks, run records, alerts on failed runs.</td><td>Step Functions retries, catch states and dead-letter queues.</td></tr>
+      <tr><td>Disaster recovery</td><td>State table backups. The agent definition is in git, so it can be recreated.</td><td>IaC redeploys. Backups on DynamoDB and S3.</td></tr>
+      <tr><td>Runbooks and on-call</td><td>Written for token expiry, budget pause and stuck approvals.</td><td>Same, plus workflow and quota issues.</td></tr>
+      <tr><td>Beta risk plan</td><td>Pin versions, watch the changelog, keep adapters swappable.</td><td>Not needed.</td></tr>
+      <tr><td>Model retirement plan</td><td>Change the model on the agent, re-run the test set.</td><td>Change the model ID, re-run the test set.</td></tr>
+    </tbody></table></div>
+</section>
+
+<section id="d-risks">
+  <h2>Risks of the recommended path</h2>
+  <div class="tw"><table>
+    <thead><tr><th>Risk</th><th>Level</th><th>Mitigation</th></tr></thead>
+    <tbody>
+      <tr><td>Managed Agents is in beta</td><td><span class="pill a">Medium</span></td><td>Pin versions, files in git, swappable adapters. Re-evaluate after the pilot. Bedrock is the fallback.</td></tr>
+      <tr><td>Company requires data to stay in AWS</td><td><span class="pill w">Decision</span></td><td>Ask before Phase 0. If yes, choose Bedrock.</td></tr>
+      <tr><td>Outcomes or memory not enabled on the account</td><td><span class="pill a">Medium</span></td><td>Check on day one. Fallback is a grader loop in the orchestrator.</td></tr>
+      <tr><td>A wrong or off-brand post goes out</td><td><span class="pill w">High impact</span></td><td>Text-bound approval, content policy, claims checker, dry-run period, kill switch.</td></tr>
+      <tr><td>LinkedIn token expires or access is refused</td><td><span class="pill a">Medium</span></td><td>Expiry alerts, manual publishing first, official API only.</td></tr>
+      <tr><td>Vendor review delays launch</td><td><span class="pill a">Medium</span></td><td>Start the review in week one. Path A2 may ease procurement.</td></tr>
+    </tbody></table></div>
+  <p><b>Revisit the choice after the pilot if:</b> approval rate stays under target, the beta API changes in a breaking way, security asks for private networking, or monthly cost exceeds $50.</p>
+</section>
+
+<section id="d-next">
+  <h2>Next steps and what we need from the VP</h2>
+  <div class="tw"><table>
+    <thead><tr><th>Question</th><th>If yes</th><th>If no</th></tr></thead>
+    <tbody>
+      <tr><td>Must prompts and outputs stay inside our AWS boundary?</td><td>Bedrock</td><td>Managed Agents</td></tr>
+      <tr><td>Can a new outside data processor be approved?</td><td>Managed Agents</td><td>Bedrock, or Path A2 if AWS Marketplace and IAM are acceptable</td></tr>
+      <tr><td>Are beta services allowed in production for this use?</td><td>Managed Agents</td><td>Bedrock</td></tr>
+      <tr><td>Do we need AWS billing and IAM but accept a beta service?</td><td>Path A2</td><td>Path A</td></tr>
+      <tr><td>Will the VP delegate approval in writing and grant LinkedIn access themselves?</td><td>Proceed</td><td>Pause. The design does not allow shared credentials.</td></tr>
+    </tbody></table></div>
+  <ol>
+    <li>Get answers to the five questions above and name the delegate approver.</li>
+    <li>Create the company-owned workspace or AWS account and service identity. Do not use anyone's personal login.</li>
+    <li>Start vendor and security review, and confirm feature access (outcomes, memory, deployments).</li>
+    <li>Run the one-day spike, replace the cost estimates with measurements, and finalize the choice.</li>
+  </ol>
+</section>
+
+<footer>Sources: Claude API and Managed Agents reference (agents, environments, sessions, tools, memory, outcomes, scheduled deployments, webhooks, pricing); Anthropic platform availability matrix; Claude Platform on AWS reference; press coverage of the April 2026 Managed Agents launch; <a href="https://medium.com/@digimineaitechnologies/how-i-built-an-ai-agent-that-writes-my-linkedin-posts-and-how-you-can-too-4f0cd1a2098e">the LinkedIn agent article</a> (reference only, its full text could not be read); <a href="https://www.cloudburn.io/blog/amazon-bedrock-agentcore-pricing">AgentCore pricing breakdown</a>; <a href="https://aws.amazon.com/th/bedrock/agentcore/pricing/">AWS AgentCore pricing</a>; <a href="https://scalefactory.com/blog/2026/04/09/navigating-your-managed-and-modular-ai-agent-options-using-amazon-bedrock">Bedrock Agents versus AgentCore</a>; <a href="https://learn.microsoft.com/en-us/linkedin/shared/authentication/programmatic-refresh-tokens">LinkedIn programmatic refresh tokens</a>. Bedrock data handling, certifications, Guardrails availability, LinkedIn and Twilio rules are from general knowledge or secondary sources and must be verified in current vendor documents. Effort, hours and cost figures are planning estimates.</footer>
+</main>
+</div>
+<script>
+(function(){
+  var F=[
+    ["Implementation speed",10,5,2,"Managed Agents needs about 10 days, Bedrock about 19"],
+    ["Build and run cost",10,4,3,"Run cost is similar, build effort is higher on Bedrock"],
+    ["Maintenance burden",10,4,2,"Fewer parts to keep patched on Managed Agents"],
+    ["Infrastructure to operate",5,4,3,"One small service against 8 to 10 AWS services"],
+    ["Fit for this job",10,5,3,"Built-in web research, grader and memory"],
+    ["Security and identity controls",10,3,5,"IAM, KMS, private networking are native on Bedrock"],
+    ["Data privacy and compliance",10,3,5,"Stays in AWS posture. Managed Agents needs a new processor review"],
+    ["Content guardrails",5,3,5,"Bedrock Guardrails against rubric and our checks"],
+    ["Observability and audit",5,4,4,"Both good, ours logs to the same AWS tools"],
+    ["Reliability and maturity",10,2,4,"Beta against generally available services"],
+    ["Model access and freshness",5,5,4,"New Claude models first on the first-party API"],
+    ["Portability",5,2,3,"Bedrock allows other models. Both lock to a cloud"],
+    ["Spend controls",5,4,3,"Native hard budget against alarms"]
+  ];
+  var P={
+    "p-default":[10,10,10,5,10,10,10,5,5,10,5,5,5],
+    "p-speed":[20,15,15,5,15,5,5,3,3,5,5,2,2],
+    "p-comp":[5,5,5,3,5,20,20,10,5,15,2,3,2]
+  };
+  var body=document.getElementById("score-body");
+  F.forEach(function(r,i){
+    var tr=document.createElement("tr");
+    tr.innerHTML='<td>'+r[0]+'</td><td class="n"><input type="number" min="0" max="100" step="1" class="w" id="w'+i+'" value="'+r[1]+'" aria-label="Weight for '+r[0]+'"></td><td class="n">'+r[2]+'</td><td class="n">'+r[3]+'</td><td class="why">'+r[4]+'</td>';
+    body.appendChild(tr);
+  });
+  function calc(){
+    var s=0,a=0,b=0;
+    F.forEach(function(r,i){var w=parseFloat(document.getElementById("w"+i).value)||0;s+=w;a+=w*r[2];b+=w*r[3];});
+    var ta=s?a/s:0,tb=s?b/s:0;
+    document.getElementById("wsum").textContent=s;
+    document.getElementById("tot-a").textContent=ta.toFixed(2);
+    document.getElementById("tot-b").textContent=tb.toFixed(2);
+    document.getElementById("bar-a").style.width=(ta/5*100)+"%";
+    document.getElementById("bar-b").style.width=(tb/5*100)+"%";
+    var d=Math.abs(ta-tb),l=document.getElementById("lead");
+    l.textContent=d<0.05?"Too close to call":(ta>tb?"Managed Agents leads by ":"Bedrock leads by ")+d.toFixed(2);
+  }
+  function setP(k){P[k].forEach(function(v,i){document.getElementById("w"+i).value=v;});calc();}
+  F.forEach(function(r,i){document.getElementById("w"+i).addEventListener("input",calc);});
+  Object.keys(P).forEach(function(k){document.getElementById(k).addEventListener("click",function(){setP(k);});});
+  calc();
+})();
+</script>
+<script>
+(function(){
+  var t=document.getElementById("toc"),s=document.getElementById("scrim"),m=document.getElementById("menu");
+  function set(o){t.classList.toggle("open",o);s.classList.toggle("show",o);}
+  m.addEventListener("click",function(){set(!t.classList.contains("open"));});
+  s.addEventListener("click",function(){set(false);});
+  var links={};[].forEach.call(t.querySelectorAll("a"),function(a){links[a.getAttribute("href").slice(1)]=a;a.addEventListener("click",function(){set(false);});});
+  var cur=null;
+  function act(id){if(cur===id||!links[id])return;if(cur)links[cur].classList.remove("active");links[id].classList.add("active");cur=id;
+    if(window.innerWidth>900){var a=links[id],r=a.getBoundingClientRect(),tr=t.getBoundingClientRect();if(r.top<tr.top+40||r.bottom>tr.bottom-40)t.scrollTop+=r.top-tr.top-120;}}
+  var secs=[].slice.call(document.querySelectorAll("main section[id]"));
+  function spy(){var y=window.innerHeight*0.3,best=secs[0];secs.forEach(function(e){if(e.getBoundingClientRect().top<=y)best=e;});act(best.id);}
+  window.addEventListener("scroll",spy,{passive:true});window.addEventListener("resize",spy);spy();
+})();
+</script>
+</body></html>
