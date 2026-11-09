@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Claude Managed Agents Guide</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Layout: sticky section nav on top, one reading column (68ch) with wider tables and code. Utilitarian guide, two parts: explainer, then plan. */
+:root{
+  --bg:#F5F7FA; --surface:#FFFFFF; --surface2:#ECF0F6; --fg:#171C26; --muted:#566074; --line:#D9DFE9;
+  --accent:#2A55C5; --accent-soft:#E3EAFB; --good:#17794A; --good-soft:#DFF3E8; --warn:#A8460C; --warn-soft:#FBEBDD;
+  --code-bg:#101826; --code-fg:#DCE6F7;
+  --f-body:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-head:'Space Grotesk','Inter',system-ui,sans-serif;
+  --f-mono:'JetBrains Mono',ui-monospace,'SFMono-Regular',Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0F141D; --surface:#171E2A; --surface2:#1F2837; --fg:#E6EBF4; --muted:#9AA6BC; --line:#2B3547;
+  --accent:#7FA2F5; --accent-soft:#1D2A4A; --good:#5CCB92; --good-soft:#143525; --warn:#F0A06A; --warn-soft:#3A2412;
+  --code-bg:#0A0F18; --code-fg:#DCE6F7; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F141D; --surface:#171E2A; --surface2:#1F2837; --fg:#E6EBF4; --muted:#9AA6BC; --line:#2B3547;
+  --accent:#7FA2F5; --accent-soft:#1D2A4A; --good:#5CCB92; --good-soft:#143525; --warn:#F0A06A; --warn-soft:#3A2412;
+  --code-bg:#0A0F18; --code-fg:#DCE6F7; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.65;margin:0;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
+.wrap{max-width:900px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-head);line-height:1.2;text-wrap:balance;margin:0}
+h1{font-size:clamp(1.9rem,5vw,2.8rem);font-weight:700;letter-spacing:-.02em}
+h2{font-size:1.65rem;font-weight:700;letter-spacing:-.01em;margin-bottom:14px}
+h3{font-size:1.1rem;font-weight:500;margin:26px 0 8px}
+p{margin:0 0 14px;max-width:68ch} ul,ol{margin:0 0 14px;padding-left:1.3em;max-width:68ch} li{margin-bottom:6px}
+a{color:var(--accent)} a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+code{font-family:var(--f-mono);font-size:.86em;background:var(--surface2);padding:1px 5px;border-radius:4px}
+nav.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);
+  margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:10px max(16px,env(safe-area-inset-left,0px));overflow-x:auto;white-space:nowrap}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+nav.top a{display:inline-block;font-size:.85rem;color:var(--muted);text-decoration:none;padding:4px 10px;border-radius:6px;margin-right:2px}
+nav.top a:hover{background:var(--surface2);color:var(--fg)}
+nav.top .part{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 6px 0 12px}
+header.hero{padding:44px 0 28px}
+.eyebrow{font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:10px}
+.lede{font-size:1.15rem;color:var(--muted);max-width:60ch;margin-top:14px}
+section{padding:40px 0 8px;border-top:1px solid var(--line)}
+section.first{border-top:0}
+.partbar{margin-top:36px;padding:18px 20px;background:var(--accent-soft);border-radius:10px}
+.partbar b{font-family:var(--f-head);font-size:1.15rem}
+.partbar span{display:block;color:var(--muted);font-size:.92rem;margin-top:2px}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));margin:16px 0 20px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;min-width:0}
+.card h3{margin:0 0 6px;font-size:1.02rem}
+.card p{margin:0;font-size:.94rem;color:var(--muted)}
+.card .tag{font-family:var(--f-mono);font-size:.74rem;color:var(--accent);display:block;margin-bottom:6px}
+.callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:12px 16px;border-radius:0 8px 8px 0;margin:18px 0;max-width:72ch}
+.callout.warn{border-color:var(--warn);background:var(--warn-soft)}
+.callout.good{border-color:var(--good);background:var(--good-soft)}
+.callout p{margin:0 0 8px} .callout p:last-child{margin:0} .callout b.t{display:block;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+.tw{overflow-x:auto;margin:16px 0 22px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:.92rem}
+th,td{text-align:left;vertical-align:top;padding:10px 14px;border-bottom:1px solid var(--line)}
+th{font-size:.74rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);background:var(--surface2);font-weight:600}
+tr:last-child td{border-bottom:0}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+pre{background:var(--code-bg);color:var(--code-fg);font-family:var(--f-mono);font-size:.82rem;line-height:1.6;padding:16px 18px;border-radius:10px;overflow-x:auto;margin:14px 0 20px}
+pre .c{color:#7E8CA6}
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch;margin:18px 0 22px}
+.flow .box{flex:1 1 150px;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:.9rem}
+.flow .box b{display:block;font-family:var(--f-head);font-size:.98rem;margin-bottom:2px}
+.flow .box small{color:var(--muted);display:block;line-height:1.45}
+.flow .box.hl{border-color:var(--accent);background:var(--accent-soft)}
+.flow .arr{flex:0 0 auto;align-self:center;color:var(--muted);font-size:1.2rem}
+@media (max-width:640px){.flow .arr{display:none}}
+.pill{display:inline-block;font-size:.72rem;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--surface2);color:var(--muted);white-space:nowrap}
+.pill.g{background:var(--good-soft);color:var(--good)} .pill.w{background:var(--warn-soft);color:var(--warn)} .pill.a{background:var(--accent-soft);color:var(--accent)}
+dl.steps{margin:0 0 18px;padding:0;counter-reset:s;max-width:72ch}
+dl.steps dt{font-weight:600;margin-top:12px;counter-increment:s}
+dl.steps dt::before{content:counter(s)". ";color:var(--accent);font-family:var(--f-mono)}
+dl.steps dd{margin:2px 0 0;color:var(--muted)}
+.phase{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:16px 18px;margin:12px 0}
+.phase header{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:baseline;justify-content:space-between;margin-bottom:6px}
+.phase h3{margin:0}
+.phase ul{margin:6px 0 0}
+.phase .done{color:var(--good);font-size:.9rem;margin:8px 0 0}
+footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:.85rem}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+
+</head><body>
+<div class="wrap">
+<nav class="top" aria-label="Sections">
+  <span class="part">Explainer</span>
+  <a href="#what">What it is</a><a href="#pieces">The pieces</a><a href="#tools">Tools</a><a href="#extras">Extras</a><a href="#compare">Compare</a><a href="#pricing">Pricing</a>
+  <span class="part">Plan</span>
+  <a href="#plan-goal">Goal</a><a href="#plan-article">The article</a><a href="#plan-design">Design</a><a href="#plan-build">Build sketch</a><a href="#plan-phases">Phases</a><a href="#plan-risks">Risks</a><a href="#plan-cost">Cost</a><a href="#plan-open">Open questions</a>
+</nav>
+
+<header class="hero">
+  <div class="eyebrow">AgentYTOrchestrator · Agent 1 of the roadmap</div>
+  <h1>Claude Managed Agents, and a plan for a LinkedIn content writing agent</h1>
+  <p class="lede">Part 1 explains what Managed Agents are in plain language. Part 2 is a plan to build the content writing agent on top of them, based on the pipeline in the Medium article you shared.</p>
+</header>
+
+<div class="partbar"><b>Part 1 · The explainer</b><span>No prior knowledge needed.</span></div>
+
+<section class="first" id="what">
+  <h2>What are Claude Managed Agents?</h2>
+  <p>An <b>AI agent</b> is Claude working through a job in several steps. It reads, searches, writes files, checks its own work, and keeps going until it is done. Normally you have to build the machinery around that: a loop that calls the model, a safe computer where its commands run, somewhere to keep its files, and a way to watch it.</p>
+  <p><b>Claude Managed Agents</b> is Anthropic's hosted version of that machinery. You describe the agent once (which model, what instructions, which tools). Anthropic runs the loop and gives each run its own sandboxed computer. You start a run, watch what it does, and collect the files it produces.</p>
+  <div class="callout">
+    <b class="t">Plain analogy</b>
+    <p>Building your own agent is like setting up an office, buying a laptop and hiring a person. Managed Agents is hiring a remote contractor who arrives with their own laptop and a written job description. You hand over a task and get the finished work back.</p>
+  </div>
+  <p>It launched in public beta in April 2026, so details can still change. Every call carries a beta header (the official SDK adds it for you).</p>
+</section>
+
+<section id="pieces">
+  <h2>The four pieces</h2>
+  <p>Everything in Managed Agents comes down to four things. Learn these and the rest of the docs read easily.</p>
+  <div class="grid">
+    <div class="card"><span class="tag">/v1/agents</span><h3>Agent</h3><p>The job description. Model, system prompt, tools, skills. Saved and versioned. You create it once and reuse it.</p></div>
+    <div class="card"><span class="tag">/v1/environments</span><h3>Environment</h3><p>The template for the computer. Which packages are installed and which websites it may reach.</p></div>
+    <div class="card"><span class="tag">/v1/sessions</span><h3>Session</h3><p>One run. It pairs an agent with an environment and a first instruction, then keeps its own conversation and files.</p></div>
+    <div class="card"><span class="tag">event stream</span><h3>Events</h3><p>Everything that happens in a session, as a live feed: your messages, the agent's replies, each tool call, status changes.</p></div>
+  </div>
+  <h3>How one run goes</h3>
+  <dl class="steps">
+    <dt>Create the agent (once)</dt><dd>Model, instructions and tools are saved. You keep the agent ID. Editing the agent later creates a new version, and old runs keep the version they started with.</dd>
+    <dt>Create the environment (once)</dt><dd>Choose networking. <code>limited</code> blocks everything except the sites you list. <code>unrestricted</code> allows all.</dd>
+    <dt>Start a session</dt><dd>Reference the agent and environment. Optionally attach files, a GitHub repo or a memory store, and set a spending cap.</dd>
+    <dt>Send a task and watch events</dt><dd>You send a <code>user.message</code>. The agent works, and the stream shows each step. The session goes <code>running</code>, then <code>idle</code> when it needs you or is finished.</dd>
+    <dt>Collect the outputs</dt><dd>Files the agent saves in <code>/mnt/session/outputs/</code> can be downloaded through the Files API.</dd>
+  </dl>
+  <p>A <b>container</b> is the sandboxed computer where the agent's commands and file edits actually run. The thinking happens on Anthropic's side and acts on the container through tools.</p>
+</section>
+
+<section id="tools">
+  <h2>What can an agent do?</h2>
+  <p>Agents act through tools. There are three kinds.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Kind</th><th>Examples</th><th>Who runs it</th></tr></thead>
+    <tbody>
+      <tr><td><b>Built-in toolset</b></td><td><code>bash</code>, <code>read</code>, <code>write</code>, <code>edit</code>, <code>glob</code>, <code>grep</code>, <code>web_search</code>, <code>web_fetch</code></td><td>Anthropic, in the session's container (web tools run on Anthropic's servers)</td></tr>
+      <tr><td><b>MCP servers</b></td><td>Connections to outside services such as GitHub or Asana</td><td>Anthropic's orchestration layer, using credentials you store in a vault</td></tr>
+      <tr><td><b>Custom tools</b></td><td>"Post to LinkedIn", "look up this customer"</td><td>You. The agent asks, your code answers</td></tr>
+    </tbody></table></div>
+  <h3>Permissions</h3>
+  <p>Each tool has a policy. <code>always_allow</code> runs it. <code>always_ask</code> pauses the session until your code approves or denies. <code>auto</code> lets the server judge each call: run it, deny it as high-risk, or pause for you. Anything that publishes or spends money should stay behind a person.</p>
+  <div class="callout warn"><b class="t">Good habit</b><p>A bare toolset turns on all eight tools, web search and fetch included. Switch off what the job does not need and list the sites it may read.</p></div>
+</section>
+
+<section id="extras">
+  <h2>Features that matter for real work</h2>
+  <div class="grid">
+    <div class="card"><h3>Memory stores</h3><p>Sessions forget everything when they end. A memory store is a folder of small text files that persists across runs, so the agent can remember which topics it already used.</p></div>
+    <div class="card"><h3>Outcomes</h3><p>You write a rubric. A separate grader scores the agent's work against it and sends back what is missing, until it passes or hits a retry limit. Good for "keep going until it is right".</p></div>
+    <div class="card"><h3>Scheduled deployments</h3><p>A cron schedule that starts a session on its own, such as every Tuesday and Thursday morning. Each firing is logged as a run.</p></div>
+    <div class="card"><h3>Vaults</h3><p>Safe storage for API keys and OAuth tokens. They are filled in when the agent makes a request, so the sandbox never holds the real secret.</p></div>
+    <div class="card"><h3>Session budgets</h3><p>A hard dollar cap on one session. At the cap it pauses instead of running on.</p></div>
+    <div class="card"><h3>Multi-agent and skills</h3><p>An agent can hand parts of a job to helper agents. Skills are reusable instruction packs, such as a house style guide.</p></div>
+  </div>
+  <p>Some of these were gated behind an access request early in the beta. Confirm your account has outcomes and memory stores before relying on them (this is Phase 1 of the plan).</p>
+</section>
+
+<section id="compare">
+  <h2>How it differs from the other ways to use Claude</h2>
+  <div class="tw"><table>
+    <thead><tr><th>Option</th><th>What you write</th><th>Who runs the loop</th><th>Who hosts the computer</th><th>Pick it when</th></tr></thead>
+    <tbody>
+      <tr><td><b>Messages API</b></td><td>One request, one reply (or your own loop)</td><td>You</td><td>You</td><td>Single tasks: summarize, classify, extract</td></tr>
+      <tr><td><b>Tool Runner</b> (in the API SDK)</td><td>Your tool functions</td><td>The SDK, on your server</td><td>You</td><td>A custom-tool agent without writing the loop</td></tr>
+      <tr><td><b>Agent SDK</b></td><td>A prompt and options</td><td>The SDK (Claude Code engine), on your server</td><td>You</td><td>A coding or file agent on your own infrastructure</td></tr>
+      <tr class="hl"><td><b>Managed Agents</b></td><td>An agent config and your tool results</td><td>Anthropic</td><td>Anthropic (or yours, with self-hosted sandboxes)</td><td>Long-running, scheduled or file-heavy agents you do not want to host</td></tr>
+    </tbody></table></div>
+  <p>Anthropic's own guidance is to prototype with the Agent SDK and move to Managed Agents for production. For a job that runs twice a week on a schedule, Managed Agents means no server of ours has to be awake to run the loop.</p>
+</section>
+
+<section id="pricing">
+  <h2>What it costs</h2>
+  <ul>
+    <li><b>Tokens</b> at the normal Claude API price for the model you choose. Batch discounts do not apply.</li>
+    <li><b>Session time</b> at $0.08 per hour, counted only while the session is actually running. Waiting for you is free.</li>
+    <li><b>Web search</b> at $10 per 1,000 searches, on top of the tokens the results use.</li>
+  </ul>
+  <div class="tw"><table style="min-width:420px">
+    <thead><tr><th>Model</th><th class="n">Input per 1M tokens</th><th class="n">Output per 1M tokens</th></tr></thead>
+    <tbody>
+      <tr><td>Claude Haiku 5.5</td><td class="n">$0.10</td><td class="n">$0.50</td></tr>
+      <tr><td>Claude Sonnet 5.5</td><td class="n">$2.00</td><td class="n">$10.00</td></tr>
+      <tr><td>Claude Opus 5.5</td><td class="n">$4.00</td><td class="n">$20.00</td></tr>
+    </tbody></table></div>
+  <p>Prices are from the Claude API reference at the time of writing. Check Anthropic's pricing page before budgeting, since this is a beta product.</p>
+</section>
+
+<div class="partbar" style="margin-top:56px"><b>Part 2 · Plan: Content writing agent</b><span>Requirement 1 of the roadmap. A research-backed plan, ready for review.</span></div>
+
+<section class="first" id="plan-goal" style="border-top:0">
+  <h2>Goal and scope</h2>
+  <p><b>Goal.</b> Twice a week, with no manual work, produce a ready-to-post LinkedIn post in the owner's voice, on a relevant and timely topic, and publish it only after a person approves it.</p>
+  <div class="grid">
+    <div class="card"><h3>In scope</h3><ul style="margin:0;padding-left:1.1em;font-size:.94rem"><li>Topic selection from current news</li><li>Research with sources</li><li>Three drafts, scored against a rubric, rewritten if weak</li><li>Approval by message on the phone</li><li>Publishing to LinkedIn after approval</li></ul></div>
+    <div class="card"><h3>Out of scope for v1</h3><ul style="margin:0;padding-left:1.1em;font-size:.94rem"><li>Images and carousels</li><li>Replying to comments</li><li>Other networks (X, Instagram)</li><li>Company page posting (needs extra LinkedIn approval)</li></ul></div>
+  </div>
+  <p>The content agent is the first of several agents. The existing project already has a review step over WhatsApp (Twilio) and a Python orchestrator, and we reuse both.</p>
+</section>
+
+<section id="plan-article">
+  <h2>What the article describes, and how it maps</h2>
+  <div class="callout warn"><b class="t">Limit of this research</b>
+    <p>Medium blocked automated access to the full article (HTTP 403), and the complete system is sold separately on Gumroad. The pipeline below comes from the article's public description in search results, so it may miss details. Please skim the article and tell me anything I got wrong.</p></div>
+  <p><a href="https://medium.com/@digimineaitechnologies/how-i-built-an-ai-agent-that-writes-my-linkedin-posts-and-how-you-can-too-4f0cd1a2098e">The article</a> describes a Python pipeline on a timer that picks topics from current AI news and researches them. It drafts three versions, scores each, rewrites weak ones, sends the options to Telegram for approval, then posts the chosen one with the LinkedIn API. It also argues that specific, assumption-challenging topics get more comments than "here is what I built" posts.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Article step</th><th>In Managed Agents</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Runs on a timer</td><td><b>Scheduled deployment</b> with a cron expression</td><td>No server of ours has to stay on. Start can drift by a few minutes.</td></tr>
+      <tr><td>Picks topics from news</td><td><code>web_search</code> and <code>web_fetch</code>, limited to chosen sites</td><td>Plus a memory store listing topics already used.</td></tr>
+      <tr><td>Researches the topic</td><td>Same web tools, notes saved as files</td><td>Every claim in a draft must have a source line.</td></tr>
+      <tr><td>Three drafts, score, rewrite</td><td><b>Outcome</b> with a rubric and an independent grader</td><td>Replaces the hand-built scoring loop.</td></tr>
+      <tr><td>Telegram approval</td><td>Our Python orchestrator sends WhatsApp (already in the repo)</td><td>Telegram is a one-line swap if preferred.</td></tr>
+      <tr><td>LinkedIn API posts</td><td>Plain Python after approval, outside the agent</td><td>The agent never holds publishing credentials.</td></tr>
+    </tbody></table></div>
+  <p><b>Where this plan differs on purpose.</b> The article's author packages it as a script. Here the agent is a saved, versioned config, voice samples live in files and memory so the writing improves with feedback, and publishing is deterministic code a person has to trigger.</p>
+</section>
+
+<section id="plan-design">
+  <h2>Proposed design</h2>
+  <div class="flow">
+    <div class="box"><b>Schedule</b><small>Deployment fires Tue and Thu</small></div><div class="arr">→</div>
+    <div class="box hl"><b>Agent session</b><small>Search, research, draft x3, graded against rubric</small></div><div class="arr">→</div>
+    <div class="box"><b>Outputs</b><small><code>drafts.json</code> and sources saved to <code>/mnt/session/outputs/</code></small></div><div class="arr">→</div>
+    <div class="box"><b>Approval</b><small>Orchestrator sends WhatsApp. Reply 1, 2, 3, edit or skip</small></div><div class="arr">→</div>
+    <div class="box"><b>Publish</b><small>LinkedIn API call from our code</small></div>
+  </div>
+  <h3>Agent behavior</h3>
+  <ol>
+    <li>Read the voice guide and sample posts, then read memory for used topics and past reviewer edits.</li>
+    <li>Search the allowed news sites, shortlist five topics, choose one that is new and specific.</li>
+    <li>Research it and save notes with source links.</li>
+    <li>Write three drafts with different hooks (contrarian, story, lesson).</li>
+    <li>Score each against the rubric and rewrite until the outcome passes.</li>
+    <li>Save <code>drafts.json</code>, then write the chosen topic to memory.</li>
+  </ol>
+  <h3>Starter rubric for the grader (to tune)</h3>
+  <ul>
+    <li>Opening line is under 140 characters and states a specific claim, not a greeting.</li>
+    <li>Total length is 900 to 1,300 characters.</li>
+    <li>Every factual claim has a source URL in the sources file.</li>
+    <li>No phrases on the banned list (for example "game-changer", "in today's fast-paced world").</li>
+    <li>Matches the voice guide: sentence length, person, level of formality.</li>
+    <li>Contains one concrete example, number or story.</li>
+    <li>Ends with one question or one clear takeaway, never both.</li>
+    <li>Topic does not repeat anything in the memory store from the last 60 days.</li>
+    <li>The three drafts differ in hook and structure.</li>
+  </ul>
+  <h3>Where the agent's voice comes from</h3>
+  <p>Two layers. Static: a style guide plus 15 to 20 of the owner's best past posts, attached as read-only files. Learning: a memory store where the orchestrator writes the reviewer's edits and rejections after each approval, so each run starts smarter. Never store tokens or keys in memory.</p>
+</section>
+
+<section id="plan-build">
+  <h2>Build sketch</h2>
+  <p>This is a shape to confirm in Phase 1, not final code. Field names for deployment resources should be checked against the current SDK reference before running.</p>
+<pre><span class="c"># one-time setup: run once, store the IDs</span>
+import anthropic
+client = anthropic.Anthropic()
+
+env = client.beta.environments.create(
+    name="content-agent-env",
+    config={"type": "cloud",
+            "networking": {"type": "limited",
+                           "allowed_hosts": ["techcrunch.com", "theverge.com"]}},  <span class="c"># your chosen news sites</span>
+)
+
+memory = client.beta.memory_stores.create(
+    name="content-memory",
+    description="Topics already posted and the reviewer's edits to past drafts.",
+)
+
+agent = client.beta.agents.create(
+    name="LinkedIn Content Writer",
+    model="claude-sonnet-5-5",
+    system=SYSTEM_PROMPT,                      <span class="c"># role, voice rules, output format</span>
+    tools=[{
+        "type": "agent_toolset_20260401",
+        "default_config": {"permission_policy": {"type": "auto"}},
+        "configs": [
+            {"name": "bash", "enabled": False},
+            {"name": "web_search", "enabled": True,
+             "allowed_domains": ["techcrunch.com", "theverge.com"]},
+            {"name": "web_fetch", "enabled": True,
+             "allowed_domains": ["techcrunch.com", "theverge.com"]},
+        ],
+    }],
+)
+
+<span class="c"># schedule: each firing starts a session with an outcome</span>
+deployment = client.beta.deployments.create(
+    name="LinkedIn posts Tue/Thu",
+    agent=agent.id,
+    environment_id=env.id,
+    initial_events=[{
+        "type": "user.define_outcome",
+        "description": "Pick today's best topic and produce three LinkedIn drafts "
+                       "with sources, saved to /mnt/session/outputs/drafts.json.",
+        "rubric": {"type": "text", "content": RUBRIC_MD},
+        "max_iterations": 4,
+    }],
+    schedule={"type": "cron", "expression": "0 7 * * 2,4",
+              "timezone": "&lt;your timezone&gt;"},
+)</pre>
+  <p>After each run, the orchestrator reads the deployment's runs, downloads the session outputs, sends the drafts for approval, and publishes the chosen one. The agent itself never touches the LinkedIn credentials.</p>
+  <h3>Where it lives in this repo</h3>
+  <ul>
+    <li><code>agents/content_agent.py</code>: one-time setup and a function to start a manual run.</li>
+    <li><code>agents/content_review.py</code>: sends drafts over the existing Twilio WhatsApp path and parses the reply.</li>
+    <li><code>utils/linkedin_publisher.py</code>: OAuth token handling and the post call.</li>
+    <li><code>content/voice/</code>: style guide and sample posts. <code>content/rubric.md</code>: the grader rubric.</li>
+    <li><code>requirements.txt</code>: add <code>anthropic</code>. <code>.env</code>: add <code>ANTHROPIC_API_KEY</code> and LinkedIn app keys.</li>
+  </ul>
+  <div class="callout warn"><b class="t">Fix before adding more keys</b>
+    <p><code>client_secret.json</code> (a Google OAuth client secret) is committed to this repository. Move it out of git, add it to <code>.gitignore</code> and rotate it in Google Cloud. <code>.env</code> is already ignored, which is correct.</p></div>
+</section>
+
+<section id="plan-phases">
+  <h2>Phases</h2>
+  <p>Effort is a rough estimate for one developer.</p>
+  <div class="phase"><header><h3>Phase 0 · Decisions</h3><span class="pill">0.5 day</span></header>
+    <p>Answer the open questions below. Gather 15 to 20 past posts and the news sites to trust.</p><p class="done">Done when: voice samples, source list and approval channel are agreed.</p></div>
+  <div class="phase"><header><h3>Phase 1 · Prove it by hand</h3><span class="pill">1 day</span></header>
+    <ul><li>Create the API key, environment and agent. Confirm access to outcomes and memory stores.</li><li>Start one session manually, watch it in the Console, copy a draft out.</li><li>Confirm the SDK field names used in the sketch above.</li></ul>
+    <p class="done">Done when: one session produces three drafts with sources.</p></div>
+  <div class="phase"><header><h3>Phase 2 · Voice and rubric</h3><span class="pill">2 days</span></header>
+    <ul><li>Attach voice files, write the rubric, set <code>max_iterations</code>.</li><li>Run 10 sessions. Blind-compare drafts with your real posts and tune.</li></ul>
+    <p class="done">Done when: you would post at least 6 of 10 with light edits.</p></div>
+  <div class="phase"><header><h3>Phase 3 · Approval loop</h3><span class="pill">1.5 days</span></header>
+    <ul><li>Download outputs after a run, send over WhatsApp, parse the reply.</li><li>Write approved and rejected drafts back to memory.</li></ul>
+    <p class="done">Done when: a reply of "2" returns the chosen text and is saved.</p></div>
+  <div class="phase"><header><h3>Phase 4 · Publish and schedule</h3><span class="pill">2 days</span></header>
+    <ul><li>Create the LinkedIn developer app, request the posting permission, add the publisher.</li><li>Create the scheduled deployment with a session budget and run it manually once.</li></ul>
+    <p class="done">Done when: an approved draft appears on the profile and the next Tuesday run fires on its own.</p></div>
+  <div class="phase"><header><h3>Phase 5 · Harden</h3><span class="pill">1 day</span></header>
+    <ul><li>Alert on failed runs, token expiry and budget pauses.</li><li>Track approval rate and edits for the first month.</li></ul>
+    <p class="done">Done when: failures reach your phone without you checking.</p></div>
+</section>
+
+<section id="plan-risks">
+  <h2>Risks and how the plan handles them</h2>
+  <div class="tw"><table>
+    <thead><tr><th>Risk</th><th>Likelihood</th><th>Mitigation</th></tr></thead>
+    <tbody>
+      <tr><td>Draft states something false</td><td><span class="pill w">High</span></td><td>Rubric requires a source URL per claim. The reviewer sees sources next to the draft. Nothing posts without approval.</td></tr>
+      <tr><td>Posts sound like generic AI</td><td><span class="pill w">High</span></td><td>Real voice samples, banned phrase list, edit feedback stored in memory, graded on voice.</td></tr>
+      <tr><td>Web pages carry hidden instructions</td><td><span class="pill a">Medium</span></td><td>Only listed sites are readable. The agent has no publishing keys and no shell. A person approves every post.</td></tr>
+      <tr><td>Same topics repeat</td><td><span class="pill a">Medium</span></td><td>Memory of past topics, checked by the rubric.</td></tr>
+      <tr><td>LinkedIn token expires or permission is denied</td><td><span class="pill a">Medium</span></td><td>Alert before expiry. Phase 4 starts with manual copy-and-paste posting, so the agent has value even if API access takes time. Check LinkedIn's current terms and token lifetimes when building.</td></tr>
+      <tr><td>Cost drifts up</td><td><span class="pill g">Low</span></td><td>Session budget on every run, retry limit on the outcome.</td></tr>
+      <tr><td>Beta API changes</td><td><span class="pill a">Medium</span></td><td>Pin the agent version, keep setup in files, keep the orchestrator thin.</td></tr>
+    </tbody></table></div>
+</section>
+
+<section id="plan-cost">
+  <h2>Estimated cost</h2>
+  <p>Rough estimate for one run: about 150,000 input tokens (research and retries), 15,000 output tokens, 10 minutes of session time and 3 searches. Prompt caching should lower the input figure. Treat these as planning numbers to replace with real usage from Phase 1.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Model</th><th class="n">Tokens</th><th class="n">Session time</th><th class="n">Search</th><th class="n">Per run</th><th class="n">Per month (8 runs)</th></tr></thead>
+    <tbody>
+      <tr><td>Sonnet 5.5</td><td class="n">$0.45</td><td class="n">$0.01</td><td class="n">$0.03</td><td class="n"><b>~$0.49</b></td><td class="n">~$3.90</td></tr>
+      <tr><td>Opus 5.5</td><td class="n">$0.90</td><td class="n">$0.01</td><td class="n">$0.03</td><td class="n"><b>~$0.94</b></td><td class="n">~$7.50</td></tr>
+    </tbody></table></div>
+  <p>Recommendation: start on Sonnet 5.5. Switching models is a one-field change on the agent, so test Opus 5.5 in Phase 2 and keep it only if the approval rate improves.</p>
+  <h3>How we will know it works</h3>
+  <ul>
+    <li><b>Approval rate:</b> share of runs where you pick a draft. Target 60% or more by week 4.</li>
+    <li><b>Edit distance:</b> how much you change the chosen draft. It should fall over time.</li>
+    <li><b>Rubric pass rate</b> within the retry limit.</li>
+    <li><b>Engagement</b> (comments and reactions) compared with your previous posts.</li>
+  </ul>
+</section>
+
+<section id="plan-open">
+  <h2>Questions I need answered</h2>
+  <ol>
+    <li>Is this for your personal profile or a company page? Company pages need extra LinkedIn approval.</li>
+    <li>What is the niche, and which 5 to 10 news sites should the agent trust?</li>
+    <li>Can you share 15 to 20 posts you are proud of, plus any banned words?</li>
+    <li>Which days and time zone? Twice a week as in the article, or different?</li>
+    <li>Approval over WhatsApp (already built) or Telegram like the article?</li>
+    <li>Is there a monthly budget cap I should set per session?</li>
+    <li>Do you want images in v1? I assumed no.</li>
+  </ol>
+</section>
+
+<footer>
+  Sources: Claude API and Managed Agents reference (agents, environments, sessions, tools, memory, outcomes, scheduled deployments, pricing); press coverage of the April 2026 launch; <a href="https://medium.com/@digimineaitechnologies/how-i-built-an-ai-agent-that-writes-my-linkedin-posts-and-how-you-can-too-4f0cd1a2098e">the LinkedIn agent article</a> (summary only, full text not readable).
+</footer>
+</div>
+
+</body></html>
