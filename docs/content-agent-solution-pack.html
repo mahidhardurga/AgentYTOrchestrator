@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Content Agent Options</title>
+<title>Managed Agents Content Writer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -122,7 +122,7 @@ section{scroll-margin-top:16px}
 @media (max-width:900px){
   .layout{display:block}
   #menu{display:block;position:fixed;z-index:25;top:calc(env(safe-area-inset-top,0px) + 10px);left:max(12px,env(safe-area-inset-left,0px));font:inherit;font-size:.88rem;padding:7px 14px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
-  aside#toc{position:fixed;z-index:30;top:0;left:0;bottom:0;height:auto;width:min(300px,86vw);background:var(--surface);padding:calc(env(safe-area-inset-top,0px) + 20px) 14px 24px max(16px,env(safe-area-inset-left,0px));transform:translateX(-105%);transition:transform .2s;box-shadow:2px 0 18px rgba(0,0,0,.25)}
+  aside#toc{position:fixed;z-index:30;top:0;left:0;height:100vh;height:100dvh;overflow-y:auto;overscroll-behavior:contain;width:min(300px,86vw);background:var(--surface);padding:calc(env(safe-area-inset-top,0px) + 20px) 14px 24px max(16px,env(safe-area-inset-left,0px));transform:translateX(-105%);transition:transform .2s;box-shadow:2px 0 18px rgba(0,0,0,.25)}
   aside#toc.open{transform:none}
   #scrim.show{display:block;position:fixed;inset:0;z-index:28;background:rgba(0,0,0,.4)}
   main.main{padding-top:52px}
@@ -187,6 +187,21 @@ section{scroll-margin-top:16px}
 .tl .bar2 span:nth-child(odd){background:#2A55C5}.tl .bar2 span:nth-child(even){background:#5F82DB}
 .tl .bdr .bar2 span:nth-child(odd){background:#A8460C}.tl .bdr .bar2 span:nth-child(even){background:#C96A2E}
 .tl .tot{font-size:.8rem;color:var(--muted)}
+
+.chk{list-style:none;padding:0;margin:0 0 14px;max-width:none}
+.chk li{position:relative;padding-left:28px;margin-bottom:7px}
+.chk li::before{content:"";position:absolute;left:2px;top:.32em;width:15px;height:15px;border:2px solid var(--accent);border-radius:4px;background:var(--surface)}
+.stepno{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;background:var(--accent);color:#fff;font-family:var(--f-head);font-weight:700;margin-right:10px;vertical-align:middle}
+.dn{background:var(--good-soft);border-left:3px solid var(--good);border-radius:0 8px 8px 0;padding:10px 14px;margin:12px 0 4px}
+.dn b{color:var(--good)}
+.setup ul{margin:0 0 10px;padding-left:1.1em;font-size:.9rem}
+.setup .ct{margin-top:6px}
+.fl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:14px 0}
+.fl .s{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:.84rem}
+.fl .s.ok{border-color:var(--ok);color:var(--ok)}
+.fl .s.no{border-color:var(--warn);color:var(--warn)}
+.fl .a{color:var(--muted)}
+.tl .row span.phtxt{font-size:.8rem;color:var(--muted)}
 @media (prefers-reduced-motion:reduce){aside#toc{transition:none}}
 @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
 </style>
@@ -195,226 +210,352 @@ section{scroll-margin-top:16px}
 <body>
 <button type="button" id="menu" aria-label="Open contents">Contents</button><div id="scrim"></div>
 <div class="layout">
-<aside id="toc" aria-label="Contents"><div class="brand">Content Agent Options</div><div class="sub">Simple guide and comparison</div><div class="tg">Part 1 · The basics</div><a href="#now">In 30 seconds</a><a href="#build">What we are building</a><a href="#ma">Claude Managed Agents</a><a href="#bd">Amazon Bedrock</a><a href="#pic">Two options, one picture</a><div class="tg">Part 2 · Scenarios side by side</div><a href="#s-weekly">1 · Weekly run</a><a href="#s-changes">2 · Changes requested</a><a href="#s-facts">3 · Getting facts right</a><a href="#s-fail">4 · Something fails</a><a href="#s-private">5 · Confidential content</a><a href="#s-grow">6 · Another team</a><a href="#s-spend">7 · Cost climbs</a><a href="#s-access">8 · Who can do what</a><div class="tg">Part 3 · Compare and decide</div><a href="#table">Comparison table</a><a href="#cost">Cost and effort</a><a href="#score">Scorecard</a><a href="#pick">Which one to pick</a><div class="tg">Part 4 · Delivery, safety, plan</div><a href="#deliver">Where content goes</a><a href="#safety">Safety rules</a><a href="#plan">Plan and timeline</a><a href="#words">Words used</a></aside>
+<aside id="toc" aria-label="Contents"><div class="brand">Managed Agents Content Writer</div><div class="sub">Guide and implementation plan</div><div class="tg">Part 1 · Understand</div><a href="#now">In 30 seconds</a><a href="#build">What we are building</a><a href="#ma">Managed Agents, simply</a><a href="#pic">How the pieces fit</a><div class="tg">Part 2 · Scenarios</div><a href="#s-weekly">1 · Weekly run</a><a href="#s-changes">2 · Changes requested</a><a href="#s-facts">3 · Getting facts right</a><a href="#s-fail">4 · Something fails</a><a href="#s-cost">5 · Cost climbs</a><a href="#s-grow">6 · Another team</a><a href="#s-sensitive">7 · Sensitive material</a><a href="#s-access">8 · Who can do what</a><div class="tg">Part 3 · Implementation plan</div><a href="#before">Before you start</a><a href="#plan">Plan at a glance</a><a href="#layout">Project layout</a><a href="#st-env">1 · Workspace and access</a><a href="#st-mem">2 · Memory</a><a href="#st-agent">3 · Writer agent</a><a href="#st-first">4 · First run by hand</a><a href="#st-rubric">5 · Checklist and quality</a><a href="#st-service">6 · Review service</a><a href="#st-deliver">7 · Delivery</a><a href="#st-schedule">8 · Schedule</a><a href="#st-safety">9 · Safety controls</a><a href="#st-monitor">10 · Monitoring</a><a href="#st-test">11 · Testing</a><a href="#st-pilot">12 · Trial and go-live</a><a href="#run">Operating it</a><div class="tg">Part 4 · Cost, risks, decisions</div><a href="#cost">Cost</a><a href="#risks">Risks</a><a href="#decide">Decisions</a><a href="#words">Words used</a></aside>
 <main class="main">
 <header class="hero"><div class="eyebrow">Content writing agent</div>
-<h1>Content writing agent: how we build it and which platform to use</h1>
-<p class="lede">A simple guide to two ways of building it, compared scenario by scenario, with a recommendation.</p></header><div class="partbar"><b>Part 1 · The basics</b><span>The idea, the two options, and the answer first.</span></div>
+<h1>Content writing agent on Claude Managed Agents: how it works and how to build it</h1>
+<p class="lede">A simple guide with scenarios, diagrams and a complete step-by-step implementation plan.</p></header><div class="partbar"><b>Part 1 · Understand</b><span>What we are building and how Managed Agents fits.</span></div>
 <section style="border-top:0;padding-top:8px" id="now"><h2>In 30 seconds</h2>
-<p class="plain">We want an AI helper that writes content on a schedule. A person reviews it, and then it goes to wherever we decide: an internal channel, a wiki, an email, or somewhere public later.</p>
-<p>There are two good ways to build it. <b>Claude Managed Agents</b> is a ready-made workplace for AI agents. <b>Amazon Bedrock</b> is AI inside our own cloud, and we build the workplace around it.</p>
-<div class="verdict">
-<div class="eyebrow">The answer</div>
-<h2 style="margin-bottom:8px">It is a close call, and one question decides it.</h2>
-<p><b>Will the agent read confidential internal documents, or must all data stay inside our cloud?</b></p>
-<ul><li><b>Yes:</b> choose Amazon Bedrock.</li><li><b>No:</b> choose Claude Managed Agents. It takes about 10 working days to build, against about 19.</li></ul>
-<p>If we cannot answer yet, start a pilot on Managed Agents using public or low-sensitivity sources only. The pieces are designed so we can move to Bedrock later in about 1 to 2 weeks.</p>
+<p class="plain">We are building an AI writing helper. On a schedule it picks a topic from a list we give it, researches trusted sources, writes three drafts in our style, and checks its own work. A person reviews and approves. Only then does the text go to wherever we decide: an internal channel, a wiki, an email, or somewhere public later.</p>
+<p>We build it on <b>Claude Managed Agents</b>. Anthropic hosts the workplace where the agent runs. We add one small service for review and delivery.</p>
+<div class="grid">
+<div class="card"><h3>About 10 working days</h3><p>To a working pilot, followed by a 2-week trial where every item is reviewed.</p></div>
+<div class="card"><h3>About $7 to $15 a month</h3><p>To run at two items a week. Waiting for a reviewer costs nothing.</p></div>
+<div class="card"><h3>A person always approves</h3><p>Nothing is delivered without a named approver signing off on the exact text.</p></div>
+<div class="card"><h3>Easy to change</h3><p>Topics, style and destination are files and settings, not rebuilds.</p></div>
 </div>
-<div class="callout"><b class="t">Middle option</b><p>Claude Platform on AWS gives Managed Agents through our AWS sign-in and billing. Anthropic still runs it, so the data question is the same.</p></div></section>
+<div class="callout warn"><b class="t">Two things to know</b>
+<p><b>Early release.</b> Managed Agents is in beta, so we pin versions, test every change, and keep our own parts small and swappable.</p>
+<p><b>Data.</b> Work in the agent is handled by Anthropic's service. For the pilot we use public or low-sensitivity sources only. Confidential material needs a security review first.</p></div></section>
 <section id="build"><h2>What we are building</h2>
-<p class="plain">A writing helper with a safety net. It never sends anything out without a person approving it.</p>
+<p class="plain">A writing helper with a safety net.</p>
 <div class="mini">
 <div class="n"><b>1. Inputs</b>Topic list, style samples, trusted websites.</div><div class="ar">→</div>
 <div class="n hl"><b>2. The agent</b>Researches, writes 3 drafts, checks them against a checklist.</div><div class="ar">→</div>
 <div class="n"><b>3. A person</b>Picks one, asks for changes, or skips.</div><div class="ar">→</div>
 <div class="n"><b>4. Delivery</b>Sends the approved text to the chosen place.</div>
 </div>
-<p>The destination can change later without touching the agent. See <a href="#deliver">Where the content goes</a>.</p></section>
+<div class="grid">
+<div class="card"><h3>The agent does</h3><p>Reads its notes, researches, writes, scores its own drafts, saves drafts and sources as files.</p></div>
+<div class="card"><h3>Our small service does</h3><p>Confirms every quote is real, asks the reviewer, passes on change requests, delivers approved text, keeps records.</p></div>
+<div class="card"><h3>A person does</h3><p>Chooses the topics and style, reviews every draft, and approves what goes out.</p></div>
+</div></section>
 <section id="ma"><h2>Claude Managed Agents, simply</h2>
 <p class="plain">Think of renting a furnished office with a smart assistant already inside.</p>
-<p>You describe the assistant's job once. The provider supplies everything around it: a safe workspace, a clock for schedules, a notebook that remembers, and a reviewer that checks work against a checklist. We only add the parts that touch our own systems.</p>
+<p>We describe the assistant's job once. Anthropic provides everything around it: a safe workspace, a clock for schedules, a notebook that remembers, and a second reviewer that checks work against a checklist. We only add the parts that touch our own systems.</p>
 <div class="grid">
-<div class="card"><h3>Agent</h3><p>The job description. Saved once and reused. Every edit is a new version.</p></div>
-<div class="card"><h3>Session</h3><p>One working day. A single run from start to finish.</p></div>
-<div class="card"><h3>Memory</h3><p>A notebook of small text files that survives between runs.</p></div>
-<div class="card"><h3>Grader</h3><p>A second, independent reviewer that scores the work against our checklist.</p></div>
+<div class="card"><span class="tag">Agent</span><h3>The job description</h3><p>Model, instructions and allowed tools. Saved once. Every edit becomes a new version we can roll back to.</p></div>
+<div class="card"><span class="tag">Environment</span><h3>The office setup</h3><p>The locked-down workspace. We choose which websites it can reach.</p></div>
+<div class="card"><span class="tag">Session</span><h3>One working day</h3><p>A single run. It keeps its own files and conversation until we close it.</p></div>
+<div class="card"><span class="tag">Memory</span><h3>The notebook</h3><p>Small text files that survive between runs: style guide, topic list, past items.</p></div>
+<div class="card"><span class="tag">Outcome</span><h3>The checklist and grader</h3><p>We write a checklist. A separate reviewer scores each draft and sends weak ones back.</p></div>
+<div class="card"><span class="tag">Deployment</span><h3>The schedule</h3><p>Starts a run on chosen days and times, and keeps a record of each one.</p></div>
+<div class="card"><span class="tag">Tools</span><h3>What it can use</h3><p>Web search and page reading (limited to allowed sites), reading and writing files, simple calculations.</p></div>
+<div class="card"><span class="tag">Budget</span><h3>The spending cap</h3><p>A dollar limit per run. At the limit it pauses by itself.</p></div>
 </div>
-<p>It is in early release (beta) and works only with Claude.</p></section>
-<section id="bd"><h2>Amazon Bedrock, simply</h2>
-<p class="plain">Think of buying a very good engine and a shop full of parts.</p>
-<p>Bedrock gives us Claude inside our own cloud account. That is the thinking part. The workplace is up to us: a scheduler, a workflow that runs the steps in order, storage, safety filters, and a way to search trusted sites. We connect them ourselves.</p>
-<div class="grid">
-<div class="card"><h3>Strong points</h3><p>Data stays in our cloud. Company sign-in and logs. Built-in safety filters. Mature, reliable services.</p></div>
-<div class="card"><h3>Trade-offs</h3><p>More to build and keep updated. No built-in web search. We build the checker loop and the memory.</p></div>
-</div></section>
-<section id="pic"><h2>The two options in one picture</h2>
-<p class="plain">Green parts come ready. Orange parts are ours to build and look after.</p>
+<p>It works only with Claude models and is in early release (beta).</p></section>
+<section id="pic"><h2>How the pieces fit</h2>
+<p class="plain">Green parts come ready from the platform. Orange parts are ours to build and look after.</p>
 <div class="legend"><span><i class="lg-p"></i>Provided by the platform</span><span><i class="lg-b"></i>We build</span></div>
 <div class="sbs">
-<div class="col"><div class="ct">Claude Managed Agents<small>We build 3 parts</small></div><div class="stack">
-<div class="zone"><div class="zt">Ready-made workplace</div>
-<div class="blk p"><b>Schedule</b><small>Runs on chosen days</small></div>
-<div class="blk p"><b>Research tools</b><small>Web search, limited to allowed sites</small></div>
+<div class="col"><div class="ct">Ready-made workplace<small>Hosted by Anthropic</small></div><div class="stack">
+<div class="blk p"><b>Schedule</b><small>Starts a run on chosen days and keeps a record</small></div>
+<div class="blk p"><b>Agent session</b><small>Researches, writes 3 drafts, saves files</small></div>
 <div class="blk p"><b>Checker (grader)</b><small>Scores drafts against our checklist</small></div>
-<div class="blk p"><b>Memory</b><small>Style, topics, history</small></div></div>
-<div class="zone"><div class="zt">Our small service</div>
-<div class="blk b"><b>Review and delivery</b><small>Asks a person, sends approved text</small></div>
-<div class="blk b"><b>Source check</b><small>Confirms quotes are real</small></div>
-<div class="blk b"><b>Run records</b><small>What ran, what was approved</small></div></div></div></div>
-<div class="col"><div class="ct">Amazon Bedrock<small>We build 7 parts</small></div><div class="stack">
-<div class="zone"><div class="zt">Provided by AWS</div>
-<div class="blk p"><b>The AI model</b><small>Claude in our account</small></div>
-<div class="blk p"><b>Scheduler and workflow engine</b><small>Standard building blocks</small></div>
-<div class="blk p"><b>Safety filters</b><small>Topics, sensitive data, grounding</small></div></div>
-<div class="zone"><div class="zt">We build on top</div>
-<div class="blk b"><b>Research tool</b><small>Search or read trusted sites</small></div>
-<div class="blk b"><b>Drafting workflow</b><small>Steps, retries, wait for review</small></div>
-<div class="blk b"><b>Checker loop</b><small>Score, send back, repeat</small></div>
-<div class="blk b"><b>Memory and storage</b><small>Style, topics, history</small></div>
-<div class="blk b"><b>Source check</b><small>Confirms quotes are real</small></div>
-<div class="blk b"><b>Review and delivery</b><small>Asks a person, sends approved text</small></div>
-<div class="blk b"><b>Run records</b><small>What ran, what was approved</small></div></div></div></div>
-</div></section>
-<div class="partbar" style="margin-top:56px"><b>Part 2 · Scenarios side by side</b><span>Eight everyday situations, with a diagram for each option.</span></div>
-<div class="legend" style="margin-top:14px"><span><i class="lg-p"></i>Provided by the platform</span><span><i class="lg-b"></i>We build</span><span><i class="lg-h"></i>A person</span><span><i class="lg-x"></i>Leaves our cloud</span></div>
-<section id="s-weekly"><h2>Scenario 1 · A normal weekly run</h2><p class="plain">Every week the agent picks a topic, writes drafts, checks them, and hands them to a person.</p>
-<div class="sbs"><div class="col"><div class="ct">Claude Managed Agents<small>We build 1 of 6 steps</small></div><div class="st k-p"><span class="tg2">Provided</span><b>A schedule starts the run</b><small>Built in. Choose the days and time.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>The agent reads its notes</b><small>Style samples, topic list and past posts are kept in its memory.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>It researches trusted sites</b><small>Built-in web search, limited to sites we allow.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>It writes 3 drafts and a checker scores them</b><small>A separate reviewer grades each draft against our checklist and sends weak ones back.</small></div><div class="st k-b"><span class="tg2">We build</span><b>Our small service checks the sources</b><small>Plain code. Confirms each quote really exists on the page.</small></div><div class="st k-h"><span class="tg2">Person</span><b>A person reviews</b><small>Picks a draft, asks for changes, or skips.</small></div></div><div class="col"><div class="ct">Amazon Bedrock<small>We build 4 of 7 steps</small></div><div class="st k-p"><span class="tg2">Provided</span><b>A schedule starts the run</b><small>AWS scheduler. Choose the days and time.</small></div><div class="st k-b"><span class="tg2">We build</span><b>Our code loads the notes</b><small>We store style, topics and history, and load them each run.</small></div><div class="st k-b"><span class="tg2">We build</span><b>Our research tool reads trusted sites</b><small>Bedrock has no built-in web search, so we build or buy one.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>The model writes 3 drafts</b><small>Claude running inside our cloud account.</small></div><div class="st k-b"><span class="tg2">We build</span><b>Our checker step scores the drafts</b><small>A second model call plus a retry loop that we build.</small></div><div class="st k-b"><span class="tg2">We build</span><b>Our code checks the sources</b><small>Same plain-code check.</small></div><div class="st k-h"><span class="tg2">Person</span><b>A person reviews</b><small>Picks a draft, asks for changes, or skips.</small></div></div></div>
-<div class="take"><span class="pill ma">Managed Agents</span><p><b>Better here:</b> Managed Agents provides most of the steps. On Bedrock we build four of the seven.</p></div></section>
-<section id="s-changes"><h2>Scenario 2 · The reviewer asks for changes</h2><p class="plain">For example "make it shorter and friendlier". The agent should not start from zero.</p>
-<div class="sbs"><div class="col"><div class="ct">Claude Managed Agents<small>We build 1 of 5 steps</small></div><div class="st k-h"><span class="tg2">Person</span><b>Reviewer asks for a change</b><small>Typed as a short note.</small></div><div class="st k-b"><span class="tg2">We build</span><b>Our service passes the note to the same run</b><small>One small call.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>The agent still remembers its research and files</b><small>The run stays open and costs nothing while it waits.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>It rewrites and re-checks</b><small>Uses the same checklist.</small></div><div class="st k-h"><span class="tg2">Person</span><b>Reviewer approves</b><small>Approval is tied to the exact text.</small></div></div><div class="col"><div class="ct">Amazon Bedrock<small>We build 3 of 6 steps</small></div><div class="st k-h"><span class="tg2">Person</span><b>Reviewer asks for a change</b><small>Typed as a short note.</small></div><div class="st k-b"><span class="tg2">We build</span><b>Our workflow wakes up</b><small>It was paused, waiting for the reviewer.</small></div><div class="st k-b"><span class="tg2">We build</span><b>Our code reloads the saved research and drafts</b><small>We must store and reload everything ourselves.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>The model rewrites</b><small>Claude inside our cloud account.</small></div><div class="st k-b"><span class="tg2">We build</span><b>Our checks run again</b><small>Length, sources, sensitive data.</small></div><div class="st k-h"><span class="tg2">Person</span><b>Reviewer approves</b><small>Approval is tied to the exact text.</small></div></div></div>
-<div class="take"><span class="pill ma">Managed Agents</span><p><b>Better here:</b> The agent remembers the work so far. On Bedrock we save and reload it.</p></div></section>
-<section id="s-facts"><h2>Scenario 3 · Getting the facts right</h2><p class="plain">Every claim in a draft needs a source that a person can open.</p>
-<div class="sbs"><div class="col"><div class="ct">Claude Managed Agents<small>We build 1 of 5 steps</small></div><div class="st k-p"><span class="tg2">Provided</span><b>The agent searches only allowed sites</b><small>Everything else is blocked.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>It saves each claim with a link and an exact quote</b><small>Written to a sources file.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>The checker rejects drafts with unsupported claims</b><small>Part of the checklist.</small></div><div class="st k-b"><span class="tg2">We build</span><b>Our code opens the page and confirms the quote</b><small>No AI needed.</small></div><div class="st k-h"><span class="tg2">Person</span><b>Reviewer sees sources next to the draft</b><small>Can click through.</small></div></div><div class="col"><div class="ct">Amazon Bedrock<small>We build 2 of 5 steps</small></div><div class="st k-b"><span class="tg2">We build</span><b>Our tool searches allowed sites</b><small>Built or bought.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>The model writes with sources</b><small>Claude inside our cloud account.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>A built-in safety filter compares the text with the source</b><small>A "grounding check" for made-up facts.</small></div><div class="st k-b"><span class="tg2">We build</span><b>Our code opens the page and confirms the quote</b><small>No AI needed.</small></div><div class="st k-h"><span class="tg2">Person</span><b>Reviewer sees sources next to the draft</b><small>Can click through.</small></div></div></div>
-<div class="take"><span class="pill">Tie</span><p><b>Better here:</b> Managed Agents is quicker to set up. Bedrock adds a ready-made fact filter. Both add our own quote check.</p></div></section>
-<section id="s-fail"><h2>Scenario 4 · Something goes wrong mid-run</h2><p class="plain">A website is down, or a step crashes.</p>
-<div class="sbs"><div class="col"><div class="ct">Claude Managed Agents<small>We build 2 of 4 steps</small></div><div class="st k-p"><span class="tg2">Provided</span><b>A step fails</b><small>The run is marked failed with a reason.</small></div><div class="st k-b"><span class="tg2">We build</span><b>Our service gets a notice and alerts the team</b><small>Notices can occasionally be missed.</small></div><div class="st k-b"><span class="tg2">We build</span><b>A check every 15 minutes catches missed notices</b><small>A small extra job we add.</small></div><div class="st k-h"><span class="tg2">Person</span><b>The team reruns it</b><small>One click or command.</small></div></div><div class="col"><div class="ct">Amazon Bedrock<small>We build 0 of 4 steps</small></div><div class="st k-p"><span class="tg2">Provided</span><b>A step fails</b><small>The workflow records exactly where.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>It retries automatically</b><small>Retry rules are built in.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>Still failing: it moves to an error step and raises an alarm</b><small>Standard cloud alarms.</small></div><div class="st k-h"><span class="tg2">Person</span><b>The team reruns it</b><small>One click or command.</small></div></div></div>
-<div class="take"><span class="pill bd">Bedrock</span><p><b>Better here:</b> Bedrock uses mature, well-known cloud tools for retries and alarms. Managed Agents is still an early release.</p></div></section>
-<section id="s-private"><h2>Scenario 5 · The content or its sources are confidential</h2><p class="plain">The agent must read internal material that must not leave the company.</p>
-<div class="sbs"><div class="col"><div class="ct">Claude Managed Agents<small>We build 1 of 4 steps</small></div><div class="st k-h"><span class="tg2">Person</span><b>The content owner provides internal material</b><small>Documents, plans, notes.</small></div><div class="st k-x"><span class="tg2">Leaves our cloud</span><b>Sent to an outside service</b><small>Over the internet to Anthropic.</small></div><div class="st k-x"><span class="tg2">Leaves our cloud</span><b>Stored by that service under its own retention rules</b><small>Sessions keep their history.</small></div><div class="st k-b"><span class="tg2">We build</span><b>Needs a security review and a data agreement</b><small>Often the slowest step in a large company.</small></div></div><div class="col"><div class="ct">Amazon Bedrock<small>We build 0 of 4 steps</small></div><div class="st k-h"><span class="tg2">Person</span><b>The content owner provides internal material</b><small>Documents, plans, notes.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>Stays in our cloud account and chosen region</b><small>No new outside service.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>Can use a private network link to the model</b><small>Traffic never crosses the public internet.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>Covered by our existing cloud agreements</b><small>Often already approved.</small></div></div></div>
-<div class="take"><span class="pill bd">Bedrock</span><p><b>Better here:</b> If confidential material is in scope, this one scenario can decide the whole choice.</p></div></section>
-<section id="s-grow"><h2>Scenario 6 · Another team wants its own writing agent</h2><p class="plain">Different topics, different style, same idea.</p>
-<div class="sbs"><div class="col"><div class="ct">Claude Managed Agents<small>We build 1 of 5 steps</small></div><div class="st k-h"><span class="tg2">Person</span><b>A second team asks for its own agent</b><small>Own topics and own style.</small></div><div class="st k-b"><span class="tg2">We build</span><b>We add their style and topic files to memory</b><small>Plain text files.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>We copy the agent and edit its instructions</b><small>Each change is saved as a version.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>We give it its own schedule</b><small>Built in.</small></div><div class="st k-h"><span class="tg2">Person</span><b>Done in hours</b><small>No new code.</small></div></div><div class="col"><div class="ct">Amazon Bedrock<small>We build 2 of 5 steps</small></div><div class="st k-h"><span class="tg2">Person</span><b>A second team asks for its own agent</b><small>Own topics and own style.</small></div><div class="st k-b"><span class="tg2">We build</span><b>We add their settings to storage</b><small>One record per team.</small></div><div class="st k-b"><span class="tg2">We build</span><b>The workflow must already be built to take settings</b><small>Built once, reused.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>We add a scheduler entry</b><small>Built in.</small></div><div class="st k-h"><span class="tg2">Person</span><b>Hours if designed for it, days if not</b><small>Depends on our upfront work.</small></div></div></div>
-<div class="take"><span class="pill ma">Managed Agents</span><p><b>Better here:</b> Slightly easier to copy. Bedrock is just as good if we design it for many teams from the start.</p></div></section>
-<section id="s-spend"><h2>Scenario 7 · Cost starts to climb</h2><p class="plain">A loop runs longer than planned.</p>
-<div class="sbs"><div class="col"><div class="ct">Claude Managed Agents<small>We build 1 of 4 steps</small></div><div class="st k-p"><span class="tg2">Provided</span><b>Each run has a dollar cap</b><small>Set when the run starts.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>At the cap the run pauses by itself</b><small>Nothing more is spent.</small></div><div class="st k-b"><span class="tg2">We build</span><b>Our alert tells the team</b><small>Small addition.</small></div><div class="st k-h"><span class="tg2">Person</span><b>The team raises the cap or stops it</b><small>Their choice.</small></div></div><div class="col"><div class="ct">Amazon Bedrock<small>We build 2 of 4 steps</small></div><div class="st k-b"><span class="tg2">We build</span><b>We limit retries and size in our code</b><small>Must be written and tested.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>A cloud budget alarm warns at a threshold</b><small>It warns but does not stop spending.</small></div><div class="st k-b"><span class="tg2">We build</span><b>We build our own stop switch</b><small>So a runaway can be halted.</small></div><div class="st k-h"><span class="tg2">Person</span><b>The team decides</b><small>Their choice.</small></div></div></div>
-<div class="take"><span class="pill ma">Managed Agents</span><p><b>Better here:</b> A hard cap is built in. On Bedrock a warning is built in, and the stop switch is ours to build.</p></div></section>
-<section id="s-access"><h2>Scenario 8 · Who is allowed to do what</h2><p class="plain">People and systems should only have the access they need.</p>
-<div class="sbs"><div class="col"><div class="ct">Claude Managed Agents<small>We build 1 of 4 steps</small></div><div class="st k-h"><span class="tg2">Person</span><b>People sign in to the Claude console</b><small>Company sign-in and roles.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>Test and live are kept in separate workspaces</b><small>Built in.</small></div><div class="st k-b"><span class="tg2">We build</span><b>Our small service uses our cloud roles for its own parts</b><small>One role per job.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>The agent itself holds no passwords</b><small>Secrets stay with our service.</small></div></div><div class="col"><div class="ct">Amazon Bedrock<small>We build 1 of 4 steps</small></div><div class="st k-h"><span class="tg2">Person</span><b>People sign in with the company cloud sign-in</b><small>Same as every other system.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>One role per step, with only the permissions it needs</b><small>Standard practice.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>One central log records every call</b><small>Familiar to security teams.</small></div><div class="st k-b"><span class="tg2">We build</span><b>We must write the permission rules carefully</b><small>Real work, done once.</small></div></div></div>
-<div class="take"><span class="pill bd">Bedrock</span><p><b>Better here:</b> Bedrock fits how a large company already manages access. Managed Agents is fine but is a second place to manage.</p></div></section>
-<div class="partbar" style="margin-top:56px"><b>Part 3 · Compare and decide</b><span>All factors, cost, a scorecard you can adjust, and the recommendation.</span></div>
-<section id="table"><h2>The comparison table</h2>
-<p class="plain">All the factors in one place, in plain words. "Better" shows the stronger option for this job.</p>
-<div class="tw"><table class="cmp" style="min-width:640px"><thead><tr><th>Factor</th><th>Claude Managed Agents</th><th>Amazon Bedrock</th><th>Better</th></tr></thead><tbody><tr><td><b>Time to build</b></td><td>About 10 days</td><td>About 19 days</td><td><span class="pill ma">Managed Agents</span></td></tr><tr><td><b>Parts we build</b></td><td>3</td><td>7</td><td><span class="pill ma">Managed Agents</span></td></tr><tr><td><b>Web research</b></td><td>Built in</td><td>Build or buy a tool</td><td><span class="pill ma">Managed Agents</span></td></tr><tr><td><b>Checking drafts against a checklist</b></td><td>Built in</td><td>We build the loop</td><td><span class="pill ma">Managed Agents</span></td></tr><tr><td><b>Remembering style and history</b></td><td>Built in</td><td>We build storage</td><td><span class="pill ma">Managed Agents</span></td></tr><tr><td><b>Monthly running cost</b></td><td>About $7 to $15</td><td>About $8 to $20</td><td><span class="pill">Tie</span></td></tr><tr><td><b>Monthly upkeep</b></td><td>About 2 to 4 hours</td><td>About 6 to 10 hours</td><td><span class="pill ma">Managed Agents</span></td></tr><tr><td><b>Spend limit</b></td><td>Hard cap per run</td><td>Warning alarms plus our own limits</td><td><span class="pill ma">Managed Agents</span></td></tr><tr><td><b>Where our data goes</b></td><td>To Anthropic's service</td><td>Stays in our cloud</td><td><span class="pill bd">Bedrock</span></td></tr><tr><td><b>Company security tools</b></td><td>Separate console, plus our own parts</td><td>Same tools as everything else</td><td><span class="pill bd">Bedrock</span></td></tr><tr><td><b>Safety filters</b></td><td>We build our own</td><td>Built-in filters</td><td><span class="pill bd">Bedrock</span></td></tr><tr><td><b>Reliability</b></td><td>Early release (beta)</td><td>Mature cloud services</td><td><span class="pill bd">Bedrock</span></td></tr><tr><td><b>Tracking and audit</b></td><td>Step-by-step viewer, plus our logs</td><td>Company logs and alarms</td><td><span class="pill">Tie</span></td></tr><tr><td><b>Freedom to change later</b></td><td>Tied to Anthropic's service</td><td>Can swap models, tied to AWS</td><td><span class="pill bd">Bedrock</span></td></tr><tr><td><b>Approval to start</b></td><td>New vendor review</td><td>Existing cloud agreement</td><td><span class="pill bd">Bedrock</span></td></tr></tbody></table></div>
-<p>Pattern: Managed Agents wins on speed, simplicity and cost control. Bedrock wins on data location, security fit, safety filters and maturity.</p></section>
-<section id="cost"><h2>Cost and effort</h2>
-<p class="plain">Running costs are small on both. The real difference is how long it takes to build and keep up.</p>
-<div class="tw"><table style="min-width:520px"><thead><tr><th>Estimate</th><th class="n">Claude Managed Agents</th><th class="n">Amazon Bedrock</th></tr></thead><tbody>
-<tr><td>Time to build</td><td class="n"><b>~10 days</b></td><td class="n"><b>~19 days</b></td></tr>
-<tr><td>Running cost per month (8 runs)</td><td class="n"><b>~$7 to $15</b></td><td class="n"><b>~$8 to $20</b></td></tr>
-<tr><td>Extra for a private network link (optional)</td><td class="n">not applicable</td><td class="n">+$15 to $45</td></tr>
-<tr><td>Upkeep per month</td><td class="n"><b>~2 to 4 hours</b></td><td class="n"><b>~6 to 10 hours</b></td></tr>
-</tbody></table></div>
-<h3>Build time, to the same scale</h3>
-<div class="tl">
-<div class="row"><b>Managed Agents · 10 days</b><div class="bar2" style="width:52.6%"><span style="width:10%">1</span><span style="width:10%">1</span><span style="width:30%">3</span><span style="width:30%">3</span><span style="width:20%">2</span></div></div>
-<div class="row bdr"><b>Bedrock · 19 days</b><div class="bar2" style="width:100%"><span style="width:5.26%">1</span><span style="width:10.53%">2</span><span style="width:26.3%">5</span><span style="width:15.8%">3</span><span style="width:21.05%">4</span><span style="width:21.05%">4</span></div></div>
+<div class="blk p"><b>Memory</b><small>Style, topic brief, history</small></div>
+<div class="blk p"><b>Locked workspace</b><small>Only allowed websites, no secrets inside</small></div>
+<div class="blk p"><b>Spending cap and step viewer</b><small>Pause at the cap, see every step</small></div></div></div>
+<div class="col"><div class="ct">Our small service<small>Hosted by us</small></div><div class="stack">
+<div class="blk b"><b>Notice receiver</b><small>Learns when a run finishes or fails</small></div>
+<div class="blk b"><b>Source check</b><small>Opens each page and confirms the quote</small></div>
+<div class="blk b"><b>Review step</b><small>Sends drafts to the approver, reads the reply</small></div>
+<div class="blk b"><b>Delivery step</b><small>Sends approved text to the chosen place</small></div>
+<div class="blk b"><b>Records and alerts</b><small>What ran, who approved what, who to warn</small></div>
+<div class="blk b"><b>Memory write-back</b><small>Saves topics used and reviewer edits</small></div></div></div>
 </div>
-<p style="font-size:.85rem;color:var(--muted)">Numbers inside the bars are days per phase. See the plan for what each phase covers.</p>
-<p>These are planning estimates for one developer, based on roughly 110,000 words read and 11,000 written per run on a mid-size Claude model. We replace them with real measurements in the first trial. Bedrock token prices are set by AWS, so check its price page.</p></section>
-<section id="score"><h2>Scorecard</h2>
-<p class="plain">Each option is scored 1 to 5 on each factor. Change the weights to match what matters most and the totals update.</p>
-<div class="presets"><button type="button" id="p-bal">Balanced (internal use)</button><button type="button" id="p-speed">Speed first</button><button type="button" id="p-comp">Confidential data</button></div>
-<div class="tw"><table class="score"><thead><tr><th>Factor</th><th class="n">Weight</th><th class="n">Managed Agents</th><th class="n">Bedrock</th><th>Why</th></tr></thead><tbody id="score-body"></tbody>
-<tfoot><tr><td><b>Score out of 5</b></td><td class="n" id="wsum"></td><td class="n"><b id="tot-a"></b></td><td class="n"><b id="tot-b"></b></td><td id="lead"></td></tr></tfoot></table></div>
-<div class="bars" aria-hidden="true"><div class="bar"><span>Managed Agents</span><i><b id="bar-a"></b></i></div><div class="bar"><span>Bedrock</span><i><b id="bar-b" class="bd"></b></i></div></div>
-<p>Try the three buttons. Balanced is a tie. Speed first favors Managed Agents. Confidential data favors Bedrock.</p></section>
-<section id="pick"><h2>Which one should we pick?</h2>
-<div class="tally"><div><b>4</b>scenarios favor Managed Agents</div><div><b>3</b>scenarios favor Bedrock</div><div><b>1</b>tie</div></div>
-<p>Managed Agents wins the build-and-run scenarios (weekly run, changes, growing, spending). Bedrock wins the safety, reliability and data-location scenarios.</p>
-<div class="decide">
-<div class="q"><b>Question 1</b> Will the agent read confidential internal documents, or must all data stay inside our cloud?<small>This is the deciding question.</small></div>
-<div class="r bd"><b>Yes</b><br>Choose <b>Amazon Bedrock</b>.</div>
-<div class="r"><b>No, or not sure</b><br>Go to question 2.</div>
-<div class="q" style="grid-column:1/-1"><b>Question 2</b> Is an early-release (beta) service acceptable for this use, and can a new vendor be approved?</div>
-<div class="r ma"><b>Yes</b><br>Choose <b>Claude Managed Agents</b>. If AWS billing and sign-in are required, use the AWS route.</div>
-<div class="r bd"><b>No</b><br>Choose <b>Amazon Bedrock</b>.</div>
+<h3>Life of one item</h3>
+<div class="fl"><span class="s">Scheduled</span><span class="a">→</span><span class="s">Drafting</span><span class="a">→</span><span class="s">Checking</span><span class="a">→</span><span class="s ok">Awaiting review</span><span class="a">→</span><span class="s">Approved</span><span class="a">→</span><span class="s ok">Delivered</span></div>
+<div class="fl"><span class="s">Awaiting review</span><span class="a">→ change requested →</span><span class="s">Drafting</span><span class="a">·</span><span class="s no">Skipped</span><span class="a">·</span><span class="s no">Failed</span><span class="a">·</span><span class="s no">Expired</span></div></section>
+<div class="partbar" style="margin-top:56px"><b>Part 2 · Scenarios</b><span>Eight everyday situations: what happens and what we set up.</span></div>
+<div class="legend" style="margin-top:14px"><span><i class="lg-p"></i>Provided by the platform</span><span><i class="lg-b"></i>We build</span><span><i class="lg-h"></i>A person</span><span><i class="lg-x"></i>Leaves our company</span></div>
+<section id="s-weekly"><h2>Scenario 1 · A normal weekly run</h2><p class="plain">Every week the agent picks a topic, writes drafts, checks them, and hands them to a person.</p><div class="sbs"><div class="col"><div class="ct">What happens<small>We build 1 of 6 steps</small></div><div class="st k-p"><span class="tg2">Provided</span><b>A schedule starts the run</b><small>Set days, time and a spending cap.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>The agent reads its notes</b><small>Style samples, topic brief and past items from memory.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>It researches trusted sites</b><small>Web search limited to sites we allow.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>It writes 3 drafts and the checker scores them</b><small>Weak drafts are sent back automatically.</small></div><div class="st k-b"><span class="tg2">We build</span><b>Our service downloads the files and checks sources</b><small>Confirms each quote exists on its page.</small></div><div class="st k-h"><span class="tg2">Person</span><b>A person reviews</b><small>Picks a draft, asks for changes, or skips.</small></div></div><div class="col setup"><div class="ct">What we set up</div><ul><li>A schedule with days, time zone and spending cap</li><li>Memory files: style, topic brief, history</li><li>A checklist for the grader</li><li>Our service, ready to hear when the run finishes</li></ul><div class="ct">Watch out for</div><ul><li>A run can start a few minutes after the set time, so draft early and deliver later.</li></ul></div></div></section>
+<section id="s-changes"><h2>Scenario 2 · The reviewer asks for changes</h2><p class="plain">For example "make it shorter and friendlier". The agent should not start from zero.</p><div class="sbs"><div class="col"><div class="ct">What happens<small>We build 1 of 5 steps</small></div><div class="st k-h"><span class="tg2">Person</span><b>Reviewer asks for a change</b><small>A short note.</small></div><div class="st k-b"><span class="tg2">We build</span><b>Our service passes the note to the same run</b><small>As a new task with the same checklist.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>The agent still remembers its research and files</b><small>The run stays open and costs nothing while it waits.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>It rewrites and the checker re-scores</b><small>Same quality bar as the first time.</small></div><div class="st k-h"><span class="tg2">Person</span><b>Reviewer approves</b><small>Approval is tied to the exact text.</small></div></div><div class="col setup"><div class="ct">What we set up</div><ul><li>A small call that sends the note to the open run</li><li>A rule that any edit to the text needs a fresh approval</li><li>A reminder after 24 hours and an automatic skip after 72</li></ul><div class="ct">Watch out for</div><ul><li>Confirm in the trial how long an idle run stays available. If it expires, start a new run seeded with the saved drafts.</li></ul></div></div></section>
+<section id="s-facts"><h2>Scenario 3 · Getting the facts right</h2><p class="plain">Every claim in a draft needs a source that a person can open.</p><div class="sbs"><div class="col"><div class="ct">What happens<small>We build 1 of 5 steps</small></div><div class="st k-p"><span class="tg2">Provided</span><b>The agent searches only allowed sites</b><small>Everything else is blocked.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>It saves each claim with a link and an exact quote</b><small>Written to a sources file.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>The grader rejects drafts with unsupported claims</b><small>Part of the checklist.</small></div><div class="st k-b"><span class="tg2">We build</span><b>Our code opens the page and confirms the quote</b><small>No AI needed, so it is cheap and exact.</small></div><div class="st k-h"><span class="tg2">Person</span><b>The reviewer sees sources next to the draft</b><small>One click to check.</small></div></div><div class="col setup"><div class="ct">What we set up</div><ul><li>The allowed-sites list in both the agent and the environment</li><li>A fixed format for the drafts and sources files</li><li>A quote checker that flags any claim it cannot find</li></ul><div class="ct">Watch out for</div><ul><li>The grader cannot browse the web, so our own check is what proves a quote is real.</li></ul></div></div></section>
+<section id="s-fail"><h2>Scenario 4 · Something goes wrong mid-run</h2><p class="plain">A website is down, or a step crashes.</p><div class="sbs"><div class="col"><div class="ct">What happens<small>We build 2 of 5 steps</small></div><div class="st k-p"><span class="tg2">Provided</span><b>A step fails</b><small>The run is marked failed with a reason.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>A record of the run is kept</b><small>Failed runs can be listed on their own.</small></div><div class="st k-b"><span class="tg2">We build</span><b>Our service hears about it and alerts the team</b><small>Through the chat tool or email.</small></div><div class="st k-b"><span class="tg2">We build</span><b>A check every 15 minutes catches anything missed</b><small>A small extra job.</small></div><div class="st k-h"><span class="tg2">Person</span><b>The team starts a run by hand</b><small>One call.</small></div></div><div class="col setup"><div class="ct">What we set up</div><ul><li>A notice endpoint registered in the Anthropic console</li><li>An alert channel for the team</li><li>A 15-minute check that lists recent runs</li></ul><div class="ct">Watch out for</div><ul><li>Notices can arrive twice, arrive late, or be dropped after three attempts. The service always checks the real state.</li></ul></div></div></section>
+<section id="s-cost"><h2>Scenario 5 · Cost starts to climb</h2><p class="plain">A run takes longer than planned.</p><div class="sbs"><div class="col"><div class="ct">What happens<small>We build 1 of 4 steps</small></div><div class="st k-p"><span class="tg2">Provided</span><b>Each run has a dollar cap</b><small>Set when the run starts.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>At the cap the run pauses by itself</b><small>Nothing more is spent, and the work is kept.</small></div><div class="st k-b"><span class="tg2">We build</span><b>Our service alerts the team</b><small>Small addition.</small></div><div class="st k-h"><span class="tg2">Person</span><b>The team raises the cap or stops the run</b><small>Their choice.</small></div></div><div class="col setup"><div class="ct">What we set up</div><ul><li>A spending cap on the schedule</li><li>An alert when a run pauses at its cap</li><li>A weekly cost report from each run's recorded usage</li></ul><div class="ct">Watch out for</div><ul><li>The step that crosses the cap still finishes, so the final cost can run slightly over.</li></ul></div></div></section>
+<section id="s-grow"><h2>Scenario 6 · Another team wants its own writing agent</h2><p class="plain">Different topics, different style, same idea.</p><div class="sbs"><div class="col"><div class="ct">What happens<small>We build 1 of 5 steps</small></div><div class="st k-h"><span class="tg2">Person</span><b>A second team asks for its own agent</b><small>Own topics and own style.</small></div><div class="st k-b"><span class="tg2">We build</span><b>We create a memory folder with their style and topics</b><small>Plain text files.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>We copy the agent and edit its instructions</b><small>Each change is saved as a version.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>We give it its own schedule</b><small>Built in.</small></div><div class="st k-h"><span class="tg2">Person</span><b>Done in hours</b><small>No new code in our service.</small></div></div><div class="col setup"><div class="ct">What we set up</div><ul><li>One agent and one memory store per team</li><li>Agent definitions kept as files, one folder per team</li><li>A team name on every record</li></ul><div class="ct">Watch out for</div><ul><li>Keep one agent per team so style and topics never mix.</li></ul></div></div></section>
+<section id="s-sensitive"><h2>Scenario 7 · The material is sensitive</h2><p class="plain">Someone wants the agent to read internal documents.</p><div class="sbs"><div class="col"><div class="ct">What happens<small>We build 1 of 5 steps</small></div><div class="st k-h"><span class="tg2">Person</span><b>The content owner offers internal material</b><small>Documents, plans, notes.</small></div><div class="st k-x"><span class="tg2">Leaves our company</span><b>Work in the agent is handled by Anthropic's service</b><small>Over the internet.</small></div><div class="st k-x"><span class="tg2">Leaves our company</span><b>Run history is kept under the service's retention terms</b><small>Sessions keep their conversation.</small></div><div class="st k-b"><span class="tg2">We build</span><b>Security and compliance review comes first</b><small>Often the slowest step in a large company.</small></div><div class="st k-h"><span class="tg2">Person</span><b>Only after approval is the material added</b><small>With written rules for what is allowed.</small></div></div><div class="col setup"><div class="ct">What we set up</div><ul><li>A pilot limited to public or low-sensitivity sources</li><li>Written data rules: what may and may not be added</li><li>Review of data retention and agreement terms before any internal material</li></ul><div class="ct">Watch out for</div><ul><li>Never put passwords, keys or personal data in memory files. They are read back into every later run.</li></ul></div></div></section>
+<section id="s-access"><h2>Scenario 8 · Who is allowed to do what</h2><p class="plain">People and systems should only have the access they need.</p><div class="sbs"><div class="col"><div class="ct">What happens<small>We build 1 of 4 steps</small></div><div class="st k-h"><span class="tg2">Person</span><b>People sign in to the console</b><small>Company sign-in and roles.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>Test and live are kept in separate workspaces</b><small>Built in.</small></div><div class="st k-b"><span class="tg2">We build</span><b>Our service holds delivery permission and keys</b><small>In the company's secrets vault.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>The agent itself holds no passwords</b><small>Nothing secret is inside its workspace.</small></div></div><div class="col setup"><div class="ct">What we set up</div><ul><li>Four roles: builder, operator, approver, deliverer</li><li>A separate workspace and key for test and live</li><li>Keys stored only in the secrets vault and rotated regularly</li></ul><div class="ct">Watch out for</div><ul><li>The role that delivers cannot edit the code. Developers cannot read delivery permissions.</li></ul></div></div></section>
+<div class="partbar" style="margin-top:56px"><b>Part 3 · Implementation plan</b><span>The full plan: prerequisites, 12 steps, and how to run it.</span></div>
+<section id="before"><h2>Before you start</h2>
+<p class="plain">Gather these first. Most delays come from waiting on access and approvals, so ask for them on day one.</p>
+<div class="sbs">
+<div class="col"><div class="ct">Access and tools</div><ul class="chk">
+<li>A team-owned Anthropic account and workspace, with a service key for live use (not anyone's personal login)</li>
+<li>Confirmation that Managed Agents, memory, checklists (outcomes) and schedules (deployments) are enabled</li>
+<li>Python 3 with the <code>anthropic</code> package, and the <code>ant</code> command line tool</li>
+<li>A place to run a small web service that has a public HTTPS address</li>
+<li>A secrets vault and a small database table for records</li>
+<li>An alert channel (chat or email) for the team</li></ul></div>
+<div class="col"><div class="ct">Content and people</div><ul class="chk">
+<li>A topic brief: focus areas, audience, angle, and off-limits topics</li>
+<li>5 to 10 trusted websites the agent may read</li>
+<li>15 to 20 past items we like, as style samples</li>
+<li>Named approvers and a backup</li>
+<li>The delivery destination (or manual delivery for version one)</li>
+<li>A named owner for security and compliance sign-off</li></ul></div>
 </div>
-<div class="callout good"><b class="t">Final recommendation</b><p>Start with <b>Claude Managed Agents</b> as a pilot on public or low-sensitivity sources. Keep style files, topic files and the delivery step as plain, portable parts. If confidential material comes into scope, or security prefers it, move to <b>Bedrock</b>.</p></div></section>
-<div class="partbar" style="margin-top:56px"><b>Part 4 · Delivery, safety, plan</b><span>Where content goes, the safety rules, the timeline and a glossary.</span></div>
-<section id="deliver"><h2>Where the content goes</h2>
-<p class="plain">The destination is not decided, and it does not need to be. Delivery is the last step and can be swapped without touching the agent.</p>
-<div class="mini"><div class="n hl"><b>Approved text</b>Exactly what the reviewer approved.</div><div class="ar">→</div><div class="n"><b>Delivery step</b>One small piece of code per destination.</div></div>
-<div class="dest"><div><b>Chat channel</b><br>A message in an internal channel.</div><div><b>Internal wiki</b><br>A page or draft.</div><div><b>Email</b><br>A newsletter draft.</div><div><b>Intranet page</b><br>Posted to the site.</div><div class="later"><b>Public site</b><br>Possible later, with extra review.</div></div>
-<p>Some destinations ask for permission to be granted. That permission belongs to the delivery step. The agent never holds it. The first version can simply send the final text to the reviewer to place by hand.</p></section>
-<section id="safety"><h2>Safety rules</h2>
-<p class="plain">These rules apply whenever content speaks for a person or the company, on either platform.</p>
-<div class="grid">
-<div class="card"><h3>A person approves first</h3><p>Nothing leaves the system without a named approver. Approval is tied to the exact text, so any edit needs approval again.</p></div>
-<div class="card"><h3>No personal logins</h3><p>The agent never uses anyone's own account or password. It uses a dedicated team account that can be switched off.</p></div>
-<div class="card"><h3>Access is granted, not shared</h3><p>If a destination needs permission, the content owner grants it once through that system's own sign-in screen. They can take it back at any time.</p></div>
-<div class="card"><h3>Hard limits</h3><p>A maximum number of items per week, allowed times, and a stop switch that pauses everything.</p></div>
-<div class="card"><h3>Content rules</h3><p>A list of topics that are off limits, sources required for facts, and a scan for sensitive data before anyone sees a draft.</p></div>
-<div class="card"><h3>Clear roles</h3><p>Builders, operators and approvers are different people. The role that delivers cannot edit the code.</p></div>
-<div class="card"><h3>Everything is logged</h3><p>Each run, draft, approval and delivery is recorded, with alerts for anything unusual.</p></div>
-<div class="card"><h3>Trial period</h3><p>For the first few weeks, drafts go only to the reviewer. Nothing is delivered automatically.</p></div>
-</div>
-<h3>Where each secret lives</h3>
-<div class="tw"><table style="min-width:600px"><thead><tr><th>Secret</th><th>Owned by</th><th>Kept in</th><th>Who can read it</th></tr></thead><tbody>
-<tr><td>Platform access</td><td>The team's own account</td><td>Company sign-in for people, secrets vault for the system</td><td>The running system only. Rotated regularly.</td></tr>
-<tr><td>Destination access (if needed)</td><td>Granted by the content owner</td><td>Secrets vault, encrypted</td><td>The delivery step only</td></tr>
-<tr><td>Chat or email bot</td><td>The team</td><td>Secrets vault</td><td>The review service only</td></tr>
+<div class="callout"><b class="t">Start the reviews now</b><p>Security and vendor review can take longer than the build itself. Begin them in week one, in parallel with Phase 1.</p></div></section>
+<section id="plan"><h2>The plan at a glance</h2>
+<p class="plain">Ten working days of building, then a two-week trial. Each phase has a clear finish line.</p>
+<div class="tl"><div class="row"><b>Build · 10 days</b><div class="bar2"><span style="width:10%">1</span><span style="width:10%">1</span><span style="width:30%">3</span><span style="width:30%">3</span><span style="width:20%">2</span></div></div></div>
+<div class="tw"><table style="min-width:640px"><thead><tr><th>Phase</th><th>What happens</th><th class="n">Effort</th><th>Finish line</th></tr></thead><tbody>
+<tr><td><b>0 · Align and access</b></td><td>Answer the open decisions, get access, start reviews, gather content.</td><td class="n">1 day</td><td>Decisions made, access confirmed</td></tr>
+<tr><td><b>1 · Foundations and first run</b></td><td>Set up the workspace, memory and agent. Run one draft by hand.</td><td class="n">1 day</td><td>One run returns 3 drafts and sources</td></tr>
+<tr><td><b>2 · Writer quality</b></td><td>Style files, checklist, quality loop, a 10-topic test set.</td><td class="n">3 days</td><td>6 of 10 drafts usable with light edits</td></tr>
+<tr><td><b>3 · Review service</b></td><td>Notice receiver, source check, approval, change requests, delivery, records.</td><td class="n">3 days</td><td>A run reaches a reviewer and a change request works</td></tr>
+<tr><td><b>4 · Schedule and safety</b></td><td>Schedule, spending cap, alerts, stop switch, runbook.</td><td class="n">2 days</td><td>An unattended run produces an item to review</td></tr>
+<tr><td><b>5 · Trial</b></td><td>Two weeks of real runs. Every item reviewed, nothing delivered automatically.</td><td class="n">2 weeks</td><td>Go or no-go against the targets</td></tr>
+<tr><td><b>6 · Go live and operate</b></td><td>Turn on delivery. Monthly review of quality, cost and access.</td><td class="n">ongoing</td><td>Targets held for 4 weeks</td></tr>
+</tbody></table></div></section>
+<section id="layout"><h2>Project layout</h2>
+<p class="plain">Keep everything that defines the agent in files, so changes are reviewed like code.</p>
+<pre>content-agent/
+  setup/
+    create_environment.py     <span class="c"># one-time: the locked workspace</span>
+    create_memory.py          <span class="c"># one-time: memory store and seed files</span>
+    create_agent.py           <span class="c"># creates or updates the agent</span>
+    create_schedule.py        <span class="c"># creates the schedule</span>
+  agent/
+    system.md                 <span class="c"># the agent's instructions</span>
+    rubric.md                 <span class="c"># the checklist the grader uses</span>
+  memory-seed/
+    voice/style-guide.md
+    voice/samples/01.md ...
+    brief/topics.md
+    brief/off-limits.md
+  service/                    <span class="c"># our small service</span>
+    app.py                    <span class="c"># receives notices, runs the review flow</span>
+    checks.py                 <span class="c"># source check, sensitive-data scan, length check</span>
+    review.py                 <span class="c"># approval adapter (chat or email)</span>
+    delivery.py               <span class="c"># one function per destination</span>
+    state.py                  <span class="c"># records table</span>
+  tests/
+    topics.json               <span class="c"># the 10-topic test set</span>
+    run_eval.py
+  runbook.md</pre>
+<p>The memory store holds these files for the agent:</p><pre>/voice/style-guide.md        tone, structure, do and don't
+/voice/samples/01.md ...     15 to 20 items we like
+/brief/topics.md             what to write about
+/brief/off-limits.md         topics and phrases to avoid
+/history/2026-11-10.md       one file per item already used (written by our service)
+/feedback/2026-11-10.md      what the reviewer changed and why (written by our service)</pre></section>
+<section id="st-env"><h2><span class="stepno">1</span>Create the locked workspace and get access</h2><p class="plain">The agent works inside a locked workspace that can only reach the sites we list.</p><h3>Tasks</h3><ul class="chk"><li>Create the team workspace and a service key. Store the key in the secrets vault, never in code.</li><li>Create the environment with limited networking and the trusted sites list.</li><li>Create separate test and live workspaces if the company requires it.</li></ul><pre>import anthropic
+client = anthropic.Anthropic()   <span class="c"># reads ANTHROPIC_API_KEY from the environment</span>
+
+SITES = ["news.example.com", "docs.example.com"]   <span class="c"># our trusted sites</span>
+
+env = client.beta.environments.create(
+    name="content-writer-env",
+    config={"type": "cloud",
+            "networking": {"type": "limited", "allowed_hosts": SITES}},
+)
+print(env.id)    <span class="c"># keep this ID</span></pre><div class="dn"><b>Done when:</b> the environment exists and its ID is stored with the project settings.</div></section>
+<section id="st-mem"><h2><span class="stepno">2</span>Create the memory and load the style files</h2><p class="plain">The agent reads its style, topics and history from memory at the start of every run.</p><h3>Tasks</h3><ul class="chk"><li>Create one memory store for this agent.</li><li>Load the style guide, sample items, topic brief and off-limits list.</li><li>Keep each file small. Many small files work better than one big one.</li><li>Never store passwords, keys or personal data in memory.</li></ul><pre>store = client.beta.memory_stores.create(
+    name="content-memory",
+    description="Writing style, topic brief, past items and reviewer feedback "
+                "for the content writer.",
+)
+for path, text in SEED_FILES.items():      <span class="c"># e.g. "/voice/style-guide.md"</span>
+    client.beta.memory_stores.memories.create(store.id, path=path, content=text)</pre><div class="dn"><b>Done when:</b> the store holds the seed files and its ID is saved.</div></section>
+<section id="st-agent"><h2><span class="stepno">3</span>Create the writer agent</h2><p class="plain">The agent is a saved job description: which model, what instructions, which tools.</p><h3>Tasks</h3><ul class="chk"><li>Write the instructions in <code>agent/system.md</code> (see below).</li><li>Choose the model. Start with Claude Sonnet 5.5, and compare Claude Opus 5.5 during Phase 2.</li><li>Allow web search and page reading only for the trusted sites.</li><li>Leave out any tool that can deliver content. Delivery belongs to our service.</li><li>Save the agent ID and version.</li></ul><pre>agent = client.beta.agents.create(
+    name="Content Writer",
+    model="claude-sonnet-5-5",
+    system=open("agent/system.md").read(),
+    tools=[{
+        "type": "agent_toolset_20260401",
+        "default_config": {"enabled": True, "permission_policy": {"type": "auto"}},
+        "configs": [
+            {"name": "web_search", "enabled": True, "allowed_domains": SITES},
+            {"name": "web_fetch",  "enabled": True, "allowed_domains": SITES},
+        ],
+    }],
+)
+print(agent.id, agent.version)   <span class="c"># keep both</span></pre>
+<h3>What the instructions say</h3>
+<ul>
+<li>Your role: write internal content in our style. Read the memory files first.</li>
+<li>Pick one topic from the brief that is not in the history.</li>
+<li>Research only the allowed sites. Save each source with its link and an exact quote.</li>
+<li>Write three drafts with different openings. Stay inside the length limits.</li>
+<li>Save <code>drafts.json</code> and <code>sources.json</code> to <code>/mnt/session/outputs/</code> in the formats below.</li>
+<li>Never include confidential information, and never claim anything you cannot source.</li>
+</ul>
+<div class="sbs"><div class="col"><div class="ct">drafts.json</div><pre>{
+  "topic": "short topic name",
+  "why_now": "one sentence",
+  "drafts": [
+    {"id": 1, "style": "question",
+     "text": "...",
+     "claims": [{"claim": "...", "source_id": "s1"}]}
+  ]
+}</pre></div><div class="col"><div class="ct">sources.json</div><pre>[
+  {"id": "s1",
+   "url": "https://news.example.com/...",
+   "title": "...",
+   "published": "2026-11-03",
+   "quote": "exact sentence from the page"}
+]</pre></div></div><div class="dn"><b>Done when:</b> the agent exists, and the files format is agreed.</div></section>
+<section id="st-first"><h2><span class="stepno">4</span>Run it once by hand</h2><p class="plain">Prove the whole idea works before building anything around it.</p><h3>Tasks</h3><ul class="chk"><li>Start one run with a spending cap of a few dollars.</li><li>Open the live view in the console and watch each step.</li><li>Download the two files from the run and read them.</li><li>Write down the time taken, the cost and what went wrong.</li></ul><pre>session = client.beta.sessions.create(
+    agent=agent.id,
+    environment_id=env.id,
+    resources=[{"type": "memory_store", "memory_store_id": store.id,
+                "access": "read_only",
+                "instructions": "Style guide, topic brief and history. Read first."}],
+    budget={"type": "limit",
+            "max_list_cost": {"amount": "300", "currency": "USD"}},   <span class="c"># $3.00 cap</span>
+    initial_events=[{
+        "type": "user.define_outcome",
+        "description": "Pick one topic from the brief and write three drafts with "
+                       "sources. Save drafts.json and sources.json to "
+                       "/mnt/session/outputs/.",
+        "rubric": {"type": "text", "content": open("agent/rubric.md").read()},
+        "max_iterations": 4,
+    }],
+)
+print("Watch it:", f"https://platform.claude.com/workspaces/default/sessions/{session.id}")
+
+<span class="c"># later, after the run goes idle, fetch the files the agent saved</span>
+files = client.beta.files.list(scope_id=session.id,
+                               betas=["managed-agents-2026-04-01"])</pre><p>Files can take a few seconds to appear after the run goes idle, so retry once or twice. The code above is a starting shape. Confirm exact call names against the current SDK in this phase.</p><div class="dn"><b>Done when:</b> one run returns three drafts with sources, and the cost and time are written down.</div></section>
+<section id="st-rubric"><h2><span class="stepno">5</span>Write the checklist and tune quality</h2><p class="plain">The checklist is how the agent knows what "good" means. A separate grader scores each draft and sends weak ones back.</p><h3>Tasks</h3><ul class="chk"><li>Write <code>agent/rubric.md</code> with clear, checkable rules (starter list below).</li><li>Start each run with the checklist and a retry limit of 3 to 4.</li><li>Build a 10-topic test set and rate the drafts blind against real examples.</li><li>Tune the style files, instructions and checklist. Compare Sonnet 5.5 with Opus 5.5.</li></ul><h3>Starter checklist</h3><ul class="chk">
+<li>Three drafts that differ in opening and structure.</li>
+<li>Each draft is within the length limits, and the first line is a specific claim, not a greeting.</li>
+<li>Every factual claim points to an entry in the sources file with a link and an exact quote.</li>
+<li>No phrases from the off-limits list. Tone and sentence length match the style guide.</li>
+<li>One concrete example, number or story per draft.</li>
+<li>Ends with one question or one takeaway, never both.</li>
+<li>The topic does not appear in the history.</li></ul>
+<p>Use specific, checkable rules. "Data looks good" gives noisy results. "Each claim has a quote" works.</p><div class="dn"><b>Done when:</b> at least 6 of 10 test drafts are ones a reviewer would use with light edits.</div></section>
+<section id="st-service"><h2><span class="stepno">6</span>Build the review service</h2><p class="plain">A small web service that connects the agent to people. It hears when a run finishes, checks it, asks the reviewer, and acts on the answer.</p><h3>Tasks</h3><ul class="chk"><li>Register a notice endpoint in the console and keep the signing secret in the vault.</li><li>On "run finished": read the real state, download the files, run the source check and the sensitive-data scan.</li><li>Send the drafts and sources to the approver through the chat tool or email.</li><li>On "change requested": send the note to the same open run as a new task with the same checklist.</li><li>On "approved": store a fingerprint of the exact text, then hand it to the delivery step.</li><li>Write the topic and the reviewer's edits to memory as new dated files.</li><li>Add a 15-minute check that lists recent runs and picks up anything missed.</li></ul><pre><span class="c"># receives notices from Anthropic (verify the signature, ignore repeats)</span>
+event = client.beta.webhooks.unwrap(raw_body, headers=dict(request.headers))
+if already_seen(event.id):
+    return "", 204
+
+if event.data.type == "session.status_idled":
+    session = client.beta.sessions.retrieve(event.data.id)
+    stop = latest_idle_stop_reason(client, session.id)   <span class="c"># read the newest idle event</span>
+    if stop == "end_turn":                                <span class="c"># the work is finished</span>
+        drafts, sources = download_outputs(session.id)
+        report = check_sources(sources)                   <span class="c"># plain code, no AI</span>
+        send_for_review(session.id, drafts, sources, report)
+        state.set(session.id, "awaiting_review")
+    elif stop == "budget_reached":
+        alert_team(session.id, "Run paused at its spending cap")
+
+<span class="c"># the reviewer asks for a change</span>
+client.beta.sessions.events.send(
+    session_id=session_id,
+    events=[{"type": "user.define_outcome",
+             "description": f"Revise draft {n}: {note}. Keep all other rules.",
+             "rubric": {"type": "text", "content": RUBRIC}}],
+)
+
+<span class="c"># the reviewer approves draft n</span>
+digest = sha256(draft_text(n)).hexdigest()
+state.approve(session_id, approver_id, n, digest)   <span class="c"># delivery only sends this exact text</span></pre>
+<p>The "run finished" notice also fires when a run is waiting for something else or has hit its cap, so the service always checks why the run stopped. Notices can repeat or arrive out of order, so it always trusts the run's real state over the order of messages.</p>
+<h3>Status of each item</h3>
+<div class="fl"><span class="s">scheduled</span><span class="a">→</span><span class="s">drafting</span><span class="a">→</span><span class="s">checking</span><span class="a">→</span><span class="s ok">awaiting_review</span><span class="a">→</span><span class="s">approved</span><span class="a">→</span><span class="s ok">delivered</span><span class="a">·</span><span class="s no">skipped</span><span class="s no">failed</span><span class="s no">expired</span></div><div class="dn"><b>Done when:</b> a run reaches a reviewer, a change request produces a new draft, and an approval is recorded with who, when and the text fingerprint.</div></section>
+<section id="st-deliver"><h2><span class="stepno">7</span>Add delivery</h2><p class="plain">Delivery is the last step and is separate from the agent. Each destination is one small function.</p><h3>Tasks</h3><ul class="chk"><li>Start with manual delivery: the service sends the final text to the reviewer to place by hand.</li><li>Add one destination at a time: internal channel, wiki page, email draft or intranet page.</li><li>Give delivery its own permission, stored in the vault. The agent never holds it.</li><li>Only deliver text whose fingerprint matches the approval. Any edit means approving again.</li></ul><div class="dest"><div><b>Chat channel</b><br>A message in an internal channel.</div><div><b>Internal wiki</b><br>A page or draft.</div><div><b>Email</b><br>A newsletter draft.</div><div><b>Intranet page</b><br>Posted to the site.</div><div class="later"><b>Public site</b><br>Possible later, with extra review.</div></div><div class="dn"><b>Done when:</b> the approved text reaches the chosen place exactly as approved, and the delivery is recorded.</div></section>
+<section id="st-schedule"><h2><span class="stepno">8</span>Put it on a schedule</h2><p class="plain">A schedule starts a run on chosen days and keeps a record of each one.</p><h3>Tasks</h3><ul class="chk"><li>Create the schedule with days, time zone, a spending cap and the same checklist.</li><li>Pin the agent version so a later edit does not change live behavior by surprise.</li><li>Run it by hand once while it is paused to test it.</li><li>Check the listed upcoming run times look right.</li></ul><pre>deployment = client.beta.deployments.create(
+    name="Content writer · Tue and Thu",
+    agent={"type": "agent", "id": agent.id, "version": agent.version},
+    environment_id=env.id,
+    resources=[{"type": "memory_store", "memory_store_id": store.id,
+                "access": "read_only"}],
+    budget={"type": "limit", "max_list_cost": {"amount": "300", "currency": "USD"}},
+    initial_events=[{
+        "type": "user.define_outcome",
+        "description": "Pick one topic from the brief and write three drafts with "
+                       "sources. Save drafts.json and sources.json to "
+                       "/mnt/session/outputs/.",
+        "rubric": {"type": "text", "content": RUBRIC},
+        "max_iterations": 4}],
+    schedule={"type": "cron", "expression": "0 7 * * 2,4",
+              "timezone": "&lt;our time zone&gt;"},
+)
+client.beta.deployments.run(deployment.id)     <span class="c"># test run, works even while paused</span></pre><p>Runs can start up to about 9 minutes late. Avoid times between 1 and 3 in the morning around clock changes. Exact field names for the schedule are confirmed in Phase 1.</p><div class="dn"><b>Done when:</b> a scheduled run starts on its own and produces an item for review.</div></section>
+<section id="st-safety"><h2><span class="stepno">9</span>Switch on the safety controls</h2><p class="plain">Make the rules real in code and settings, not just in a document.</p><h3>Tasks</h3><ul class="chk"><li>Approver list: only named people can approve. Anyone else is ignored and logged.</li><li>Text fingerprint: approval is tied to the exact text. Editing the text voids it.</li><li>Approvals expire after 24 hours.</li><li>Hard limits: a maximum number of items per week and allowed delivery times.</li><li>Stop switch: one setting pauses the schedule and blocks delivery. Reviewers can also reply "pause".</li><li>Sensitive-data scan on every draft before the reviewer sees it.</li><li>Dry-run mode: during the trial, nothing is delivered automatically.</li></ul><div class="grid"><div class="card"><h3>Clear roles</h3><p>Builders, operators, approvers and deliverers are different people. The deliverer cannot edit code.</p></div><div class="card"><h3>Secrets</h3><p>Keys live only in the vault. The agent has none. Rotate on a schedule and whenever someone leaves the team.</p></div><div class="card"><h3>Content rules</h3><p>Off-limits topics approved by compliance, sources required for facts, and a note on whether items say they were AI-assisted.</p></div></div><div class="dn"><b>Done when:</b> each control is tested once on purpose: an unknown approver, an edited text, an expired approval, and the stop switch.</div></section>
+<section id="st-monitor"><h2><span class="stepno">10</span>Monitor and alert</h2><p class="plain">Know quickly when something stops working, and who will act.</p><h3>Tasks</h3><ul class="chk"><li>Subscribe the notice endpoint to: run finished, run ended, scheduled run failed, schedule paused.</li><li>Alert on: failed run, run paused at its cap, item waiting more than 24 hours, no run record by the expected time, signature failures on notices.</li><li>Keep the 15-minute check as a safety net, because notices are not guaranteed to be delivered.</li><li>Send a weekly summary: items made, approved, skipped, cost.</li><li>Use the console's step-by-step viewer when investigating a run.</li></ul><div class="tw"><table style="min-width:560px"><thead><tr><th>Signal</th><th>Meaning</th><th>Action</th></tr></thead><tbody><tr><td>Failed run record</td><td>The schedule fired but no run was created</td><td>Fix the cause, then start a run by hand</td></tr><tr><td>Run paused at cap</td><td>Spending limit reached</td><td>Review the run, then raise the cap or stop</td></tr><tr><td>Waiting over 24 hours</td><td>No reply from the reviewer</td><td>Reminder, then auto-skip after 72 hours</td></tr><tr><td>No run by 09:00</td><td>Notice missed or schedule paused</td><td>Check run records and the schedule</td></tr></tbody></table></div><div class="dn"><b>Done when:</b> an alert reaches the team in a test of each failure above.</div></section>
+<section id="st-test"><h2><span class="stepno">11</span>Test and measure</h2><p class="plain">A small test set and a few numbers keep quality from drifting.</p><h3>Tasks</h3><ul class="chk"><li>Keep a test set of 10 topics with the expected style.</li><li>After any change to instructions, style files, checklist or model, run the test set and compare.</li><li>Roll out a change by trying the new agent version on test runs first, then pointing the schedule at it.</li><li>Keep results in the repository.</li></ul><div class="tw"><table style="min-width:520px"><thead><tr><th>Measure</th><th>Target by week 4</th></tr></thead><tbody><tr><td>Items where a draft is picked</td><td>60% or more</td></tr><tr><td>Quotes verified by the source check</td><td>95% or more</td></tr><tr><td>Reviewer edits per picked draft</td><td>Falling week by week</td></tr><tr><td>Checker rounds per run</td><td>2 or fewer on average</td></tr><tr><td>Cost per approved item</td><td>Under $1.50</td></tr><tr><td>Missed or failed runs</td><td>0 unnoticed</td></tr></tbody></table></div><div class="dn"><b>Done when:</b> the test set runs with one command and results are stored.</div></section>
+<section id="st-pilot"><h2><span class="stepno">12</span>Run the trial and go live</h2><p class="plain">Two weeks of real runs with every item reviewed and nothing delivered automatically.</p><h3>Tasks</h3><ul class="chk"><li>Run the schedule for two weeks. The reviewer sees every draft.</li><li>Record every change the reviewer makes and add the lessons to memory.</li><li>Hold a go or no-go review against the targets.</li><li>Collect sign-offs: security, compliance, content owner, approver.</li><li>Turn on delivery to the chosen destination. Keep the approval step.</li></ul><h3>Go-live checklist</h3><ul class="chk"><li>All targets met for two weeks</li><li>Every control in step 9 tested</li><li>Alerts tested</li><li>Runbook written and an owner and backup named</li><li>Sign-offs recorded</li><li>Stop switch known to everyone on the team</li></ul><div class="dn"><b>Done when:</b> the review says go, and the first live item has been delivered.</div></section>
+<section id="run"><h2>Operating it</h2>
+<p class="plain">Small routine, written down so anyone on the team can run it.</p>
+<div class="tw"><table style="min-width:620px"><thead><tr><th>What you see</th><th>Likely cause</th><th>What to do</th></tr></thead><tbody>
+<tr><td>No drafts by the expected time</td><td>Run failed, schedule paused, or a notice was missed</td><td>Check run records, then start a run by hand</td></tr>
+<tr><td>Run paused at its cap</td><td>Loop ran long</td><td>Read the run, then raise the cap if the work is sound</td></tr>
+<tr><td>Quote check fails</td><td>A site changed, or the agent invented a quote</td><td>Open the source, fix the style or allowed list, re-run the test set</td></tr>
+<tr><td>Drafts sound off</td><td>Style files stale or checklist too loose</td><td>Update style samples and checklist, save a new agent version, test it</td></tr>
+<tr><td>A change made things worse</td><td>New agent version regressed</td><td>Point the schedule back to the previous version</td></tr>
+<tr><td>Notices stop arriving</td><td>Endpoint down or disabled after repeated failures</td><td>Fix the endpoint and re-enable it in the console. Missed notices are not replayed, so run the 15-minute check</td></tr>
+<tr><td>Reviewer does not answer</td><td>Away or busy</td><td>Reminder at 24 hours, auto-skip at 72, topic logged either way</td></tr>
 </tbody></table></div>
-<p>Before launch: security review, compliance and legal approval of the content rules, a decision on whether content says it was AI-assisted, and a named owner with a backup.</p></section>
-<section id="plan"><h2>Plan and timeline</h2>
-<p class="plain">Same steps on both platforms. Bedrock simply has more to build.</p>
-<div class="tw"><table style="min-width:560px"><thead><tr><th>Phase</th><th>What happens</th><th class="n">Managed Agents</th><th class="n">Bedrock</th></tr></thead><tbody>
-<tr><td><b>1. Decide</b></td><td>Answer the key question, pick the destination, collect style samples and trusted sites.</td><td class="n">1 day</td><td class="n">1 day</td></tr>
-<tr><td><b>2. Try by hand</b></td><td>Run one draft end to end and measure real cost.</td><td class="n">1 day</td><td class="n">2 days</td></tr>
-<tr><td><b>3. Make it good</b></td><td>Add the research, checklist and memory. Tune until drafts are usable.</td><td class="n">3 days</td><td class="n">8 days</td></tr>
-<tr><td><b>4. Review and delivery</b></td><td>Reviewer approves or requests changes. Approved text is delivered.</td><td class="n">3 days</td><td class="n">4 days</td></tr>
-<tr><td><b>5. Schedule and alerts</b></td><td>Weekly schedule, failure alerts, spend limits, security setup.</td><td class="n">2 days</td><td class="n">4 days</td></tr>
-<tr><td><b>Total</b></td><td>Then a 2-week trial where every item is reviewed.</td><td class="n"><b>10 days</b></td><td class="n"><b>19 days</b></td></tr>
+<h3>Monthly routine</h3><ul class="chk"><li>Review a sample of delivered items</li><li>Review cost and the approval rate</li><li>Review who has access and rotate keys that are due</li><li>Refresh style samples and the trusted sites list</li><li>Read the Managed Agents release notes for changes that affect us</li></ul></section>
+<div class="partbar" style="margin-top:56px"><b>Part 4 · Cost, risks, decisions</b><span>What it costs, what could go wrong, and what to decide first.</span></div>
+<section id="cost"><h2>Cost</h2>
+<p class="plain">Running cost is small. The main cost is the build time.</p>
+<div class="tw"><table style="min-width:520px"><thead><tr><th>Estimate for 8 runs a month</th><th class="n">Amount</th></tr></thead><tbody>
+<tr><td>Writing and checking (Claude Sonnet 5.5)</td><td class="n">~$3.60</td></tr>
+<tr><td>Run time, billed only while the agent is working ($0.08 per hour)</td><td class="n">~$0.10</td></tr>
+<tr><td>Web search ($10 per 1,000 searches)</td><td class="n">~$0.24</td></tr>
+<tr><td>Hosting our small service</td><td class="n">$1 to $5</td></tr>
+<tr><td>Records, secrets storage</td><td class="n">$2 to $4</td></tr>
+<tr><td>Logging and alerts</td><td class="n">$1 to $3</td></tr>
+<tr><td><b>Total per month</b></td><td class="n"><b>~$7 to $15</b></td></tr>
+<tr><td><b>Build effort</b></td><td class="n"><b>~10 working days</b></td></tr>
+<tr><td><b>Upkeep</b></td><td class="n"><b>~2 to 4 hours a month</b></td></tr>
 </tbody></table></div>
-<p>Measures of success: how often a draft is picked (target 60% or more by week 4), how much the reviewer edits it (falling), how many facts are verified (95% or more), and cost per approved item (under $1.50).</p></section>
+<p>Estimate per run: roughly 110,000 words read and 11,000 written, 10 minutes of working time and 3 searches. Waiting for a reviewer is free. Using Claude Opus 5.5 roughly doubles the writing cost. We replace these figures with real measurements in Phase 1.</p></section>
+<section id="risks"><h2>Risks and how we handle them</h2>
+<div class="tw"><table style="min-width:620px"><thead><tr><th>Risk</th><th>Level</th><th>What we do</th></tr></thead><tbody>
+<tr><td>A draft states something untrue</td><td><span class="pill w">High</span></td><td>Source and quote for every claim, our own quote check, sources shown to the reviewer, human approval</td></tr>
+<tr><td>Items sound generic</td><td><span class="pill w">High</span></td><td>Real style samples, off-limits phrases, reviewer edits saved to memory, style graded in the checklist</td></tr>
+<tr><td>Managed Agents is an early release</td><td><span class="pill a">Medium</span></td><td>Pinned versions, definitions in files, small swappable service, test set run on every change</td></tr>
+<tr><td>A needed feature is not enabled on our account</td><td><span class="pill a">Medium</span></td><td>Checked on day one. Fallback: a simple score-and-retry loop in our service</td></tr>
+<tr><td>Notices are missed</td><td><span class="pill a">Medium</span></td><td>Duplicate-safe handling, real-state checks, 15-minute safety net</td></tr>
+<tr><td>A pending approval goes stale</td><td><span class="pill a">Medium</span></td><td>Reminders, auto-skip, and a test of how long an idle run stays available</td></tr>
+<tr><td>Sensitive material gets into the agent</td><td><span class="pill w">High impact</span></td><td>Pilot on public or low-sensitivity sources, written data rules, review before any internal material</td></tr>
+<tr><td>Security or vendor review is slow</td><td><span class="pill a">Medium</span></td><td>Start in week one, run in parallel with the build</td></tr>
+<tr><td>Cost drifts up</td><td><span class="pill g">Low</span></td><td>Spending cap on every run, retry limit, weekly cost summary</td></tr>
+</tbody></table></div></section>
+<section id="decide"><h2>Decisions to make in Phase 0</h2>
+<div class="tw"><table style="min-width:620px"><thead><tr><th>Decision</th><th>Options</th><th>Suggested default</th></tr></thead><tbody>
+<tr><td>Where the content goes</td><td>Chat channel, wiki, email, intranet page, public later</td><td>Manual delivery first, then one internal destination</td></tr>
+<tr><td>How reviewers are asked</td><td>The company's chat tool, or email</td><td>Whatever the team already uses daily</td></tr>
+<tr><td>Who approves</td><td>One person, or two for sensitive topics</td><td>One approver and one named backup</td></tr>
+<tr><td>Model</td><td>Claude Sonnet 5.5 or Claude Opus 5.5</td><td>Sonnet 5.5, with an Opus comparison in Phase 2</td></tr>
+<tr><td>How topics are chosen</td><td>Agent finds them, topics are assigned, or a queue of ideas</td><td>Agent finds them from the brief, with assigned topics on request</td></tr>
+<tr><td>Spending cap</td><td>Per run and per month</td><td>$3 per run, with a monthly alert</td></tr>
+<tr><td>Where the small service runs</td><td>Any company-approved place with a public HTTPS address</td><td>A small serverless function plus a database table</td></tr>
+<tr><td>Data scope</td><td>Public sources only, or internal material later</td><td>Public or low-sensitivity only for the pilot</td></tr>
+</tbody></table></div></section>
 <section id="words"><h2>Words used</h2>
 <div class="tw"><table style="min-width:520px"><thead><tr><th>Word</th><th>Meaning</th></tr></thead><tbody>
 <tr><td><b>Agent</b></td><td>An AI that works through a task in several steps, using tools.</td></tr>
 <tr><td><b>Beta</b></td><td>An early release that can still change.</td></tr>
+<tr><td><b>Session (run)</b></td><td>One working day of the agent, from start to finish.</td></tr>
 <tr><td><b>Grader</b></td><td>A second AI reviewer that scores work against a checklist.</td></tr>
 <tr><td><b>Memory</b></td><td>Small notes the agent can read in every run.</td></tr>
-<tr><td><b>Workflow</b></td><td>A set of steps that run in order, with retries and waiting.</td></tr>
-<tr><td><b>Safety filter</b></td><td>A built-in check for off-limit topics, sensitive data or made-up facts.</td></tr>
-<tr><td><b>Sandbox</b></td><td>A locked room where the agent can work without touching anything else.</td></tr>
+<tr><td><b>Deployment (schedule)</b></td><td>A setting that starts a run on chosen days and times.</td></tr>
 <tr><td><b>Notice (webhook)</b></td><td>An automatic message one system sends another when something happens.</td></tr>
-<tr><td><b>Private network link</b></td><td>A connection to a cloud service that never uses the public internet.</td></tr>
+<tr><td><b>Fingerprint (hash)</b></td><td>A short code that changes if even one letter of the text changes.</td></tr>
+<tr><td><b>Secrets vault</b></td><td>A protected place to keep keys and permissions.</td></tr>
+<tr><td><b>Sandbox</b></td><td>A locked room where the agent can work without touching anything else.</td></tr>
 </tbody></table></div></section>
-<footer>Sources: Claude API and Managed Agents reference (agents, sessions, tools, memory, grader, schedules, budgets); Anthropic platform availability table (what is and is not offered on Bedrock); Claude Platform on AWS reference; <a href="https://www.cloudburn.io/blog/amazon-bedrock-agentcore-pricing">AgentCore pricing breakdown</a>; <a href="https://aws.amazon.com/th/bedrock/agentcore/pricing/">AWS AgentCore pricing</a>; <a href="https://scalefactory.com/blog/2026/04/09/navigating-your-managed-and-modular-ai-agent-options-using-amazon-bedrock">Bedrock Agents versus AgentCore</a>. Statements about Bedrock data handling, certifications and safety filters come from general knowledge or secondary sources and should be checked in current vendor documents. Time, hour and cost figures are planning estimates.</footer>
+<footer>Source: Claude Managed Agents documentation (agents, environments, sessions, memory, outcomes, schedules, notices, budgets, pricing). Managed Agents is in beta, so details can change. Time, hour and cost figures are planning estimates. Code is a starting shape, and exact call names are confirmed in Phase 1.</footer>
 </main>
 </div>
-<script>
-(function(){
-  var F=[
-    ["Speed to build",5,2,"About 10 days against about 19"],
-    ["Cost to build and run",4,3,"Run cost is similar, build effort is higher on Bedrock"],
-    ["Upkeep",4,2,"Fewer parts to keep updated"],
-    ["Infrastructure to run",4,3,"One small service against many cloud pieces"],
-    ["Fit for this job",5,3,"Built-in research, checker and memory"],
-    ["Security and sign-in fit",3,5,"Uses the company's cloud tools throughout"],
-    ["Data privacy and compliance",3,5,"Data stays in our cloud"],
-    ["Safety filters",3,5,"Built-in filters on Bedrock"],
-    ["Tracking and audit",4,4,"Both are good"],
-    ["Reliability and maturity",2,4,"Early release against mature services"],
-    ["Newest models",5,4,"New Claude models appear first on Anthropic's service"],
-    ["Freedom to change later",2,3,"Bedrock offers other models"],
-    ["Spend control",4,3,"Hard cap against warnings"]
-  ];
-  var P={"p-bal":[10,5,10,5,10,12,15,5,5,10,3,5,5],"p-speed":[20,15,15,5,15,5,5,3,3,5,5,2,2],"p-comp":[5,5,5,3,5,20,20,10,5,15,2,3,2]};
-  var body=document.getElementById("score-body");
-  F.forEach(function(r,i){var tr=document.createElement("tr");
-    tr.innerHTML='<td>'+r[0]+'</td><td class="n"><input type="number" min="0" max="100" step="1" class="w" id="w'+i+'" value="'+P["p-bal"][i]+'" aria-label="Weight for '+r[0]+'"></td><td class="n">'+r[1]+'</td><td class="n">'+r[2]+'</td><td class="why">'+r[3]+'</td>';body.appendChild(tr);});
-  function calc(){var s=0,a=0,b=0;
-    F.forEach(function(r,i){var w=parseFloat(document.getElementById("w"+i).value)||0;s+=w;a+=w*r[1];b+=w*r[2];});
-    var ta=s?a/s:0,tb=s?b/s:0;
-    document.getElementById("wsum").textContent=s;
-    document.getElementById("tot-a").textContent=ta.toFixed(2);document.getElementById("tot-b").textContent=tb.toFixed(2);
-    document.getElementById("bar-a").style.width=(ta/5*100)+"%";document.getElementById("bar-b").style.width=(tb/5*100)+"%";
-    var d=Math.abs(ta-tb),l=document.getElementById("lead");
-    l.textContent=d<0.05?"Too close to call":(ta>tb?"Managed Agents leads by ":"Bedrock leads by ")+d.toFixed(2);}
-  F.forEach(function(r,i){document.getElementById("w"+i).addEventListener("input",calc);});
-  Object.keys(P).forEach(function(k){document.getElementById(k).addEventListener("click",function(){P[k].forEach(function(v,i){document.getElementById("w"+i).value=v;});calc();});});
-  calc();
-})();
-</script>
 <script>
 (function(){
   var t=document.getElementById("toc"),s=document.getElementById("scrim"),m=document.getElementById("menu");
