@@ -191,14 +191,12 @@ section{scroll-margin-top:16px}
 .meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
 .meta span{font-size:.78rem;background:var(--surface2);color:var(--muted);padding:3px 10px;border-radius:999px}
 .sub3{font-family:var(--f-head);font-size:1rem;font-weight:700;margin:22px 0 6px}
-.kv td:first-child{width:30%}
 .chk{list-style:none;padding:0;margin:0 0 14px;max-width:none}
 .chk li{position:relative;padding-left:28px;margin-bottom:7px}
 .chk li::before{content:"";position:absolute;left:2px;top:.32em;width:15px;height:15px;border:2px solid var(--accent);border-radius:4px;background:var(--surface)}
 .stepno{display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:34px;padding:0 6px;border-radius:8px;background:var(--accent);color:#fff;font-family:var(--f-head);font-weight:700;margin-right:12px;vertical-align:middle}
 .dn{background:var(--good-soft);border-left:3px solid var(--good);border-radius:0 8px 8px 0;padding:10px 14px;margin:14px 0 4px}
 .dn b{color:var(--good)}
-.fl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:14px 0}
 @media (prefers-reduced-motion:reduce){aside#toc{transition:none}}
 @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
 </style>
@@ -207,30 +205,37 @@ section{scroll-margin-top:16px}
 <body>
 <button type="button" id="menu" aria-label="Open contents">Contents</button><div id="scrim"></div>
 <div class="layout">
-<aside id="toc" aria-label="Contents"><div class="brand">Implementation Plan</div><div class="sub">Content writing agent</div><div class="tg">Overview</div><a href="#plan">Build order</a><a href="#inventory">Everything we create</a><div class="tg">Agent side · Steps 1 to 7</div><a href="#s1">1 · Agent settings</a><a href="#s2">2 · Environment</a><a href="#s3">3 · Memory store</a><a href="#s4">4 · Instructions</a><a href="#s5">5 · Output files</a><a href="#s6">6 · Checklist and grader</a><a href="#s7">7 · First manual run</a><div class="tg">Service side · Steps 8 to 14</div><a href="#s8">8 · Records</a><a href="#s9">9 · Checks</a><a href="#s10">10 · Notice receiver</a><a href="#s11">11 · Review step</a><a href="#s12">12 · Delivery</a><a href="#s13">13 · Memory write-back</a><a href="#s14">14 · Safety controls</a><div class="tg">Schedule and operate · Steps 15 to 21</div><a href="#s15">15 · Schedule</a><a href="#s16">16 · Safety-net jobs</a><a href="#s17">17 · Monitoring</a><a href="#s18">18 · Tests and tuning</a><a href="#s19">19 · Changing the agent</a><a href="#s20">20 · Trial and go-live</a><a href="#s21">21 · Runbook</a><div class="tg">Reference</div><a href="#config">Settings reference</a><a href="#envvars">Environment variables</a></aside>
+<aside id="toc" aria-label="Contents"><div class="brand">Implementation Plan</div><div class="sub">LinkedIn content agent</div><div class="tg">Overview</div><a href="#req">What we are building to</a><a href="#flow">Two ways to start</a><a href="#plan">Build order</a><a href="#inventory">Everything we create</a><div class="tg">Agent side · Steps 1 to 7</div><a href="#s1">1 · Agent settings</a><a href="#s2">2 · Environment</a><a href="#s3">3 · Config, memory, sync</a><a href="#s4">4 · Instructions</a><a href="#s5">5 · Output files</a><a href="#s6">6 · Checklists</a><a href="#s7">7 · First manual runs</a><div class="tg">Runner · Steps 8 to 12</div><a href="#s8">8 · Request runner</a><a href="#s9">9 · Records</a><a href="#s10">10 · Checks</a><a href="#s11">11 · Review documents</a><a href="#s12">12 · Feedback and learning</a><div class="tg">Schedule and safeguards · Steps 13 to 16</div><a href="#s13">13 · Scheduled discovery</a><a href="#s14">14 · Polling job</a><a href="#s15">15 · Safeguards</a><a href="#s16">16 · Monitoring</a><div class="tg">Test and evaluate · Steps 17 to 20</div><a href="#s17">17 · Tests and tuning</a><a href="#s18">18 · Changing the agent</a><a href="#s19">19 · Evaluation</a><a href="#s20">20 · Runbook</a><div class="tg">Reference</div><a href="#config">Settings reference</a><a href="#later">Later additions</a></aside>
 <main class="main">
 <header class="hero"><div class="eyebrow">Content writing agent · Claude Managed Agents</div>
-<h1>Implementation plan: configuring the agent and building around it</h1>
-<p class="lede">Every step to configure and create once the agent exists, in build order, with the files, code, settings and tests for each.</p></header><div class="partbar"><b>Overview</b><span>The order of work and the full list of what we create.</span></div>
+<h1>Implementation plan: LinkedIn content agent with topic proposals and tone options</h1>
+<p class="lede">Built to the client's answers. Every step to configure and create once the agent exists, in build order, with the files, code, settings and tests for each.</p></header><div class="partbar"><b>Overview</b><span>What the client asked for, how a request flows, and what we build.</span></div>
+<section id="req"><h2>What we are building to</h2>
+<p class="plain">The client's answers, and what each one means for the build.</p>
+<div class="tw"><table style="min-width:760px"><thead><tr><th>Client answer</th><th>What it means for the build</th></tr></thead><tbody><tr><td>Both ways: give a topic, or give themes and let the agent research what is trending and propose a topic</td><td>Two request types: <b>draft</b> (topic given) and <b>propose</b> (themes only). A proposal is picked, then drafted in the same run.</td></tr><tr><td>The owner provides and maintains the themes and data sources</td><td>Two plain files in the repo, <code>themes.md</code> and <code>datasources.yaml</code>, and one command that pushes changes to the agent.</td></tr><tr><td>Several options, to compare tone and contrast</td><td>Three drafts per request, each in a different named tone, with a contrast note on each and a short comparison.</td></tr><tr><td>Public or low-sensitivity material only</td><td>No internal documents. The agent can only reach the approved sites. Nothing confidential goes into memory.</td></tr><tr><td>LinkedIn now, blog later. Audience: technology and business leaders in North America</td><td>A LinkedIn format profile and an audience profile in memory. A blog is added later as another format profile. Posting stays manual for now, so no posting credentials exist.</td></tr><tr><td>The owner reviews and approves. Google Doc or Confluence is open</td><td>Each result becomes a review document. Recommendation: Google Docs for the evaluation (see Step 11).</td></tr><tr><td>A Claude Platform API key is available</td><td>Use Managed Agents directly on the Claude Platform.</td></tr></tbody></table></div>
+<p>Running cost is estimated at about $0.50 to $1.00 per request on Claude Sonnet 5.5, which is under $15 a month at about 15 requests. The first manual runs in Step 7 replace this estimate with measurements.</p></section>
+<section id="flow"><h2>Two ways to start a request</h2>
+<p class="plain">Both end in the same place: a review document with options to compare.</p>
+<div class="legend"><span><i class="lg-p"></i>Provided by the platform</span><span><i class="lg-b"></i>We build</span><span><i class="lg-h"></i>A person</span></div>
+<div class="sbs"><div class="col"><div class="ct">A · You give a topic<small>We build 3 of 8 steps</small></div><div class="st k-h"><span class="tg2">Person</span><b>You give a topic</b><small>Plus an optional angle or tones.</small></div><div class="st k-b"><span class="tg2">We build</span><b>Our runner starts a run</b><small>One command.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>The agent researches the topic</b><small>Only on the approved data sources.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>It writes 3 drafts in different tones</b><small>Each with a contrast note and a comparison.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>A separate grader checks them</b><small>Weak drafts are sent back to be fixed.</small></div><div class="st k-b"><span class="tg2">We build</span><b>Our runner checks quotes and format</b><small>Plain code.</small></div><div class="st k-b"><span class="tg2">We build</span><b>It creates the review document and sends the link</b><small>Google Doc or Confluence page.</small></div><div class="st k-h"><span class="tg2">Person</span><b>You review, compare and choose</b><small>Then post by hand.</small></div></div><div class="col"><div class="ct">B · You give themes only<small>We build 2 of 9 steps</small></div><div class="st k-p"><span class="tg2">Provided</span><b>A weekly schedule, or you ask</b><small>Starts a propose run.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>The agent reads your themes</b><small>From its memory.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>It researches what is trending</b><small>Only on the approved data sources.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>It proposes 4 topics</b><small>Why now, an angle for the audience, sources.</small></div><div class="st k-b"><span class="tg2">We build</span><b>Our runner creates a proposals document</b><small>And sends the link.</small></div><div class="st k-h"><span class="tg2">Person</span><b>You pick a topic</b><small>One command.</small></div><div class="st k-p"><span class="tg2">Provided</span><b>The same run writes 3 drafts</b><small>It remembers its research.</small></div><div class="st k-b"><span class="tg2">We build</span><b>Our runner checks and creates the draft document</b><small>Same as the other way.</small></div><div class="st k-h"><span class="tg2">Person</span><b>You review, compare and choose</b><small>Then post by hand.</small></div></div></div></section>
 <section id="plan"><h2>Build order</h2>
-<p class="plain">The agent already exists. Everything below is what we configure and create around it, in the order to do it. Steps 1 to 7 finish the agent side. Steps 8 to 14 build our small service. Steps 15 to 21 schedule, protect, test and run it.</p>
-<div class="tl"><div class="row"><b>Build · 10 days</b><div class="bar2"><span style="width:30%">Agent side 3</span><span style="width:40%">Service 4</span><span style="width:20%">Schedule and operate 2</span><span style="width:10%">Tune 1</span></div></div></div>
-<div class="tw"><table style="min-width:640px"><thead><tr><th>Group</th><th>Steps</th><th>Effort</th><th>Result</th></tr></thead><tbody><tr><td><b>Agent side</b></td><td>1 to 7</td><td>3 days</td><td>One manual run returns three drafts and a sources file</td></tr><tr><td><b>Service side</b></td><td>8 to 14</td><td>4 days</td><td>A finished run reaches a reviewer and approved text is delivered</td></tr><tr><td><b>Schedule and operate</b></td><td>15 to 18</td><td>2 days</td><td>An unattended run produces an item, failures raise alerts</td></tr><tr><td><b>Tune and test</b></td><td>6, 18, 19</td><td>1 day</td><td>The test set passes and quality targets are met</td></tr><tr><td><b>Trial</b></td><td>20</td><td>2 weeks</td><td>Go or no-go review</td></tr><tr><td><b>Run</b></td><td>21</td><td>ongoing</td><td>Routine and runbook in place</td></tr></tbody></table></div>
-<p>Steps 8 to 14 only need the file formats from Step 5, so they can start as soon as those are fixed, in parallel with Steps 6 and 7.</p></section>
+<p class="plain">The agent already exists. Steps 1 to 7 finish the agent side. Steps 8 to 12 build our small runner. Steps 13 to 16 add the schedule and safeguards. Steps 17 to 20 test and evaluate.</p>
+<div class="tl"><div class="row"><b>Build · about 10 days</b><div class="bar2"><span style="width:30%">Agent side 3</span><span style="width:35%">Runner 3.5</span><span style="width:17.5%">Schedule 1.75</span><span style="width:17.5%">Test 1.5</span></div></div></div>
+<div class="tw"><table style="min-width:640px"><thead><tr><th>Group</th><th>Steps</th><th>Effort</th><th>Result</th></tr></thead><tbody><tr><td><b>Agent side</b></td><td>1 to 7</td><td>3 days</td><td>Both request types work by hand and return valid files</td></tr><tr><td><b>Runner</b></td><td>8 to 12</td><td>3.5 days</td><td>A request ends in a review document, and your feedback is saved</td></tr><tr><td><b>Schedule and safeguards</b></td><td>13 to 16</td><td>1.75 days</td><td>Weekly proposals arrive on their own, failures raise alerts</td></tr><tr><td><b>Test and tune</b></td><td>17 to 18</td><td>1.5 days</td><td>Tests pass and drafts meet the quality bar</td></tr><tr><td><b>Evaluation with the owner</b></td><td>19</td><td>2 weeks</td><td>Go or no-go review</td></tr><tr><td><b>Runbook</b></td><td>20</td><td>0.25 day</td><td>Routine written down</td></tr></tbody></table></div>
+<p>Steps 8 to 12 only need the file formats from Step 5, so they can start as soon as those are fixed.</p></section>
 <section id="inventory"><h2>Everything we create</h2>
 <p class="plain">The full list of things that exist when the build is finished.</p>
-<div class="tw"><table style="min-width:700px"><thead><tr><th>Item</th><th>Name or location</th><th>Defined in</th><th>Step</th></tr></thead><tbody><tr><td>Agent settings</td><td>"Content Writer", pinned version</td><td><code>setup/configure_agent.py</code></td><td>1</td></tr><tr><td>Environment</td><td><code>content-writer-env</code>, limited network</td><td><code>setup/create_environment.py</code></td><td>2</td></tr><tr><td>Memory store</td><td><code>content-memory</code>, mounted read-only</td><td><code>setup/create_memory.py</code>, <code>memory-seed/</code></td><td>3</td></tr><tr><td>Instructions</td><td>System prompt</td><td><code>agent/system.md</code></td><td>4</td></tr><tr><td>File formats</td><td>drafts and sources schemas</td><td><code>agent/schemas/*.json</code></td><td>5</td></tr><tr><td>Checklist</td><td>Grader rubric</td><td><code>agent/rubric.md</code></td><td>6</td></tr><tr><td>Manual run script</td><td>First run and test runs</td><td><code>setup/run_once.py</code></td><td>7</td></tr><tr><td>Database</td><td>4 tables: items, seen_events, audit_log, settings</td><td><code>service/schema.sql</code></td><td>8</td></tr><tr><td>Checks</td><td>Quote check, sensitive-data scan, length, off-limits</td><td><code>service/checks.py</code></td><td>9</td></tr><tr><td>Notice endpoint</td><td><code>/anthropic/webhook</code> plus Console registration</td><td><code>service/app.py</code></td><td>10</td></tr><tr><td>Review step</td><td>Adapter, commands, approver list</td><td><code>service/review.py</code></td><td>11</td></tr><tr><td>Delivery step</td><td>One function per destination</td><td><code>service/delivery.py</code></td><td>12</td></tr><tr><td>Memory write-back</td><td>History and feedback files</td><td><code>service/memory_writeback.py</code></td><td>13</td></tr><tr><td>Safety controls</td><td>Stop switch, limits, roles, secrets</td><td>settings table, vault</td><td>14</td></tr><tr><td>Schedule</td><td>Tuesday and Thursday run</td><td><code>setup/create_schedule.py</code></td><td>15</td></tr><tr><td>Safety-net jobs</td><td>Sweeper, reminders, expiry</td><td><code>service/jobs.py</code></td><td>16</td></tr><tr><td>Alerts and report</td><td>Alert rules, weekly summary</td><td><code>service/alerts.py</code></td><td>17</td></tr><tr><td>Test set and tests</td><td>10 topics, 15 test cases</td><td><code>tests/</code></td><td>18</td></tr><tr><td>Change procedure</td><td>Promote and roll back agent versions</td><td><code>runbook.md</code></td><td>19</td></tr><tr><td>Runbook</td><td>Failure table and monthly routine</td><td><code>runbook.md</code></td><td>21</td></tr></tbody></table></div></section>
-<div class="partbar" style="margin-top:56px"><b>Agent side · Steps 1 to 7</b><span>Finish configuring the agent and prove one run.</span></div>
-<section id="s1"><h2><span class="stepno">1</span>Agent settings</h2><div class="meta"><span>Step 1</span><span>0.25 day</span></div><p class="plain">Set the model, tools and permissions on the existing agent. Every change here creates a new saved version.</p><h3>What to create or configure</h3><ul class="chk"><li>Model: Claude Sonnet 5.5 with effort <code>high</code>. Try Claude Opus 5.5 later in Step 18.</li><li>Tools: keep the built-in toolset, turn on web search and page reading only for the trusted sites, and give no tool that can deliver content.</li><li>Permission policy: <code>always_allow</code> for the toolset, because the workspace is locked down and holds no secrets.</li><li>Description and metadata for easy identification.</li><li>Record the agent ID and the new version number.</li></ul><pre>import os, anthropic
+<div class="tw"><table style="min-width:720px"><thead><tr><th>Item</th><th>Name or location</th><th>Step</th></tr></thead><tbody><tr><td>Agent settings</td><td>"Content Writer", pinned version, <code>setup/configure_agent.py</code></td><td>1</td></tr><tr><td>Environment</td><td><code>content-writer-env</code>, limited network, hosts from <code>datasources.yaml</code></td><td>2</td></tr><tr><td>Config files</td><td><code>config/themes.md</code>, <code>datasources.yaml</code>, <code>audience.md</code>, <code>tones.md</code>, <code>off-limits.md</code>, <code>formats/linkedin.md</code>, <code>voice/samples/</code></td><td>3</td></tr><tr><td>Memory store and sync command</td><td><code>content-memory</code>, <code>setup/sync_config.py</code></td><td>3</td></tr><tr><td>Instructions</td><td><code>agent/system.md</code> (two modes)</td><td>4</td></tr><tr><td>File formats</td><td><code>agent/schemas/</code>: proposals, drafts, sources</td><td>5</td></tr><tr><td>Checklists</td><td><code>agent/rubric_propose.md</code>, <code>agent/rubric_draft.md</code></td><td>6</td></tr><tr><td>Manual run script</td><td><code>setup/run_once.py</code></td><td>7</td></tr><tr><td>Request runner</td><td><code>runner/cli.py</code>, <code>sessions.py</code>: propose, draft, pick, revise, feedback, status</td><td>8</td></tr><tr><td>Records</td><td>Small SQLite file, <code>runner/state.py</code></td><td>9</td></tr><tr><td>Checks</td><td><code>runner/checks.py</code></td><td>10</td></tr><tr><td>Review documents</td><td><code>runner/docs_google.py</code> (or <code>docs_confluence.py</code>), <code>notify.py</code></td><td>11</td></tr><tr><td>Memory write-back</td><td><code>runner/writeback.py</code></td><td>12</td></tr><tr><td>Weekly schedule</td><td><code>setup/create_schedule.py</code></td><td>13</td></tr><tr><td>Polling job</td><td><code>runner/jobs.py</code></td><td>14</td></tr><tr><td>Safeguards</td><td>Settings, kill switch, budget caps, audit log</td><td>15</td></tr><tr><td>Alerts and weekly summary</td><td><code>runner/alerts.py</code></td><td>16</td></tr><tr><td>Tests</td><td><code>tests/</code>: 14 cases and a 10-topic set</td><td>17</td></tr><tr><td>Runbook</td><td><code>runbook.md</code></td><td>20</td></tr></tbody></table></div></section>
+<div class="partbar" style="margin-top:56px"><b>Agent side · Steps 1 to 7</b><span>Finish configuring the agent and prove both modes.</span></div>
+<section id="s1"><h2><span class="stepno">1</span>Agent settings</h2><div class="meta"><span>Step 1</span><span>0.25 day</span></div><p class="plain">Set the model, tools and permissions on the existing agent. Every change creates a new saved version.</p><h3>What to create or configure</h3><ul class="chk"><li>Model: Claude Sonnet 5.5, effort <code>high</code>. Compare Claude Opus 5.5 in Step 17.</li><li>Tools: the built-in toolset with web search and page reading on. No tool that can send or publish anything.</li><li>Do not put site lists on the agent. The environment's host list (Step 2) controls where the web tools can go, so a data-source change never creates a new agent version.</li><li>Permission policy <code>always_allow</code>: the workspace is locked down and holds no secrets.</li><li>Record the agent ID and the new version number.</li></ul><pre>import os, anthropic
 client = anthropic.Anthropic()                   <span class="c"># ANTHROPIC_API_KEY from the vault</span>
 AGENT_ID = os.environ["CONTENT_AGENT_ID"]
-SITES = ["news.example.com", "docs.example.com"]   <span class="c"># trusted sites, bare hostnames</span>
 
 current = client.beta.agents.retrieve(AGENT_ID)
 agent = client.beta.agents.update(
     AGENT_ID,
     version=current.version,        <span class="c"># stops us overwriting someone else's edit</span>
-    description="Writes three drafts per run from the topic brief, with sources.",
+    description="Proposes topics from our themes and writes LinkedIn drafts in several tones.",
     model={"id": "claude-sonnet-5-5", "effort": "high"},
     system=open("agent/system.md").read(),
     tools=[{
@@ -238,512 +243,500 @@ agent = client.beta.agents.update(
         "default_config": {"enabled": True,
                            "permission_policy": {"type": "always_allow"}},
         "configs": [
-            {"name": "web_search", "enabled": True, "allowed_domains": SITES},
-            {"name": "web_fetch",  "enabled": True, "allowed_domains": SITES,
-             "max_content_tokens": 50000},
+            {"name": "web_search", "enabled": True},
+            {"name": "web_fetch",  "enabled": True, "max_content_tokens": 50000},
         ],
     }],
-    metadata={"project": "content-writer", "team": "comms"},
+    metadata={"project": "content-writer"},
 )
-print(agent.id, agent.version)      <span class="c"># store both in the project settings</span></pre>
-<div class="sub3">Tool settings</div><div class="tw"><table style="min-width:640px"><thead><tr><th>Tool</th><th>Setting</th><th>Why</th></tr></thead><tbody><tr><td><code>bash</code></td><td>On</td><td>Count characters and check today's date. The workspace has no secrets and limited network.</td></tr><tr><td><code>read</code>, <code>write</code>, <code>edit</code>, <code>glob</code>, <code>grep</code></td><td>On</td><td>Read memory files, write the two output files.</td></tr><tr><td><code>web_search</code></td><td>On, <code>allowed_domains</code> = trusted sites</td><td>Finds recent items. Results from other sites are dropped.</td></tr><tr><td><code>web_fetch</code></td><td>On, <code>allowed_domains</code> = trusted sites, 50,000 content cap</td><td>Reads full pages. A URL outside the list returns an error to the agent.</td></tr><tr><td>Custom tools, MCP servers, skills</td><td>None</td><td>Nothing the agent could use to deliver or reach other systems.</td></tr><tr><td>Multi-agent helpers</td><td>Off for now</td><td>Add a research helper only if measurements in Step 18 justify it.</td></tr></tbody></table></div>
-<div class="sub3">Rules for the site list</div><ul><li>Plain hostnames only, no <code>https://</code>, no paths, no wildcards.</li><li>A listed domain also covers its subdomains. List the bare domain.</li><li>Between 1 and 64 entries, no duplicates, no IP addresses.</li><li>The same sites must also be allowed in the environment (Step 2), or the web tools return nothing.</li><li>Optional: pin where the model runs with <code>"inference_geo": "us"</code> inside the model object, if data location rules require it.</li></ul><div class="dn"><b>Check it:</b> <code>agent.version</code> increased by one, and a test run (Step 7) shows web search returning results only from the listed sites.</div></section>
-<section id="s2"><h2><span class="stepno">2</span>Environment (the locked workspace)</h2><div class="meta"><span>Step 2</span><span>0.25 day</span></div><p class="plain">The environment decides what the agent's workspace can reach. Keep it as small as possible.</p><h3>What to create or configure</h3><ul class="chk"><li>One environment named <code>content-writer-env</code> with limited networking.</li><li>Allowed hosts: every trusted site, listed with and without <code>www</code>.</li><li>No package installs, no outside tool servers.</li><li>Save the environment ID.</li></ul><pre>HOSTS = ["news.example.com", "www.news.example.com",
-         "docs.example.com", "www.docs.example.com"]
+print(agent.id, agent.version)      <span class="c"># store both in the project settings</span></pre><div class="tw"><table style="min-width:640px"><thead><tr><th>Tool</th><th>Setting</th><th>Why</th></tr></thead><tbody><tr><td><code>bash</code></td><td>On</td><td>Count characters and check today's date. No secrets, limited network.</td></tr><tr><td><code>read</code>, <code>write</code>, <code>edit</code>, <code>glob</code>, <code>grep</code></td><td>On</td><td>Read memory files, write the output files.</td></tr><tr><td><code>web_search</code>, <code>web_fetch</code></td><td>On, reach limited by the environment</td><td>Find and read recent items on the approved sites only.</td></tr><tr><td>Custom tools, outside tool servers, skills</td><td>None</td><td>Nothing that could reach other systems or publish.</td></tr><tr><td>Helper agents</td><td>Off for now</td><td>Add a research helper only if measurements in Step 17 justify it.</td></tr></tbody></table></div><div class="dn"><b>Check it:</b> <code>agent.version</code> went up by one.</div></section>
+<section id="s2"><h2><span class="stepno">2</span>Environment (the locked workspace)</h2><div class="meta"><span>Step 2</span><span>0.25 day</span></div><p class="plain">The environment decides which websites the agent's workspace can reach. The owner's data-source list drives it.</p><h3>What to create or configure</h3><ul class="chk"><li>One environment, <code>content-writer-env</code>, with limited networking.</li><li>Allowed hosts built from <code>config/datasources.yaml</code>, each listed with and without <code>www</code>.</li><li>No package installs and no outside tool servers.</li><li>Save the environment ID.</li></ul><pre>import yaml
+def hosts(sites):
+    out = []
+    for s in sites:
+        out += [s, "www." + s]       <span class="c"># a bare host matches only that exact host</span>
+    return out
 
+cfg = yaml.safe_load(open("config/datasources.yaml"))
 env = client.beta.environments.create(
     name="content-writer-env",
     config={"type": "cloud",
             "networking": {"type": "limited",
-                           "allowed_hosts": HOSTS,
+                           "allowed_hosts": hosts(cfg["sites"]),
                            "allow_package_managers": False,
                            "allow_mcp_servers": False}},
 )
-print(env.id)</pre>
-<p>In the environment list, a bare hostname matches only that exact host: <code>example.com</code> does not match <code>www.example.com</code>. A wildcard such as <code>*.example.com</code> matches every subdomain but not the bare domain. With limited networking, this list also controls the two web tools, so it must include every site in the agent's list.</p><div class="dn"><b>Check it:</b> a session using this environment can fetch a listed site and fails on any other site.</div></section>
-<section id="s3"><h2><span class="stepno">3</span>Memory store (style, topics, history)</h2><div class="meta"><span>Step 3</span><span>0.5 day</span></div><p class="plain">The memory store is the agent's notebook. It is read at the start of every run.</p><h3>What to create or configure</h3><ul class="chk"><li>One memory store named <code>content-memory</code>. The name becomes the folder name the agent sees.</li><li>Seed files from the <code>memory-seed/</code> folder (templates below).</li><li>Attach it to every run as <b>read-only</b>. Only our service writes to it.</li><li>Keep every file small and under 100 KB. Never store passwords, keys or personal data.</li></ul><pre>store = client.beta.memory_stores.create(
-    name="content-memory",
-    description="House style, topic brief, off-limits list, items already written "
-                "and reviewer feedback for the content writer.",
-)
-for root, _, names in os.walk("memory-seed"):
-    for n in names:
-        full = os.path.join(root, n)
-        path = "/" + os.path.relpath(full, "memory-seed").replace(os.sep, "/")
-        client.beta.memory_stores.memories.create(
-            store.id, path=path, content=open(full).read())
-print(store.id)</pre>
-<p>In a run, the store appears at <code>/mnt/memory/content-memory/</code>. The agent reads it with its normal file tools.</p>
-<div class="sub3">Files to seed</div><div class="tw"><table style="min-width:620px"><thead><tr><th>Path</th><th>What it holds</th><th>Written by</th></tr></thead><tbody><tr><td><code>/voice/style-guide.md</code></td><td>Tone, structure, length, do and do not</td><td>Content owner</td></tr><tr><td><code>/voice/samples/01.md</code> to <code>20.md</code></td><td>15 to 20 items we like, one per file</td><td>Content owner</td></tr><tr><td><code>/brief/topics.md</code></td><td>Focus areas, audience, angles, sources to prefer</td><td>Content owner</td></tr><tr><td><code>/brief/off-limits.md</code></td><td>Topics and phrases that must never appear</td><td>Compliance</td></tr><tr><td><code>/history/YYYY-MM-DD-slug.md</code></td><td>One file per item used</td><td>Our service (Step 13)</td></tr><tr><td><code>/feedback/YYYY-MM-DD-slug.md</code></td><td>What the reviewer changed and why</td><td>Our service (Step 13)</td></tr></tbody></table></div>
-<div class="sub3">Template: style-guide.md</div><pre># Style guide
-Audience: &lt;who reads this&gt;
-Tone: &lt;for example plain, warm, direct. No hype.&gt;
-Length: 900 to 1300 characters.
-Structure: opening line that makes one specific claim, two or three short
-paragraphs, one concrete example, one closing question or takeaway.
-Do: use "we", short sentences, real numbers.
-Do not: use greetings, buzzwords, exclamation marks, or emoji.</pre><div class="sub3">Template: topics.md</div><pre># Topic brief
-Focus areas:
-- &lt;area 1&gt;
-- &lt;area 2&gt;
-Audience and why they care: &lt;one paragraph&gt;
-Angles we like: &lt;for example practical lessons, what changed and why it matters&gt;
-Prefer sources: &lt;site names&gt;</pre><div class="sub3">Template: off-limits.md</div><pre># Off limits
-Topics: unreleased products, customers and deals, financial results and forecasts,
-legal and HR matters, security incidents, anything marked confidential.
-Phrases: game-changer, in today's fast-paced world, revolutionary, &lt;add more&gt;</pre><div class="dn"><b>Check it:</b> a test run reads <code>/mnt/memory/content-memory/voice/style-guide.md</code> and quotes one line from it.</div></section>
-<section id="s4"><h2><span class="stepno">4</span>Instructions (system prompt)</h2><div class="meta"><span>Step 4</span><span>0.25 day</span></div><p class="plain">The instructions tell the agent where things are, what to do in order, and what it must never do. Save them as <code>agent/system.md</code> and apply them in Step 1.</p><h3>What to create or configure</h3><ul class="chk"><li>Write <code>agent/system.md</code> from the text below.</li><li>Keep it short and stable. Style and topics belong in memory, so they can change without a new agent version.</li><li>Re-apply with Step 1 whenever it changes.</li></ul><pre># Role
-You write internal content for &lt;TEAM NAME&gt;. Each run you write three draft items
-on one topic taken from the topic brief, in our house style.
+print(env.id)</pre><div class="sbs"><div class="col"><div class="ct">config/datasources.yaml (maintained by the owner)</div><pre>sites:
+  - news.example.com
+  - research.example.org
+  - blog.example.net
+notes:
+  news.example.com: general technology and business news
+  research.example.org: analyst and research reports</pre></div><div class="col"><div class="ct">What happens</div><ul><li>With limited networking, this list also controls the two web tools: a page outside it returns an error, and search results from other sites are dropped.</li><li>A host listed here is also reachable from the workspace, so list only sites you trust.</li><li>Changing the list affects new runs only. Runs already open keep their old list.</li></ul></div></div><div class="dn"><b>Check it:</b> a test run can read a listed site and fails on any other site.</div></section>
+<section id="s3"><h2><span class="stepno">3</span>Config files, memory store and the sync command</h2><div class="meta"><span>Step 3</span><span>0.75 day</span></div><p class="plain">The owner edits plain files. One command pushes them to the agent's memory and workspace.</p><h3>What to create or configure</h3><ul class="chk"><li>Create the <code>config/</code> folder with the files below. Its folder layout matches the memory store.</li><li>Create one memory store, <code>content-memory</code>. Its name becomes the folder the agent sees, <code>/mnt/memory/content-memory/</code>.</li><li>Write <code>setup/sync_config.py</code> so any edit reaches the agent with one command.</li><li>Attach memory to every run as read-only. Only our runner writes to it, and only to <code>history/</code> and <code>feedback/</code>.</li><li>Keep every file under 100 KB. Never store passwords, keys, personal data or confidential material.</li></ul><div class="tw"><table style="min-width:660px"><thead><tr><th>Path in memory</th><th>What it holds</th><th>Maintained by</th></tr></thead><tbody><tr><td><code>/themes.md</code></td><td>Themes and topics to cover, with keywords and priority</td><td>Owner</td></tr><tr><td><code>/datasources.md</code></td><td>Generated from <code>datasources.yaml</code>: which sites are good for what</td><td>Generated</td></tr><tr><td><code>/audience.md</code></td><td>Technology and business leaders in North America: what they care about, level, US spelling</td><td>Owner</td></tr><tr><td><code>/tones.md</code></td><td>The named tones to choose from and compare</td><td>Owner</td></tr><tr><td><code>/formats/linkedin.md</code></td><td>Length, hook, structure and hashtag rules for LinkedIn. A blog profile is added later.</td><td>Owner</td></tr><tr><td><code>/off-limits.md</code></td><td>Topics and phrases that must never appear</td><td>Owner</td></tr><tr><td><code>/voice/samples/01.md</code> ...</td><td>Optional: past posts to match the owner's voice</td><td>Owner</td></tr><tr><td><code>/history/YYYY-MM-DD-slug.md</code></td><td>Topics already used</td><td>Runner (Step 12)</td></tr><tr><td><code>/feedback/YYYY-MM-DD-slug.md</code></td><td>Which draft was chosen and why, what was edited</td><td>Runner (Step 12)</td></tr></tbody></table></div><pre><span class="c"># setup/sync_config.py   run after every edit to config/</span>
+import os, yaml, anthropic
+client = anthropic.Anthropic()
+ENV_ID, STORE_ID = os.environ["ENVIRONMENT_ID"], os.environ["MEMORY_STORE_ID"]
+
+def upsert(path, text):
+    try:
+        client.beta.memory_stores.memories.create(STORE_ID, path=path, content=text)
+    except Exception:                      <span class="c"># the path already exists: replace its content</span>
+        mem = next(m for m in client.beta.memory_stores.memories.list(STORE_ID)
+                   if m.path == path)
+        client.beta.memory_stores.memories.update(
+            mem.id, memory_store_id=STORE_ID, content=text)   <span class="c"># confirm this call in Step 7</span>
+
+def sync():
+    cfg = yaml.safe_load(open("config/datasources.yaml"))
+    client.beta.environments.update(ENV_ID, config={           <span class="c"># confirm this call in Step 7</span>
+        "type": "cloud",
+        "networking": {"type": "limited", "allowed_hosts": hosts(cfg["sites"]),
+                       "allow_package_managers": False, "allow_mcp_servers": False}})
+    for root, _, names in os.walk("config"):
+        for n in names:
+            if n == "datasources.yaml":
+                continue
+            full = os.path.join(root, n)
+            path = "/" + os.path.relpath(full, "config").replace(os.sep, "/")
+            upsert(path, open(full).read())
+    upsert("/datasources.md", render_datasources_md(cfg))
+
+if __name__ == "__main__":
+    sync()</pre>
+<div class="sub3">Template: themes.md</div><pre># Themes
+Priority 1
+- &lt;theme name&gt;: &lt;one line on what it covers&gt;. Keywords: &lt;a, b, c&gt;
+Priority 2
+- &lt;theme name&gt;: &lt;one line&gt;. Keywords: &lt;a, b, c&gt;
+Always avoid: &lt;anything that does not fit the audience&gt;</pre><div class="sub3">Template: audience.md</div><pre># Audience
+Who: technology and business leaders in North America.
+What they care about: &lt;for example outcomes, risk, cost, practical lessons&gt;.
+Level: senior, time-poor, not hands-on technical. Explain jargon in a few words.
+Language: US English spelling. Avoid idioms from other regions. Use dollars.
+They dislike: hype, buzzwords, vague claims, thinly veiled sales pitches.</pre><div class="sub3">Template: tones.md</div><pre># Tones
+Analytical: evidence first, measured, one clear takeaway.
+Conversational: plain, warm, speaks to the reader as "you".
+Bold: takes a clear position and argues it, still fair and sourced.
+Story-led: opens with a short real example, then draws the lesson.
+(Edit freely. In draft mode the agent picks the 3 that contrast most unless told otherwise.)</pre><div class="sub3">Template: formats/linkedin.md</div><pre># LinkedIn format
+Length: 900 to 1500 characters.
+Hook: the first line makes one specific claim and is at most 200 characters.
+Structure: short paragraphs of one to three sentences, with blank lines between.
+Ending: one question or one takeaway, never both.
+Hashtags: at most 3, at the end.
+Do not: use a greeting, emoji, or tag real people.</pre><div class="sub3">Template: off-limits.md</div><pre># Off limits
+Topics: non-public information about any company, financial forecasts, legal or
+medical advice, politics, claims about named people.
+Phrases: game-changer, in today's fast-paced world, revolutionary, &lt;add more&gt;</pre><div class="dn"><b>Check it:</b> after a sync, a test run quotes a line from <code>/themes.md</code> and cannot read a site that is not in the list.</div></section>
+<section id="s4"><h2><span class="stepno">4</span>Instructions (system prompt)</h2><div class="meta"><span>Step 4</span><span>0.25 day</span></div><p class="plain">The instructions tell the agent where things are and what to do in each of the two modes. Save them as <code>agent/system.md</code> and apply them with Step 1.</p><h3>What to create or configure</h3><ul class="chk"><li>Write <code>agent/system.md</code> from the text below.</li><li>Keep it short and stable. Themes, tones and formats live in memory so the owner can change them without a new agent version.</li><li>Re-apply with Step 1 whenever it changes.</li></ul><pre># Role
+You write LinkedIn posts for &lt;OWNER&gt;, for an audience of technology and business
+leaders in North America. You work in one of two modes. The request tells you which.
 
 # Where things are
-- Your notes are mounted read-only at /mnt/memory/content-memory/
-  voice/style-guide.md, voice/samples/*.md, brief/topics.md, brief/off-limits.md,
-  history/*.md (topics already used), feedback/*.md (what reviewers changed)
+- Notes (read-only): /mnt/memory/content-memory/
+  themes.md, datasources.md, audience.md, tones.md, off-limits.md,
+  formats/linkedin.md, voice/samples/*.md, history/*.md, feedback/*.md
 - Save results to /mnt/session/outputs/
 
-# Steps
-1. Read everything in voice/, brief/ and history/, and the 5 newest files in feedback/.
-2. Search the allowed websites for recent developments that fit brief/topics.md.
-   Shortlist up to five. Pick one that is not in history/ and does not touch
-   brief/off-limits.md. If nothing qualifies, write no_topic.txt to the outputs
-   folder with the reason, and stop.
-3. Read the 3 to 5 best sources in full. For every fact you use, copy the exact
-   sentence from the page as a quote.
-4. Write three drafts with different openings (a question, a surprising fact,
-   a short story). Follow style-guide.md. Check the length with a tool.
-5. Save drafts.json and sources.json in the formats given below.
-6. Check your work against the checklist you were given. Fix problems before
-   you finish.
+# Mode: propose
+The request has: MODE: propose, THEMES (optional), COUNT (default 4).
+1. Read themes.md (or the THEMES given), audience.md, off-limits.md and history/.
+2. Search the allowed sites for what is trending or newly published for those themes.
+3. Propose COUNT different topics. For each give a title, the theme, why it matters
+   now, a suggested angle for our audience, and 2 to 3 sources.
+4. Do not propose anything already in history/ or touching off-limits.md.
+5. Save proposals.json and sources.json.
+
+# Mode: draft
+The request has: MODE: draft, TOPIC (text, or "proposal N" from the run so far),
+ANGLE (optional), TONES (optional), DRAFTS (default 3), FORMAT (default linkedin).
+1. Read audience.md, tones.md, formats/&lt;FORMAT&gt;.md, voice/, off-limits.md and the
+   5 newest files in feedback/.
+2. Research the topic on the allowed sites. Read the best 3 to 5 sources in full and
+   copy the exact sentence for every fact you use.
+3. Write DRAFTS drafts, each in a different tone. If TONES is not given, pick the
+   tones that contrast most. Follow the format rules and check length with a tool.
+4. For each draft add one line on how it differs from the others.
+5. Add a short comparison and say which draft you would pick and why.
+6. Save drafts.json and sources.json.
 
 # Rules
 - Use only the allowed websites. Never invent a quote, number, name or link.
-- Every factual claim must point to a source id in sources.json.
-- Never include confidential information, personal data, or anything in off-limits.md.
-- Never describe unreleased plans, customers or financials.
-- Do not ask questions. If something is unclear, choose the safest option and
-  explain it in the "notes" field of drafts.json.
+- Every factual claim points to a source id in sources.json.
+- Never include non-public information, personal data or anything in off-limits.md.
+- Attribute facts to their source. Do not disparage any person or company.
+- Do not ask questions. If something is unclear, choose the safest option and say so
+  in the "notes" field.
 
 # Output formats
-(paste the two schemas from Step 5 here)</pre><div class="dn"><b>Check it:</b> a run follows the steps in order and writes both files, or writes <code>no_topic.txt</code> when told a topic is used.</div></section>
-<section id="s5"><h2><span class="stepno">5</span>Output files (the contract with our service)</h2><div class="meta"><span>Step 5</span><span>0.25 day</span></div><p class="plain">Our service reads two files from every run. Fix their format now so both sides agree.</p><h3>What to create or configure</h3><ul class="chk"><li>Create <code>agent/schemas/drafts.schema.json</code> and <code>sources.schema.json</code>.</li><li>Paste the formats into the system prompt.</li><li>Validate every run's files against the schemas in Step 10 before anything else happens.</li></ul><div class="sbs"><div class="col"><div class="ct">drafts.json</div><pre>{
+(paste the three schemas from Step 5 here)</pre><div class="dn"><b>Check it:</b> a propose run writes <code>proposals.json</code> and a draft run writes <code>drafts.json</code>, each following its steps in order.</div></section>
+<section id="s5"><h2><span class="stepno">5</span>Output files (the contract with our runner)</h2><div class="meta"><span>Step 5</span><span>0.25 day</span></div><p class="plain">Our runner reads these files from every run. Fix their format now so both sides agree.</p><h3>What to create or configure</h3><ul class="chk"><li>Create <code>agent/schemas/proposals.schema.json</code>, <code>drafts.schema.json</code> and <code>sources.schema.json</code>.</li><li>Paste the formats into the system prompt.</li><li>Validate every file against its schema in Step 10 before doing anything else with it.</li></ul><div class="sbs"><div class="col"><div class="ct">proposals.json</div><pre>{
+  "themes_used": ["theme A", "theme B"],
+  "proposals": [
+    {"id": 1,
+     "title": "short topic title",
+     "theme": "theme A",
+     "why_now": "one or two sentences",
+     "angle": "suggested angle for the audience",
+     "source_ids": ["s1", "s2"]}
+  ]
+}</pre></div><div class="col"><div class="ct">drafts.json</div><pre>{
   "topic": "short topic name",
-  "why_now": "one sentence",
-  "notes": "anything the reviewer should know",
+  "format": "linkedin",
   "drafts": [
     {"id": 1,
-     "style": "question",
-     "text": "full text of the draft",
-     "claims": [
-       {"claim": "short statement", "source_id": "s1"}
-     ]}
-  ]
-}</pre></div><div class="col"><div class="ct">sources.json</div><pre>[
+     "tone": "Analytical",
+     "hook": "first line of the post",
+     "text": "full text, starting with the hook",
+     "hashtags": ["<span class="c">#example"],</span>
+     "claims": [{"claim": "short statement", "source_id": "s1"}],
+     "contrast_note": "how this differs from the others"}
+  ],
+  "comparison": "2 to 3 sentences, and which draft you would pick",
+  "notes": "anything the reviewer should know"
+}</pre></div></div><div class="sub3">sources.json (shared by both modes)</div><pre>[
   {"id": "s1",
    "url": "https://news.example.com/article",
    "title": "article title",
    "published": "2026-11-03",
    "quote": "exact sentence copied from the page"}
-]</pre></div></div><ul><li>Exactly three drafts with ids 1, 2 and 3.</li><li>Every <code>source_id</code> in a claim exists in the sources file.</li><li>Every source URL starts with <code>https://</code> and is on the trusted list.</li><li>If there is no topic, the agent writes <code>no_topic.txt</code> and neither JSON file.</li></ul><div class="dn"><b>Check it:</b> both files from a test run pass schema validation, and a hand-broken file is rejected.</div></section>
-<section id="s6"><h2><span class="stepno">6</span>Checklist (the outcome and grader)</h2><div class="meta"><span>Step 6</span><span>0.5 day</span></div><p class="plain">The checklist is how a separate grader scores each run and sends weak drafts back for fixing before any person sees them.</p><h3>What to create or configure</h3><ul class="chk"><li>Write <code>agent/rubric.md</code> from the text below.</li><li>Start every run with a "define outcome" event holding the task, the checklist and a retry limit of 4.</li><li>Handle each result: <code>satisfied</code> goes to review normally. <code>max_iterations_reached</code> and <code>failed</code> still go to review, flagged "checklist not fully met".</li><li>Refine the checklist during Step 18 using real misses.</li></ul><pre># Checklist
-Grade the files in /mnt/session/outputs/ against every item. Fail the item if
-you cannot confirm it from the files.
-1. drafts.json and sources.json exist and follow the agreed formats.
-2. There are exactly three drafts and their openings differ in style.
-3. Each draft is between 900 and 1300 characters.
-4. Each draft opens with one specific claim, not a greeting or a question about the reader.
+]</pre><ul><li>Exactly the requested number of drafts, each with a different tone.</li><li>Every <code>source_id</code> exists in the sources file.</li><li>Every source URL is <code>https</code> and on the approved list.</li><li>Every draft starts with its own <code>hook</code>.</li></ul><div class="dn"><b>Check it:</b> valid files from a test run pass validation, and a hand-broken file is rejected.</div></section>
+<section id="s6"><h2><span class="stepno">6</span>Checklists (grader)</h2><div class="meta"><span>Step 6</span><span>0.5 day</span></div><p class="plain">Each request starts with a checklist. A separate grader scores the work and sends weak results back to be fixed before a person sees them. There is one checklist per mode.</p><h3>What to create or configure</h3><ul class="chk"><li>Write <code>agent/rubric_propose.md</code> and <code>agent/rubric_draft.md</code> from the text below.</li><li>Start every run with a "define outcome" event holding the request, the matching checklist and a retry limit of 4.</li><li>Handle each result: <code>satisfied</code> goes to review normally. <code>max_iterations_reached</code> and <code>failed</code> still go to review, flagged "checklist not fully met".</li><li>Refine both checklists in Step 17 using real misses.</li></ul><div class="sbs"><div class="col"><div class="ct">rubric_propose.md</div><pre>1. proposals.json and sources.json exist and follow the agreed formats.
+2. The requested number of topics, no two on the same story.
+3. Every topic belongs to a listed theme.
+4. Every topic has a specific reason it matters now, based on a dated source.
+5. Every topic has an angle that fits the audience in audience.md.
+6. Every topic has at least 2 sources, each with a link, date and exact quote.
+7. No topic appears in history/ or touches off-limits.md.
+8. Sources come only from the approved sites.</pre></div><div class="col"><div class="ct">rubric_draft.md</div><pre>1. drafts.json and sources.json exist and follow the agreed formats.
+2. The requested number of drafts, each in a different named tone from tones.md.
+3. Each tone is clearly recognizable and the drafts contrast with each other.
+4. Each draft meets the length, hook and hashtag rules in the format file.
 5. Every factual claim points to a source id that exists in sources.json.
 6. Every source has an https link, a date and an exact quote.
-7. No phrase from brief/off-limits.md appears in any draft.
-8. Tone, person and sentence length match voice/style-guide.md.
-9. Each draft contains one concrete example, number or short story.
+7. No phrase from off-limits.md appears in any draft.
+8. Each draft suits the audience: plain, specific, no hype, US spelling.
+9. Each draft has one concrete example, number or short story.
 10. Each draft ends with one question or one takeaway, never both.
-11. The topic does not appear in history/.</pre>
-<div class="sub3">How the run is started</div><pre>OUTCOME = {
-    "type": "user.define_outcome",
-    "description": "Pick one topic from the brief and write three drafts with "
-                   "sources. Save drafts.json and sources.json to "
-                   "/mnt/session/outputs/.",
-    "rubric": {"type": "text", "content": open("agent/rubric.md").read()},
-    "max_iterations": 4,          <span class="c"># default is 3, maximum is 20</span>
-}</pre><div class="tw"><table style="min-width:640px"><thead><tr><th>Grader result</th><th>What it means</th><th>What our service does</th></tr></thead><tbody><tr><td><code>satisfied</code></td><td>All items passed</td><td>Normal review</td></tr><tr><td><code>needs_revision</code></td><td>Another round is running</td><td>Wait</td></tr><tr><td><code>max_iterations_reached</code></td><td>Retries used up</td><td>Review, flagged "not fully met"</td></tr><tr><td><code>failed</code></td><td>Checklist does not fit the task</td><td>Review, flagged, and alert the team to fix the checklist</td></tr><tr><td><code>interrupted</code></td><td>Someone stopped the run</td><td>Mark skipped</td></tr></tbody></table></div>
-<p>The grader cannot browse the web. It judges form, style and whether each claim points to a quote. Our own quote check in Step 9 proves the quotes are real.</p><div class="dn"><b>Check it:</b> a draft with a missing source is sent back by the grader and fixed within the retry limit.</div></section>
-<section id="s7"><h2><span class="stepno">7</span>First manual run and the run settings</h2><div class="meta"><span>Step 7</span><span>0.5 day</span></div><p class="plain">Run the whole agent side once, by hand, to prove it works and to learn the real time and cost.</p><h3>What to create or configure</h3><ul class="chk"><li>Create one run with memory attached read-only, a spending cap and the outcome from Step 6.</li><li>Print the live-view link and watch every step.</li><li>Wait for the run to finish, then download the two files.</li><li>Record time, cost, grader rounds and tool calls (table below).</li><li>Fix anything that went wrong in Steps 1 to 6 before moving on.</li></ul><pre>store_id, env_id, agent_id = (os.environ[k] for k in
-    ("MEMORY_STORE_ID", "ENVIRONMENT_ID", "CONTENT_AGENT_ID"))
+11. contrast_note and comparison are present and honest.</pre></div></div><pre>def outcome(request_text, rubric_path, max_iterations=4):
+    return {
+        "type": "user.define_outcome",
+        "description": request_text,
+        "rubric": {"type": "text", "content": open(rubric_path).read()},
+        "max_iterations": max_iterations,        <span class="c"># default 3, maximum 20</span>
+    }</pre><div class="tw"><table style="min-width:620px"><thead><tr><th>Grader result</th><th>Meaning</th><th>What our runner does</th></tr></thead><tbody><tr><td><code>satisfied</code></td><td>All items passed</td><td>Normal review</td></tr><tr><td><code>needs_revision</code></td><td>Another round is running</td><td>Wait</td></tr><tr><td><code>max_iterations_reached</code></td><td>Retries used up</td><td>Review, flagged "not fully met"</td></tr><tr><td><code>failed</code></td><td>Checklist does not fit the request</td><td>Review, flagged, and alert the owner</td></tr><tr><td><code>interrupted</code></td><td>Someone stopped the run</td><td>Mark cancelled</td></tr></tbody></table></div><p>The grader cannot browse the web. It judges form, tone and whether each claim points to a quote. Our own quote check in Step 10 proves the quotes are real.</p><div class="dn"><b>Check it:</b> a draft with a missing source, or two drafts in the same tone, is sent back and fixed within the retry limit.</div></section>
+<section id="s7"><h2><span class="stepno">7</span>First manual runs</h2><div class="meta"><span>Step 7</span><span>0.75 day</span></div><p class="plain">Run both modes by hand to prove the agent side works and to learn the real time and cost.</p><h3>What to create or configure</h3><ul class="chk"><li>Run <code>propose</code> and read the proposals.</li><li>Run <code>draft</code> with a topic of your own and read the drafts.</li><li>Run a second <code>draft</code> request in the same run to test change requests.</li><li>Open the live view for each run and watch the steps.</li><li>Record time, cost and grader rounds (table below), then fix Steps 1 to 6 as needed.</li></ul><pre><span class="c"># setup/run_once.py     python setup/run_once.py propose   |   python setup/run_once.py draft "topic"</span>
+import os, sys, time, anthropic
+client = anthropic.Anthropic()
+AGENT_ID, ENV_ID, STORE_ID = (os.environ[k] for k in
+    ("CONTENT_AGENT_ID", "ENVIRONMENT_ID", "MEMORY_STORE_ID"))
 
-session = client.beta.sessions.create(
-    agent={"type": "agent", "id": agent_id, "version": int(os.environ["AGENT_VERSION"])},
-    environment_id=env_id,
-    title="Manual test run",
-    metadata={"project": "content-writer", "kind": "test"},
-    resources=[{"type": "memory_store", "memory_store_id": store_id,
-                "access": "read_only",
-                "instructions": "House style, topic brief, off-limits list, history "
-                                "and feedback. Read before writing."}],
-    budget={"type": "limit",
-            "max_list_cost": {"amount": "300", "currency": "USD"}},   <span class="c"># $3.00 cap</span>
-    initial_events=[OUTCOME],
-)
-print("Watch it:", f"https://platform.claude.com/workspaces/default/sessions/{session.id}")
+def kickoff(request_text, rubric_path):
+    return client.beta.sessions.create(
+        agent={"type": "agent", "id": AGENT_ID, "version": int(os.environ["AGENT_VERSION"])},
+        environment_id=ENV_ID,
+        title=request_text.splitlines()[0],
+        metadata={"project": "content-writer"},
+        resources=[{"type": "memory_store", "memory_store_id": STORE_ID,
+                    "access": "read_only",
+                    "instructions": "Themes, data sources, audience, tones, formats, "
+                                    "history and feedback. Read first."}],
+        budget={"type": "limit", "max_list_cost": {"amount": "300", "currency": "USD"}},  <span class="c"># $3</span>
+        initial_events=[outcome(request_text, rubric_path)],
+    )
 
-<span class="c"># wait until the run is finished (not waiting for an approval, not paused at the cap)</span>
-with client.beta.sessions.events.stream(session.id) as stream:
-    for ev in stream:
-        if (ev.type == "session.status_idle"
-                and ev.stop_reason.type not in ("requires_action", "budget_reached")):
-            break
-        if ev.type == "session.status_terminated":
-            break
+def wait_finished(session_id):
+    with client.beta.sessions.events.stream(session_id=session_id) as stream:
+        for ev in stream:
+            if (ev.type == "session.status_idle"
+                    and ev.stop_reason.type not in ("requires_action", "budget_reached")):
+                return "finished"
+            if ev.type == "session.status_idle":
+                return ev.stop_reason.type            <span class="c"># needs attention</span>
+            if ev.type == "session.status_terminated":
+                return "terminated"
 
-<span class="c"># fetch what the agent saved (files can take a few seconds to appear)</span>
-import time
-for _ in range(4):
-    files = list(client.beta.files.list(scope_id=session.id,
-                                        betas=["managed-agents-2026-04-01"]))
-    if files: break
-    time.sleep(3)
-for f in files:
-    print(f.filename, client.beta.files.download(f.id).read()[:300])
+def fetch_outputs(session_id):
+    for _ in range(4):                                <span class="c"># files appear after a short delay</span>
+        files = client.beta.files.list(scope_id=session_id,
+                                       betas=["managed-agents-2026-04-01"]).data
+        if files: return {f.filename: client.beta.files.download(f.id).read() for f in files}
+        time.sleep(3)
+    return {}
 
-s = client.beta.sessions.retrieve(session.id)
-print("cost:", s.usage.list_cost, "active seconds:", s.usage.active_seconds)</pre>
-<p>The code is a starting shape. Confirm the exact stream, file download and usage call names against the current SDK in this step, then keep the working versions in <code>setup/run_once.py</code>. Use your workspace ID in the live-view link if it is not the default workspace.</p>
-<div class="sub3">What to record</div><div class="tw"><table style="min-width:640px"><thead><tr><th>Measure</th><th>Where to read it</th><th>Use it for</th></tr></thead><tbody><tr><td>Cost of the run</td><td>Run usage, list cost (in cents)</td><td>Check the $3 cap and the monthly estimate</td></tr><tr><td>Working time</td><td>Run usage, active seconds</td><td>Check the estimate and the stuck-run threshold in Step 16</td></tr><tr><td>Grader rounds</td><td>Outcome evaluation events</td><td>Tune the checklist (aim for 2 or fewer)</td></tr><tr><td>Tool calls and searches</td><td>Live view</td><td>Spot wasted searches</td></tr><tr><td>Time until files appear</td><td>Your own timer</td><td>Set the retry delay in Step 10</td></tr></tbody></table></div><div class="dn"><b>Check it:</b> the run produces valid <code>drafts.json</code> and <code>sources.json</code>, costs under the cap, and its numbers are written down.</div></section>
-<div class="partbar" style="margin-top:56px"><b>Service side · Steps 8 to 14</b><span>Our small service: records, checks, review, delivery, safety.</span></div>
-<section id="s8"><h2><span class="stepno">8</span>Records (database and settings)</h2><div class="meta"><span>Step 8</span><span>0.5 day</span></div><p class="plain">Our service needs a small database to remember what happened to each item.</p><h3>What to create or configure</h3><ul class="chk"><li>Create four tables: <code>items</code>, <code>seen_events</code>, <code>audit_log</code>, <code>settings</code>.</li><li>Add the starting settings (table below).</li><li>Never store secrets or full source pages here.</li></ul><pre>CREATE TABLE items (
-  id               TEXT PRIMARY KEY,
-  team             TEXT,
-  session_id       TEXT UNIQUE,
-  status           TEXT,       -- scheduled, drafting, checking, awaiting_review, revising,
-                               -- approved, delivered, skipped, failed, expired
-  topic            TEXT,
-  outcome_result   TEXT,
-  check_report     TEXT,       -- JSON from Step 9
-  drafts_json      TEXT,
-  review_ref       TEXT,       -- id of the message sent to the reviewer
-  reminder_sent_at TIMESTAMP,
-  approved_by      TEXT,
-  approved_draft   INTEGER,
-  approved_hash    TEXT,
-  approved_at      TIMESTAMP,
-  delivered_to     TEXT,
-  delivered_at     TIMESTAMP,
-  delivery_ref     TEXT,
-  cost_cents       INTEGER,
-  created_at       TIMESTAMP,
-  updated_at       TIMESTAMP
+mode = sys.argv[1]
+text = "MODE: propose\nCOUNT: 4" if mode == "propose" else f"MODE: draft\nTOPIC: {sys.argv[2]}\nDRAFTS: 3\nFORMAT: linkedin"
+s = kickoff(text, f"agent/rubric_{mode}.md")
+print("Watch it:", f"https://platform.claude.com/workspaces/default/sessions/{s.id}")
+print(wait_finished(s.id))
+for name, data in fetch_outputs(s.id).items():
+    print(name, data[:300])
+u = client.beta.sessions.retrieve(session_id=s.id).usage
+print("cost:", u.list_cost, "active seconds:", u.active_seconds)</pre><p>The code is a starting shape. Confirm the exact call names (stream, file download, usage, memory update, environment update) against the current SDK in this step, and keep the working versions.</p><div class="tw"><table style="min-width:640px"><thead><tr><th>Measure</th><th>Where to read it</th><th>Use it for</th></tr></thead><tbody><tr><td>Cost per run</td><td>Run usage, list cost in cents</td><td>Check the $3 cap and the monthly estimate</td></tr><tr><td>Working time</td><td>Run usage, active seconds</td><td>Set the stuck-run threshold in Step 14</td></tr><tr><td>Grader rounds</td><td>Outcome events</td><td>Tune the checklists (aim for 2 or fewer)</td></tr><tr><td>Searches and sites used</td><td>Live view</td><td>Spot gaps in <code>datasources.yaml</code></td></tr><tr><td>Time until files appear</td><td>Your own timer</td><td>Set the retry delay in Step 8</td></tr></tbody></table></div><div class="dn"><b>Check it:</b> both modes return valid files, each run costs under the cap, and the numbers are written down.</div></section>
+<div class="partbar" style="margin-top:56px"><b>Runner · Steps 8 to 12</b><span>Our small tool: commands, records, checks, documents, feedback.</span></div>
+<section id="s8"><h2><span class="stepno">8</span>Request runner (the commands you use)</h2><div class="meta"><span>Step 8</span><span>1 day</span></div><p class="plain">A small command line tool that starts requests, waits for results and passes your choices back to the agent. It is the only thing you operate day to day.</p><h3>What to create or configure</h3><ul class="chk"><li>Create <code>runner/cli.py</code> with the six commands below.</li><li>Keep each request's run (session) ID so a pick or a change request goes to the same run. The agent then still remembers its research.</li><li>If an old run is no longer available, start a new run seeded with the saved files from the earlier one.</li><li>After every finished run, call the same <code>process_finished</code> function (Steps 10 and 11).</li></ul><pre><span class="c"># runner/cli.py</span>
+import argparse, sys
+from sessions import kickoff, wait_finished, followup
+from process import process_finished          <span class="c"># checks, document, notice (Steps 10, 11)</span>
+from state import new_request, get_request, set_status
+from writeback import record_feedback         <span class="c"># Step 12</span>
+
+def run(request_text, rubric, mode):
+    s = kickoff(request_text, rubric)
+    rid = new_request(mode, s.id)
+    print("Run started:", rid)
+    set_status(rid, "running")
+    result = wait_finished(s.id)
+    if result == "finished":
+        print("Review document:", process_finished(rid))
+    else:
+        print("Needs attention:", result)
+
+def cmd_propose(a):
+    text = "MODE: propose\n" + (f"THEMES: {a.themes}\n" if a.themes else "") + f"COUNT: {a.count}"
+    run(text, "agent/rubric_propose.md", "propose")
+
+def cmd_draft(a):
+    text = f"MODE: draft\nTOPIC: {a.topic}\nDRAFTS: {a.drafts}\nFORMAT: {a.format}\n"
+    if a.angle: text += f"ANGLE: {a.angle}\n"
+    if a.tones: text += f"TONES: {a.tones}\n"
+    run(text, "agent/rubric_draft.md", "draft")
+
+def cmd_pick(a):                               <span class="c"># choose one of the proposals</span>
+    r = get_request(a.request_id)
+    followup(r.session_id,
+             f"MODE: draft\nTOPIC: proposal {a.proposal}\nDRAFTS: 3\nFORMAT: linkedin\n"
+             "Use the research you already did.", "agent/rubric_draft.md")
+    set_status(r.id, "running")
+    wait_finished(r.session_id); print("Review document:", process_finished(r.id))
+
+def cmd_revise(a):                             <span class="c"># ask for a change to one draft</span>
+    r = get_request(a.request_id)
+    followup(r.session_id, f"Revise draft {a.draft}: {a.note}. Keep every other rule.",
+             "agent/rubric_draft.md")
+    set_status(r.id, "running")
+    wait_finished(r.session_id); print("Review document:", process_finished(r.id))
+
+def cmd_feedback(a):                           <span class="c"># tell the system what you chose</span>
+    record_feedback(a.request_id, a.chosen, a.note)
+
+p = argparse.ArgumentParser(); sub = p.add_subparsers(required=True)
+x = sub.add_parser("propose"); x.add_argument("--themes"); x.add_argument("--count", type=int, default=4); x.set_defaults(f=cmd_propose)
+x = sub.add_parser("draft"); x.add_argument("topic"); x.add_argument("--angle"); x.add_argument("--tones")
+x.add_argument("--drafts", type=int, default=3); x.add_argument("--format", default="linkedin"); x.set_defaults(f=cmd_draft)
+x = sub.add_parser("pick"); x.add_argument("request_id"); x.add_argument("proposal", type=int); x.set_defaults(f=cmd_pick)
+x = sub.add_parser("revise"); x.add_argument("request_id"); x.add_argument("draft", type=int); x.add_argument("note"); x.set_defaults(f=cmd_revise)
+x = sub.add_parser("feedback"); x.add_argument("request_id"); x.add_argument("chosen", type=int); x.add_argument("note", nargs="?", default=""); x.set_defaults(f=cmd_feedback)
+a = p.parse_args(); a.f(a)</pre><div class="tw"><table style="min-width:660px"><thead><tr><th>Command</th><th>What it does</th></tr></thead><tbody><tr><td><code>propose [--themes "..."] [--count 4]</code></td><td>Research trending topics from your themes and propose some</td></tr><tr><td><code>draft "topic" [--angle] [--tones] [--drafts 3]</code></td><td>Research the topic and write several drafts in different tones</td></tr><tr><td><code>pick REQUEST_ID N</code></td><td>Choose proposal N and write drafts for it in the same run</td></tr><tr><td><code>revise REQUEST_ID N "note"</code></td><td>Rewrite draft N with your note, then check again</td></tr><tr><td><code>feedback REQUEST_ID N "why"</code></td><td>Record which draft you chose and why, so the agent learns</td></tr></tbody></table></div>
+<p>A change request or a pick is sent as a new "define outcome" event in the same run, so the same checklist applies. One outcome runs at a time. Send the next only after the previous one has finished.</p><div class="dn"><b>Check it:</b> <code>draft</code>, <code>pick</code> and <code>revise</code> each return a review document link, and a pick reuses the earlier research.</div></section>
+<section id="s9"><h2><span class="stepno">9</span>Records</h2><div class="meta"><span>Step 9</span><span>0.25 day</span></div><p class="plain">A tiny database remembers every request and where it stands.</p><h3>What to create or configure</h3><ul class="chk"><li>Create a SQLite file with three tables.</li><li>Statuses move forward only, and every change writes an audit row.</li><li>Never store secrets or full source pages here.</li></ul><pre>CREATE TABLE requests (
+  id          TEXT PRIMARY KEY,
+  mode        TEXT,        -- propose or draft
+  session_id  TEXT UNIQUE,
+  status      TEXT,        -- running, waiting_for_review, failed, cancelled, done
+  topic       TEXT,
+  outcome     TEXT,        -- grader result
+  report      TEXT,        -- JSON from the checks in Step 10
+  doc_url     TEXT,
+  chosen      INTEGER,
+  cost_cents  INTEGER,
+  source      TEXT,        -- manual or schedule
+  created_at  TIMESTAMP,
+  updated_at  TIMESTAMP
 );
-CREATE TABLE seen_events (event_id TEXT PRIMARY KEY, seen_at TIMESTAMP);
 CREATE TABLE audit_log (id INTEGER PRIMARY KEY, ts TIMESTAMP, actor TEXT,
-                        action TEXT, item_id TEXT, detail TEXT);
-CREATE TABLE settings (key TEXT PRIMARY KEY, value TEXT);</pre><div class="tw"><table style="min-width:620px"><thead><tr><th>Setting</th><th>Starting value</th><th>Used by</th></tr></thead><tbody><tr><td><code>kill_switch</code></td><td>off</td><td>Every handler and the delivery step</td></tr><tr><td><code>delivery_enabled</code></td><td>off during the trial</td><td>Delivery step</td></tr><tr><td><code>max_items_per_week</code></td><td>2</td><td>Delivery step</td></tr><tr><td><code>delivery_window</code></td><td>Mon to Fri, 08:00 to 18:00 local</td><td>Delivery step</td></tr><tr><td><code>approval_expiry_hours</code></td><td>24</td><td>Delivery step</td></tr><tr><td><code>reminder_hours</code> / <code>auto_skip_hours</code></td><td>24 / 72</td><td>Jobs in Step 16</td></tr><tr><td><code>approver_ids</code></td><td>named approvers and one backup</td><td>Review step</td></tr></tbody></table></div>
-<p>Status of an item moves forward only: scheduled, drafting, checking, awaiting_review, then approved and delivered. Side exits are revising (back to drafting), skipped, failed and expired. Every status change writes a row to <code>audit_log</code>.</p><div class="dn"><b>Check it:</b> a script can insert an item, move it through the statuses, and read the audit trail.</div></section>
-<section id="s9"><h2><span class="stepno">9</span>Checks (plain code, no AI)</h2><div class="meta"><span>Step 9</span><span>0.5 day</span></div><p class="plain">Before a reviewer sees anything, our code checks every file the agent produced.</p><h3>What to create or configure</h3><ul class="chk"><li>Schema check for both files.</li><li>Quote check: open each source and confirm the quote appears.</li><li>Claim mapping: every claim's source id exists.</li><li>Length check, sensitive-data scan, off-limits phrase scan.</li><li>Return one report. Anything that fails is shown to the reviewer, not hidden.</li></ul><pre><span class="c"># service/checks.py</span>
-import os, re
+                        action TEXT, request_id TEXT, detail TEXT);
+CREATE TABLE settings (key TEXT PRIMARY KEY, value TEXT);   -- kill_switch, reviewer_email</pre><div class="dn"><b>Check it:</b> a script can create a request, move it through the statuses and read the audit trail.</div></section>
+<section id="s10"><h2><span class="stepno">10</span>Checks (plain code, no AI)</h2><div class="meta"><span>Step 10</span><span>0.75 day</span></div><p class="plain">Before the owner sees anything, our code checks every file the agent produced.</p><h3>What to create or configure</h3><ul class="chk"><li>Validate each file against its schema.</li><li>Quote check: open every source and confirm the quote appears.</li><li>Format check: length, hook, hashtags, number of drafts, no two drafts in the same tone.</li><li>Sensitive-data scan and off-limits phrase scan.</li><li>Return one report. Anything that fails is shown in the document, not hidden.</li></ul><pre><span class="c"># runner/checks.py</span>
+import os, re, yaml
 from urllib.parse import urlparse
 import requests
 
-ALLOWED = [s.strip().lower() for s in os.environ["ALLOWED_SITES"].split(",")]
+ALLOWED = [s.lower() for s in yaml.safe_load(open("config/datasources.yaml"))["sites"]]
+FORMATS = {"linkedin": {"min": 900, "max": 1500, "hook_max": 200, "max_hashtags": 3, "drafts": 3}}
+<span class="c"># keep these numbers in step with config/formats/linkedin.md</span>
 
 def host_ok(url):
-    u = urlparse(url)
-    h = (u.hostname or "").lower()
+    u = urlparse(url); h = (u.hostname or "").lower()
     return u.scheme == "https" and any(h == s or h.endswith("." + s) for s in ALLOWED)
+
+def norm(s):
+    s = s.replace("\u2019", "'").replace("\u201c", '"').replace("\u201d", '"')
+    return re.sub(r"\s+", " ", s.replace("\u2013", "-").replace("\u2014", "-")).strip().lower()
 
 def fetch_text(url, hops=3):
     for _ in range(hops):
         if not host_ok(url):
-            return None                      <span class="c"># never fetch outside the trusted list</span>
+            return None                              <span class="c"># never fetch outside the approved list</span>
         r = requests.get(url, timeout=15, allow_redirects=False, stream=True,
                          headers={"User-Agent": "content-writer-check"})
         if r.is_redirect:
-            url = r.headers.get("location", "")
-            continue
+            url = r.headers.get("location", ""); continue
         body = r.raw.read(2_000_000, decode_content=True).decode("utf-8", "ignore")
-        text = re.sub(r"&lt;(script|style).*?&lt;/\1&gt;", " ", body, flags=re.S | re.I)
-        return norm(re.sub(r"&lt;[^&gt;]+&gt;", " ", text))
+        body = re.sub(r"&lt;(script|style).*?&lt;/\1&gt;", " ", body, flags=re.S | re.I)
+        return norm(re.sub(r"&lt;[^&gt;]+&gt;", " ", body))
     return None
 
-def norm(s):
-    s = s.replace("\u2019", "'").replace("\u201c", '"').replace("\u201d", '"')
-    s = s.replace("\u2013", "-").replace("\u2014", "-")
-    return re.sub(r"\s+", " ", s).strip().lower()
+SENSITIVE = [re.compile(r"[\w.+-]+@[\w-]+\.[\w.-]+"),
+             re.compile(r"\b(?:\d[ -]?){13,16}\b"),
+             re.compile(r"(?i)\b(api[_-]?key|secret|password|token)\b\s*[:=]\s*\S+")]
 
-SENSITIVE = [
-    re.compile(r"[\w.+-]+@[\w-]+\.[\w.-]+"),                         <span class="c"># email address</span>
-    re.compile(r"\b(?:\d[ -]?){13,16}\b"),                            <span class="c"># card-like number</span>
-    re.compile(r"(?i)\b(api[_-]?key|secret|password|token)\b\s*[:=]\s*\S+"),
-]
-
-def check_all(drafts, sources, off_limits, lo=900, hi=1300):
-    report = {"quotes_failed": [], "claims_unmapped": [], "length": [],
-              "sensitive": [], "off_limits": []}
-    ids = {s["id"] for s in sources}
+def check_sources(sources):
+    failed = []
     for s in sources:
         page = fetch_text(s["url"])
         if page is None or norm(s["quote"]) not in page:
-            report["quotes_failed"].append(s["id"])
+            failed.append(s["id"])
+    return failed
+
+def check_drafts(drafts, sources, off_limits, fmt="linkedin"):
+    f = FORMATS[fmt]; ids = {s["id"] for s in sources}
+    r = {"quotes_failed": check_sources(sources), "claims_unmapped": [], "length": [],
+         "hook": [], "hashtags": [], "sensitive": [], "off_limits": [],
+         "count_wrong": len(drafts["drafts"]) != f["drafts"],
+         "tone_repeated": len({d["tone"] for d in drafts["drafts"]}) != len(drafts["drafts"])}
     for d in drafts["drafts"]:
         n = len(d["text"])
-        if not lo &lt;= n &lt;= hi: report["length"].append((d["id"], n))
+        if not f["min"] &lt;= n &lt;= f["max"]: r["length"].append((d["id"], n))
+        if len(d["hook"]) &gt; f["hook_max"] or not d["text"].startswith(d["hook"]): r["hook"].append(d["id"])
+        if len(d.get("hashtags", [])) &gt; f["max_hashtags"]: r["hashtags"].append(d["id"])
         for c in d["claims"]:
-            if c["source_id"] not in ids: report["claims_unmapped"].append((d["id"], c["claim"]))
-        if any(p.search(d["text"]) for p in SENSITIVE): report["sensitive"].append(d["id"])
-        low = d["text"].lower()
-        if any(p.lower() in low for p in off_limits): report["off_limits"].append(d["id"])
-    report["ok"] = not any(report[k] for k in report if k != "ok")
-    return report</pre>
-<p>The quote check only fetches over <code>https</code> from the trusted list, follows at most three redirects, and each redirect must also be on the list. Without this limit, a bad link in the agent's output could make our service fetch an internal address.</p><div class="dn"><b>Check it:</b> a made-up quote, a missing source, a short draft, an email address in a draft and an off-limits word each appear in the report.</div></section>
-<section id="s10"><h2><span class="stepno">10</span>Notice receiver (hearing when a run finishes)</h2><div class="meta"><span>Step 10</span><span>1 day</span></div><p class="plain">Anthropic sends our service a signed message when something happens to a run. This is how we know to start checking.</p><h3>What to create or configure</h3><ul class="chk"><li>In the Anthropic console, open Manage, then Webhooks, and add the endpoint: public HTTPS on port 443, ending in <code>/anthropic/webhook</code>.</li><li>Subscribe to the event types in the table below.</li><li>Copy the signing secret (shown once) into the vault as <code>ANTHROPIC_WEBHOOK_SIGNING_KEY</code>.</li><li>Build the endpoint: verify the signature, ignore repeats, then act.</li><li>Make every handler safe to run twice.</li></ul><pre><span class="c"># service/app.py</span>
-import os, time
-from flask import Flask, request
-import anthropic
-from state import seen, get_item, create_item, set_status, audit, setting
-from checks import check_all
-from review import send_for_review
-from alerts import alert
+            if c["source_id"] not in ids: r["claims_unmapped"].append((d["id"], c["claim"]))
+        if any(p.search(d["text"]) for p in SENSITIVE): r["sensitive"].append(d["id"])
+        if any(p.lower() in d["text"].lower() for p in off_limits): r["off_limits"].append(d["id"])
+    r["ok"] = not any(v for k, v in r.items() if k != "ok")
+    return r</pre><p>The quote check only fetches over <code>https</code> from the approved list, follows at most three redirects, and each redirect must also be on the list. Without this, a bad link in the agent's output could make our code fetch an internal address.</p><div class="dn"><b>Check it:</b> a made-up quote, a missing source, a short draft, a long hook, two drafts in one tone, and an off-limits word each appear in the report.</div></section>
+<section id="s11"><h2><span class="stepno">11</span>Review documents (Google Docs or Confluence)</h2><div class="meta"><span>Step 11</span><span>1 day</span></div><p class="plain">Each finished request becomes a document the owner reads, compares and comments on. This is also where the choice is made.</p><h3>What to create or configure</h3><ul class="chk"><li>Decide the review tool (recommendation below) and create one shared folder or space for the documents.</li><li>Build <code>runner/process.py</code>: run the checks, build the document text, create the document, record the link, send the link by email or chat.</li><li>Use the layouts below, so every document looks the same.</li><li>Make creation safe to run twice: if a request already has a document, do not create another.</li><li>Posting stays manual. The owner copies the chosen text from the document.</li></ul><div class="tw"><table style="min-width:720px"><thead><tr><th>Document</th><th>Layout</th></tr></thead><tbody><tr><td><b>Topic proposals</b></td><td>Title with date. Themes used. One section per proposal: title, theme, why now, angle, sources with links. A line at the top: how to pick.</td></tr><tr><td><b>Drafts</b></td><td>Title with topic and date. Summary: topic, why now, audience. Sources table (id, title, link, quote). One section per draft: tone, text, hashtags, claims with source ids, contrast note. Comparison and the agent's suggested pick. Checks report. Empty "Reviewer notes" and "Final text" sections. A revision log.</td></tr></tbody></table></div>
+<div class="sub3">Which tool: Google Docs or Confluence</div><div class="tw"><table style="min-width:720px"><thead><tr><th>Question</th><th>Google Docs</th><th>Confluence</th></tr></thead><tbody><tr><td>Comparing drafts and commenting</td><td>Inline comments and suggestions on each draft, easy to share with a link</td><td>Inline comments on a page, good for team review</td></tr><tr><td>Setup effort</td><td>Small: a shared folder and a service account</td><td>Small: an API token and a space</td></tr><tr><td>Formatting from our code</td><td>Plain text with headings first, richer formatting added later</td><td>Rich formatting through HTML storage format</td></tr><tr><td>Where it fits later</td><td>Quick personal review</td><td>Team wiki and the future blog workflow</td></tr><tr><td><b>Recommendation</b></td><td><b>Use for the evaluation</b></td><td>Use if the owner's team already works there every day</td></tr></tbody></table></div><p>Ask the client which one they open daily. The adapter is small, so the other can be added later.</p><pre><span class="c"># runner/docs_google.py        (a service account that has Editor access to the shared folder)</span>
+import os
+from google.oauth2 import service_account
+from googleapiclient.discovery import build
 
-client = anthropic.Anthropic()
-app = Flask(__name__)
+SCOPES = ["https://www.googleapis.com/auth/documents", "https://www.googleapis.com/auth/drive"]
+creds = service_account.Credentials.from_service_account_file(
+    os.environ["GOOGLE_CREDENTIALS_FILE"], scopes=SCOPES)
+docs, drive = build("docs", "v1", credentials=creds), build("drive", "v3", credentials=creds)
 
-@app.post("/anthropic/webhook")
-def anthropic_webhook():
-    try:
-        event = client.beta.webhooks.unwrap(request.get_data(as_text=True),
-                                            headers=dict(request.headers))
-    except Exception:
-        audit("system", "webhook_bad_signature", None, {})
-        return "invalid signature", 400
-    if seen(event.id):                       <span class="c"># the same notice can arrive twice</span>
-        return "", 204
-    kind, rid = event.data.type, event.data.id
-    if kind == "session.status_idled":
-        handle_idle(rid)
-    elif kind == "session.status_terminated":
-        handle_terminated(rid)
-    elif kind in ("deployment_run.failed", "deployment.paused"):
-        alert("high", f"{kind}: {rid}")
-    return "", 204
+def create_doc(title, text):
+    f = drive.files().create(
+        body={"name": title, "mimeType": "application/vnd.google-apps.document",
+              "parents": [os.environ["DOC_FOLDER_ID"]]},       <span class="c"># shared with the owner</span>
+        fields="id").execute()
+    docs.documents().batchUpdate(
+        documentId=f["id"],
+        body={"requests": [{"insertText": {"location": {"index": 1}, "text": text}}]}).execute()
+    return f"https://docs.google.com/document/d/{f['id']}/edit"
 
-def latest_idle_stop_reason(session_id):
-    last = None
-    for ev in client.beta.sessions.events.list(session_id):    <span class="c"># oldest first</span>
-        if ev.type == "session.status_idle":
-            last = ev
-    return last.stop_reason.type if last and last.stop_reason else None
-
-def download_outputs(session_id):
-    for _ in range(4):                                         <span class="c"># files appear after a delay</span>
-        files = {f.filename: f for f in client.beta.files.list(
-            scope_id=session_id, betas=["managed-agents-2026-04-01"])}
-        if "drafts.json" in files or "no_topic.txt" in files:
-            return files
-        time.sleep(3)
-    return {}
-
-def handle_idle(session_id):
-    item = get_item(session_id) or create_item(session_id)
-    if item.status not in ("scheduled", "drafting", "revising"):
-        return                                  <span class="c"># already handled, ignore the repeat</span>
-    if setting("kill_switch") == "on":
-        return
-    stop = latest_idle_stop_reason(session_id)
-    if stop == "budget_reached":
-        set_status(item, "failed", "paused at spending cap")
-        alert("high", f"Run {session_id} paused at its spending cap"); return
-    if stop == "requires_action":
-        alert("high", f"Run {session_id} is waiting for a tool approval"); return
-    set_status(item, "checking")
-    files = download_outputs(session_id)
-    if "no_topic.txt" in files:
-        set_status(item, "skipped", "no suitable topic"); return
-    drafts, sources = load_and_validate(files)          <span class="c"># schema check from Step 5</span>
-    report = check_all(drafts, sources, load_off_limits())
-    send_for_review(item, drafts, sources, report, latest_outcome_result(session_id))
-    set_status(item, "awaiting_review")
-
-def handle_terminated(session_id):
-    item = get_item(session_id)
-    if item and item.status not in ("delivered", "skipped", "failed", "expired"):
-        set_status(item, "failed", "run ended early")
-        alert("high", f"Run {session_id} ended before finishing")</pre><div class="tw"><table style="min-width:640px"><thead><tr><th>Subscribe to</th><th>What our service does</th></tr></thead><tbody><tr><td><code>session.status_idled</code></td><td>Check why it stopped. If finished, run Steps 9 and 11. If paused at the cap or waiting for approval, alert.</td></tr><tr><td><code>session.status_terminated</code></td><td>Mark failed and alert if the item was not finished.</td></tr><tr><td><code>deployment_run.failed</code></td><td>Alert: the schedule fired but no run was created.</td></tr><tr><td><code>deployment.paused</code></td><td>Alert: the schedule paused itself after a serious error.</td></tr><tr><td><code>session.outcome_evaluation_ended</code> (optional)</td><td>Log each grader round for the weekly report.</td></tr></tbody></table></div>
-<ul>
-<li>The "idled" notice also fires when a run waits for a tool approval or hits its cap, so always read why it stopped.</li>
-<li>Notices can repeat, arrive out of order, or be dropped after three failed attempts. Trust the run's real state, and rely on the sweeper in Step 16 as the safety net.</li>
-<li>If the endpoint fails for a sustained period, the console disables it and does not replay missed notices. Re-enable it and run the sweeper.</li>
-<li>Pass the raw request body to the signature check. Re-serialised JSON breaks it.</li></ul><div class="dn"><b>Check it:</b> a test run triggers the handler once, a replayed notice is ignored, and a notice with a bad signature gets a 400.</div></section>
-<section id="s11"><h2><span class="stepno">11</span>Review step (asking a person)</h2><div class="meta"><span>Step 11</span><span>1 day</span></div><p class="plain">This step sends drafts to the reviewer and turns their reply into an action. It is a small adapter, so the channel can change without touching anything else.</p><h3>What to create or configure</h3><ul class="chk"><li>Create the review channel adapter with two functions: send the message, read the reply.</li><li>Support five commands (table below).</li><li>Check the sender against the approver list before acting. Log and ignore anyone else.</li><li>For a change request, send the note to the same open run as a new outcome with the same checklist.</li><li>For approval, store a fingerprint of the exact text.</li></ul><pre><span class="c"># service/review.py  (channel-specific parts are the two functions at the top)</span>
-def send_for_review(item, drafts, sources, report, outcome_result):
-    msg = render_review_message(item, drafts, sources, report, outcome_result)
-    item.review_ref = channel_send(msg)            <span class="c"># chat tool or email</span>
-    save(item)
-
-def parse_reply(raw_request):
-    <span class="c"># returns Action(kind, user_id, draft_no, note) or None</span>
-    ...
-
-<span class="c"># service/app.py</span>
-import hashlib
-@app.post("/review/reply")
-def review_reply():
-    a = parse_reply(request)
-    if a is None:
-        return "", 204
-    if a.user_id not in approver_ids():
-        audit(a.user_id, "reply_from_unknown_user", None, {}); return "", 204
-    item = item_awaiting_review()
-    if a.kind == "pause":
-        set_setting("kill_switch", "on")
-        client.beta.deployments.pause(os.environ["DEPLOYMENT_ID"])
-        audit(a.user_id, "paused", None, {})
-    elif a.kind == "skip":
-        set_status(item, "skipped", f"skipped by {a.user_id}")
-        write_history(item, "skipped")
-    elif a.kind == "revise":
-        set_status(item, "revising")
-        client.beta.sessions.events.send(
-            session_id=item.session_id,
-            events=[{"type": "user.define_outcome",
-                     "description": f"Revise draft {a.draft_no}: {a.note}. "
-                                    "Keep every other rule. Save new drafts.json "
-                                    "and sources.json to /mnt/session/outputs/.",
-                     "rubric": {"type": "text", "content": RUBRIC},
-                     "max_iterations": 3}])
-    elif a.kind == "approve":
-        text = draft_text(item, a.draft_no)
-        item.approved_by, item.approved_draft = a.user_id, a.draft_no
-        item.approved_hash = hashlib.sha256(text.encode()).hexdigest()
-        item.approved_at = now()
-        set_status(item, "approved")
-        deliver_if_allowed(item)
-    return "", 204</pre><div class="tw"><table style="min-width:560px"><thead><tr><th>Reviewer types</th><th>Meaning</th></tr></thead><tbody><tr><td><code>approve 2</code></td><td>Use draft 2 exactly as written</td></tr><tr><td><code>revise 2: shorter and warmer</code></td><td>Rewrite draft 2 with this note, then check again</td></tr><tr><td><code>skip</code></td><td>Do not use any draft this time</td></tr><tr><td><code>pause</code></td><td>Stop the schedule and block delivery</td></tr><tr><td><code>show 2</code></td><td>Show draft 2 with its sources again</td></tr></tbody></table></div>
-<div class="sub3">What the reviewer sees</div><pre>Topic: &lt;topic&gt;     Checklist: passed | not fully met
-Why now: &lt;one sentence&gt;
-
-Draft 1 (question) &lt;text&gt;   Sources: s1, s2
-Draft 2 (surprising fact) &lt;text&gt;   Sources: s1
-Draft 3 (story) &lt;text&gt;   Sources: s3
-
-Checks: quotes verified 4 of 4 | length ok | no sensitive data | no off-limits words
-Reply: approve N | revise N: note | skip | pause</pre><ul><li>The run stays open while it waits, and waiting costs nothing.</li><li>If an edited draft comes back, it replaces the old drafts and the reviewer is asked again.</li><li>Only one item can be awaiting review at a time.</li><li>If a reviewer edits the text by hand, the fingerprint changes, so the text must be approved again.</li></ul><div class="dn"><b>Check it:</b> a reply from an unknown person is ignored, a change request returns new drafts in the same run, and an approval records who, when and the fingerprint.</div></section>
-<section id="s12"><h2><span class="stepno">12</span>Delivery (sending approved text)</h2><div class="meta"><span>Step 12</span><span>0.5 day</span></div><p class="plain">Delivery is the last step and is separate from the agent. One function per destination.</p><h3>What to create or configure</h3><ul class="chk"><li>Create <code>service/delivery.py</code> with a common shape: take approved text, return a reference.</li><li>Version one: manual delivery. The service sends the final text to the reviewer to place by hand.</li><li>Add destinations one at a time (internal channel, wiki page, email draft, intranet page).</li><li>Give each destination its own permission, kept in the vault. The agent never holds it.</li><li>Make it safe to run twice.</li></ul><pre><span class="c"># service/delivery.py</span>
-def deliver_if_allowed(item):
-    checks = [
-        (setting("kill_switch") != "on",                 "stop switch is on"),
-        (setting("delivery_enabled") == "on",             "delivery is off (trial mode)"),
-        (item.status == "approved",                       "item is not approved"),
-        (item.delivered_at is None,                       "already delivered"),
-        (age_hours(item.approved_at) &lt;= int(setting("approval_expiry_hours")),
-                                                          "approval expired"),
-        (delivered_this_week() &lt; int(setting("max_items_per_week")),
-                                                          "weekly limit reached"),
-        (inside_window(setting("delivery_window")),       "outside the delivery window"),
-    ]
-    for ok, why in checks:
-        if not ok:
-            audit("system", "delivery_blocked", item.id, {"reason": why})
-            return False
-    text = draft_text(item, item.approved_draft)
-    if hashlib.sha256(text.encode()).hexdigest() != item.approved_hash:
-        audit("system", "delivery_blocked", item.id, {"reason": "text changed"})
-        return False
-    ref = DESTINATIONS[item.team](text)             <span class="c"># one function per destination</span>
-    item.delivered_to, item.delivered_at, item.delivery_ref = item.team, now(), ref
-    set_status(item, "delivered")
-    audit("system", "delivered", item.id, {"ref": ref})
-    write_history(item, "delivered"); write_feedback(item)
-    return True
-
-def manual(text):               <span class="c"># version one</span>
-    return channel_send_to_reviewer("Final text, ready to place:\n\n" + text)</pre><div class="dest"><div><b>Chat channel</b><br>A message in an internal channel.</div><div><b>Internal wiki</b><br>A page or draft.</div><div><b>Email</b><br>A newsletter draft.</div><div><b>Intranet page</b><br>Posted to the site.</div><div class="later"><b>Public site</b><br>Possible later, with extra review.</div></div><div class="dn"><b>Check it:</b> blocking each condition one at a time stops delivery and logs the reason, and a second call after success delivers nothing.</div></section>
-<section id="s13"><h2><span class="stepno">13</span>Memory write-back (so the agent improves)</h2><div class="meta"><span>Step 13</span><span>0.25 day</span></div><p class="plain">After each item ends, our service saves what happened as new files in the memory store. The next run reads them.</p><h3>What to create or configure</h3><ul class="chk"><li>After delivery or skip, create one history file with date, topic and outcome.</li><li>After delivery, create one feedback file with the reviewer's note, the chosen style and a short summary of any edit.</li><li>Always create new dated files and never rewrite old ones. If a path already exists, add a suffix.</li><li>Keep the files short and free of personal data.</li></ul><pre><span class="c"># service/memory_writeback.py</span>
-def write_history(item, outcome):
-    path = f"/history/{today()}-{slug(item.topic)}.md"
-    body = f"Topic: {item.topic}\nDate: {today()}\nOutcome: {outcome}\n"
-    put(path, body)
-
-def write_feedback(item):
-    path = f"/feedback/{today()}-{slug(item.topic)}.md"
-    body = (f"Chosen draft style: {item.approved_style}\n"
-            f"Reviewer note: {item.last_note or 'none'}\n"
-            f"Edits made by reviewer: {item.edit_summary or 'none'}\n")
-    put(path, body)
+<span class="c"># Confluence version, same shape (confirm against your Confluence plan):</span>
+<span class="c"># requests.post(f"{BASE}/wiki/rest/api/content", auth=(EMAIL, API_TOKEN),</span>
+<span class="c">#   json={"type": "page", "title": title, "space": {"key": SPACE},</span>
+<span class="c">#         "body": {"storage": {"value": html, "representation": "storage"}}})</span></pre><pre><span class="c"># runner/process.py</span>
+def process_finished(request_id):
+    r = get_request(request_id)
+    files = fetch_outputs(r.session_id)
+    if "proposals.json" in files:
+        proposals, sources = load_and_validate("proposals", files)
+        report = {"quotes_failed": check_sources(sources)}
+        text = render_proposals(proposals, sources, report, request_id)
+        title = f"Topic proposals {today()}"
+    else:
+        drafts, sources = load_and_validate("drafts", files)
+        report = check_drafts(drafts, sources, load_off_limits())
+        text = render_drafts(drafts, sources, report, request_id, outcome_result(r.session_id))
+        title = f"Drafts {drafts['topic']} {today()}"
+    url = r.doc_url or create_doc(title, text)            <span class="c"># never create a second document</span>
+    save(r, doc_url=url, report=report, status="waiting_for_review", cost=run_cost(r.session_id))
+    notify(f"{title}: {url}")                              <span class="c"># email or chat message</span>
+    return url</pre><div class="dn"><b>Check it:</b> a request produces one document in the shared folder with the right layout, the link arrives, and running it again does not create a second document.</div></section>
+<section id="s12"><h2><span class="stepno">12</span>Feedback and memory write-back (so the agent learns)</h2><div class="meta"><span>Step 12</span><span>0.5 day</span></div><p class="plain">After you choose a draft, the runner saves what happened as new files in memory. The next run reads them.</p><h3>What to create or configure</h3><ul class="chk"><li>After each pick or revision, run <code>feedback</code> with the chosen draft and a one-line reason.</li><li>Write one history file per used topic and one feedback file per chosen draft.</li><li>Always create new dated files and never rewrite old ones. If a path exists, add a suffix.</li><li>Optional later: read the "Final text" section of the document and save a summary of your edits automatically.</li></ul><pre><span class="c"># runner/writeback.py</span>
+def record_feedback(request_id, chosen, note):
+    r = get_request(request_id)
+    drafts = load_saved_drafts(r)
+    d = drafts["drafts"][chosen - 1]
+    put(f"/history/{today()}-{slug(drafts['topic'])}.md",
+        f"Topic: {drafts['topic']}\nDate: {today()}\nFormat: {drafts['format']}\n")
+    put(f"/feedback/{today()}-{slug(drafts['topic'])}.md",
+        f"Chosen tone: {d['tone']}\nChosen draft: {chosen} of {len(drafts['drafts'])}\n"
+        f"Reviewer note: {note or 'none'}\n")
+    set_status(r.id, "done"); audit("owner", "feedback", r.id, {"chosen": chosen})
 
 def put(path, body, n=1):
     try:
         client.beta.memory_stores.memories.create(STORE_ID, path=path, content=body)
-    except Exception as e:                       <span class="c"># path already exists (conflict)</span>
+    except Exception as e:                              <span class="c"># path already exists</span>
         if "conflict" in str(e).lower() and n &lt; 5:
             put(path.replace(".md", f"-{n+1}.md"), body, n + 1)
         else:
-            raise</pre><div class="dn"><b>Check it:</b> after an item ends, a new file appears in the store, and the next test run reads it and avoids that topic.</div></section>
-<section id="s14"><h2><span class="stepno">14</span>Safety controls (switch them on and test them)</h2><div class="meta"><span>Step 14</span><span>0.5 day</span></div><p class="plain">Make the rules real in settings and code.</p><h3>What to create or configure</h3><ul class="chk"><li>Approver list in settings, checked in Step 11.</li><li>Fingerprint binding and approval expiry, checked in Step 12.</li><li>Stop switch: one setting plus pausing the schedule.</li><li>Weekly limit and delivery window, checked in Step 12.</li><li>Four roles with separate permissions (table below).</li><li>Keys only in the vault, rotated on a schedule and when anyone leaves the team.</li><li>Trial mode: delivery switched off.</li></ul><div class="tw"><table style="min-width:620px"><thead><tr><th>Role</th><th>Can do</th><th>Cannot do</th></tr></thead><tbody><tr><td>Builder</td><td>Change code, agent files and settings in test</td><td>Read live keys, approve items, deliver</td></tr><tr><td>Operator</td><td>Watch runs, rerun, pause, read logs</td><td>Change code or the approver list</td></tr><tr><td>Approver</td><td>Approve, ask for changes, skip, pause</td><td>Change code or settings</td></tr><tr><td>Deliverer (the service itself)</td><td>Send approved text to the destination</td><td>Edit code, approve</td></tr></tbody></table></div><div class="tw"><table style="min-width:620px"><thead><tr><th>Secret</th><th>Kept in</th><th>Read by</th></tr></thead><tbody><tr><td>Anthropic service key</td><td>Vault</td><td>The service only. Rotate every 90 days.</td></tr><tr><td>Notice signing secret</td><td>Vault</td><td>The notice receiver only</td></tr><tr><td>Review channel token</td><td>Vault</td><td>The review step only</td></tr><tr><td>Destination permission</td><td>Vault</td><td>The delivery step only</td></tr><tr><td>Database connection</td><td>Vault</td><td>The service only</td></tr></tbody></table></div><div class="dn"><b>Check it:</b> an unknown approver, an edited text, an expired approval, the weekly limit, the delivery window and the stop switch each block delivery on purpose.</div></section>
-<div class="partbar" style="margin-top:56px"><b>Schedule and operate · Steps 15 to 21</b><span>Put it on a schedule, protect it, test it, run it.</span></div>
-<section id="s15"><h2><span class="stepno">15</span>Schedule</h2><div class="meta"><span>Step 15</span><span>0.5 day</span></div><p class="plain">The schedule starts a run on chosen days and keeps a record of each one.</p><h3>What to create or configure</h3><ul class="chk"><li>Create one schedule with days, time zone, spending cap and the same outcome as Step 6.</li><li>Pin the agent version so a later edit cannot change live behavior by surprise.</li><li>Attach memory read-only.</li><li>Check the listed upcoming run times.</li><li>Run it once by hand while paused.</li></ul><pre>deployment = client.beta.deployments.create(
-    name="Content writer, Tue and Thu",
-    agent={"type": "agent", "id": agent_id, "version": int(os.environ["AGENT_VERSION"])},
-    environment_id=env_id,
-    resources=[{"type": "memory_store", "memory_store_id": store_id,
-                "access": "read_only"}],
+            raise</pre><p>Proposals you did not pick are not saved as used, so they can come back later. Do not put anything confidential in the reason note.</p><div class="dn"><b>Check it:</b> after <code>feedback</code>, two new files appear in memory and the next run avoids that topic and prefers the chosen tone.</div></section>
+<div class="partbar" style="margin-top:56px"><b>Schedule and safeguards · Steps 13 to 16</b><span>Weekly proposals, pickup, safeguards and alerts.</span></div>
+<section id="s13"><h2><span class="stepno">13</span>Scheduled topic discovery</h2><div class="meta"><span>Step 13</span><span>0.5 day</span></div><p class="plain">A weekly schedule runs the propose mode on its own, so proposals are waiting for you. Drafting stays on demand.</p><h3>What to create or configure</h3><ul class="chk"><li>Create one schedule: weekly, in your time zone, with a spending cap and the propose checklist.</li><li>Pin the agent version so a later edit cannot change live behavior by surprise.</li><li>Attach memory read-only.</li><li>Check the listed upcoming run times, then run it once by hand.</li><li>Pause it any time with one call.</li></ul><pre>deployment = client.beta.deployments.create(
+    name="Weekly topic proposals",
+    agent={"type": "agent", "id": AGENT_ID, "version": int(os.environ["AGENT_VERSION"])},
+    environment_id=ENV_ID,
+    resources=[{"type": "memory_store", "memory_store_id": STORE_ID, "access": "read_only"}],
     budget={"type": "limit", "max_list_cost": {"amount": "300", "currency": "USD"}},
-    initial_events=[OUTCOME],
-    schedule={"type": "cron", "expression": "0 7 * * 2,4",     <span class="c"># 07:00 Tue and Thu</span>
-              "timezone": "&lt;our time zone&gt;"},
+    initial_events=[outcome("MODE: propose\nCOUNT: 4", "agent/rubric_propose.md")],
+    schedule={"type": "cron", "expression": "0 7 * * 1",      <span class="c"># 07:00 every Monday</span>
+              "timezone": "&lt;your time zone&gt;"},
 )
-print(deployment.id, deployment.schedule.upcoming_runs_at)    <span class="c"># confirm the times look right</span>
+print(deployment.id, deployment.schedule.upcoming_runs_at)   <span class="c"># confirm the times look right</span>
 
-client.beta.deployments.run(deployment.id)     <span class="c"># test run, works even while paused</span>
-<span class="c"># client.beta.deployments.pause(deployment.id)    / .unpause(deployment.id)</span></pre><ul><li>Runs can start up to about 9 minutes after the listed time. Draft early and deliver later.</li><li>Times that do not exist on a clock-change day are skipped, and repeated times run twice. Avoid 1 to 3 in the morning local time.</li><li>A budget set here is copied onto each run. Changing it applies from the next run.</li><li>Missed runs while paused are not made up on resume.</li><li>If the agent is archived, the schedule is archived with it. Never archive the live agent as clean-up.</li><li>Confirm the exact field names for resources and budget on the schedule against the current SDK in this step.</li></ul><div class="dn"><b>Check it:</b> a scheduled run starts on its own, a record is written for it, and our service receives its finished notice.</div></section>
-<section id="s16"><h2><span class="stepno">16</span>Safety-net jobs (sweeper, reminders, expiry)</h2><div class="meta"><span>Step 16</span><span>0.5 day</span></div><p class="plain">Notices are not guaranteed, and people forget to reply. Three small jobs cover both.</p><h3>What to create or configure</h3><ul class="chk"><li><b>Sweeper</b> every 15 minutes: list recent schedule records, create missing items, finish anything stuck.</li><li><b>Reminder</b> hourly: remind the reviewer after 24 hours.</li><li><b>Expiry</b> hourly: auto-skip after 72 hours and log the topic.</li><li>Run them from whatever scheduler the hosting platform provides.</li></ul><pre><span class="c"># service/jobs.py</span>
-def sweep():
+client.beta.deployments.run(deployment.id)        <span class="c"># test run, works even while paused</span>
+<span class="c"># client.beta.deployments.pause(deployment.id)    /  .unpause(deployment.id)</span></pre><ul><li>Runs can start up to about 9 minutes after the listed time.</li><li>Avoid 1 to 3 in the morning local time, around clock changes.</li><li>The cap is copied onto each run. A change applies from the next run.</li><li>Runs missed while paused are not made up.</li><li>Never archive the live agent as clean-up. The schedule is archived with it.</li><li>Confirm the exact field names for resources and budget on the schedule against the current SDK.</li></ul><div class="dn"><b>Check it:</b> a scheduled run starts by itself, a record is written, and the proposals document appears after the next polling pass.</div></section>
+<section id="s14"><h2><span class="stepno">14</span>Picking up finished runs (polling job)</h2><div class="meta"><span>Step 14</span><span>0.5 day</span></div><p class="plain">Scheduled runs have no one watching, so a small job notices when they finish. It runs every 15 minutes from any scheduler.</p><h3>What to create or configure</h3><ul class="chk"><li>Create <code>runner/jobs.py</code> with a <code>poll</code> function.</li><li>Run it every 15 minutes with cron or any scheduler you already have. No public web address is needed.</li><li>It also covers manual runs that were interrupted (for example the laptop went to sleep).</li><li>Later option: switch to signed notices from Anthropic if you want results within seconds. The same <code>process_finished</code> function is reused.</li></ul><pre><span class="c"># runner/jobs.py</span>
+def poll():
     for run in recent(client.beta.deployment_runs.list(deployment_id=DEPLOYMENT_ID)):
         if run.error:
             alert_once("high", f"Scheduled run failed: {run.error.type}", run.id); continue
-        if run.session_id and not get_item(run.session_id):
-            create_item(run.session_id)                    <span class="c"># a notice was missed</span>
-    for item in items_with_status("scheduled", "drafting", "revising"):
-        s = client.beta.sessions.retrieve(item.session_id)
-        if s.status == "idle":        handle_idle(item.session_id)
-        elif s.status == "terminated": handle_terminated(item.session_id)
-        elif minutes_since(item.updated_at) &gt; 45:
-            alert_once("medium", f"Run {item.session_id} is taking too long", item.id)
+        if run.session_id and not get_by_session(run.session_id):
+            new_request("propose", run.session_id, source="schedule")
+    for r in requests_with_status("running"):
+        s = client.beta.sessions.retrieve(session_id=r.session_id)
+        if s.status == "idle":
+            reason = latest_idle_stop_reason(r.session_id)
+            if reason == "budget_reached":
+                set_status(r.id, "failed"); alert_once("high", "Run paused at its cap", r.id)
+            elif reason != "requires_action":
+                process_finished(r.id)                      <span class="c"># safe to run twice</span>
+        elif s.status == "terminated":
+            set_status(r.id, "failed"); alert_once("high", "Run ended early", r.id)
+        elif minutes_since(r.updated_at) &gt; 45:
+            alert_once("medium", "Run is taking too long", r.id)
 
-def reminders():
-    for item in items_with_status("awaiting_review"):
-        if hours_since(item.updated_at) &gt;= int(setting("reminder_hours")) and not item.reminder_sent_at:
-            remind_reviewer(item)
-
-def expire():
-    for item in items_with_status("awaiting_review"):
-        if hours_since(item.updated_at) &gt;= int(setting("auto_skip_hours")):
-            set_status(item, "expired", "no reply"); write_history(item, "expired")</pre><div class="dn"><b>Check it:</b> switching the notice endpoint off for one run still ends with the item reaching the reviewer within 15 minutes.</div></section>
-<section id="s17"><h2><span class="stepno">17</span>Monitoring and alerts</h2><div class="meta"><span>Step 17</span><span>0.5 day</span></div><p class="plain">Know quickly when something stops working, and who will act.</p><h3>What to create or configure</h3><ul class="chk"><li>Send alerts to one team channel with a severity label.</li><li>Add the alert rules below.</li><li>Send a weekly summary: items made, approved, skipped, expired, cost.</li><li>Link each alert to the run in the console's step-by-step viewer.</li></ul><div class="tw"><table style="min-width:620px"><thead><tr><th>Alert</th><th>Severity</th><th>Trigger</th></tr></thead><tbody><tr><td>Scheduled run failed</td><td>High</td><td>Failed schedule record, or no record by 09:00 on a run day</td></tr><tr><td>Run paused at spending cap</td><td>High</td><td>Idle with stop reason "budget reached"</td></tr><tr><td>Run ended early</td><td>High</td><td>Terminated before finishing</td></tr><tr><td>Run stuck</td><td>Medium</td><td>Drafting for over 45 minutes</td></tr><tr><td>Review waiting</td><td>Medium</td><td>Awaiting review for over 24 hours</td></tr><tr><td>Notice signature failures</td><td>Medium</td><td>Any invalid signature</td></tr><tr><td>Quote check failures</td><td>Low</td><td>Any item with an unverified quote</td></tr><tr><td>Unknown approver reply</td><td>Low</td><td>Any reply from someone not on the list</td></tr><tr><td>Weekly cost above plan</td><td>Low</td><td>Over $5 in a week</td></tr></tbody></table></div><pre><span class="c"># weekly report: cost per item comes from each run's recorded usage</span>
-for item in items_since(days=7):
-    s = client.beta.sessions.retrieve(item.session_id)
-    item.cost_cents = int(s.usage.list_cost.amount)       <span class="c"># amount is in cents</span>
-total = sum(i.cost_cents for i in items_since(days=7)) / 100</pre><div class="dn"><b>Check it:</b> each alert in the table reaches the channel in a deliberate test.</div></section>
-<section id="s18"><h2><span class="stepno">18</span>Test plan and tuning</h2><div class="meta"><span>Step 18</span><span>1 day</span></div><p class="plain">Run the fifteen tests below, then tune quality against a 10-topic set.</p><h3>What to create or configure</h3><ul class="chk"><li>Create <code>tests/topics.json</code> with 10 topics and notes on the expected style.</li><li>Run each test case in the table.</li><li>Rate drafts blind against real examples and tune style files, checklist and instructions until 6 of 10 are usable with light edits.</li><li>Compare Sonnet 5.5 with Opus 5.5 on the same set and keep the cheaper one unless quality clearly improves.</li><li>Store results in the repository.</li></ul><div class="tw"><table style="min-width:640px"><thead><tr><th>#</th><th>Test</th><th>Expected result</th></tr></thead><tbody><tr><td>T1</td><td>Happy path from run to delivery (manual delivery)</td><td>Item reaches delivered, audit trail complete</td></tr><tr><td>T2</td><td>Reviewer asks for a change</td><td>New drafts in the same run, asked again</td></tr><tr><td>T3</td><td>Reply from an unknown person</td><td>Ignored and logged</td></tr><tr><td>T4</td><td>Text edited after approval</td><td>Delivery blocked, approval needed again</td></tr><tr><td>T5</td><td>Approval older than 24 hours</td><td>Delivery blocked</td></tr><tr><td>T6</td><td>Stop switch on</td><td>No handler acts, delivery blocked</td></tr><tr><td>T7</td><td>Same notice delivered twice</td><td>Handled once</td></tr><tr><td>T8</td><td>Notice endpoint switched off</td><td>Sweeper recovers the item within 15 minutes</td></tr><tr><td>T9</td><td>Made-up quote in a source</td><td>Flagged in the review message</td></tr><tr><td>T10</td><td>Run paused at its cap</td><td>Alert, item marked failed</td></tr><tr><td>T11</td><td>Scheduled run fails</td><td>Alert from the failed record</td></tr><tr><td>T12</td><td>Delivery called twice</td><td>Delivered once</td></tr><tr><td>T13</td><td>Bad signature on a notice</td><td>400 and an audit row</td></tr><tr><td>T14</td><td>Off-limits word in a draft</td><td>Flagged, grader sends back</td></tr><tr><td>T15</td><td>New agent version then roll back</td><td>Schedule points back and behaves as before</td></tr></tbody></table></div><div class="tw"><table style="min-width:520px"><thead><tr><th>Measure</th><th>Target by week 4</th></tr></thead><tbody><tr><td>Items where a draft is picked</td><td>60% or more</td></tr><tr><td>Quotes verified by the check</td><td>95% or more</td></tr><tr><td>Reviewer edits per picked draft</td><td>Falling each week</td></tr><tr><td>Grader rounds per run</td><td>2 or fewer on average</td></tr><tr><td>Cost per approved item</td><td>Under $1.50</td></tr><tr><td>Missed or failed runs</td><td>0 unnoticed</td></tr></tbody></table></div><div class="dn"><b>Check it:</b> all fifteen tests pass and the test set meets the quality bar.</div></section>
-<section id="s19"><h2><span class="stepno">19</span>Changing the agent safely</h2><div class="meta"><span>Step 19</span><span>0.25 day</span></div><p class="plain">Every change to the instructions, tools or model creates a new version. Roll changes out in a fixed order so live behavior never changes by surprise.</p><h3>What to create or configure</h3><ul class="chk"><li>Edit the files in the repository (system prompt, checklist, tool settings).</li><li>Apply with Step 1. This creates a new version and the live schedule keeps using the old one.</li><li>Run the test set against the new version by pinning it in a test run.</li><li>If the results are equal or better, point the schedule at the new version.</li><li>If anything regresses, point the schedule back to the previous version.</li><li>Style, topics and off-limits changes need no new version, because they live in memory.</li></ul><pre><span class="c"># test the new version without touching the live schedule</span>
+def latest_idle_stop_reason(session_id):
+    last = None
+    for ev in client.beta.sessions.events.list(session_id=session_id).data:   <span class="c"># oldest first</span>
+        if ev.type == "session.status_idle":
+            last = ev
+    return last.stop_reason.type if last and last.stop_reason else None</pre><div class="dn"><b>Check it:</b> with the job switched on, a scheduled run ends with a proposals document and an email within 15 minutes of finishing.</div></section>
+<section id="s15"><h2><span class="stepno">15</span>Safeguards</h2><div class="meta"><span>Step 15</span><span>0.5 day</span></div><p class="plain">Make the rules real in settings and code. The scope is public or low-sensitivity material only, drafts only, and one reviewer.</p><h3>What to create or configure</h3><ul class="chk"><li><b>Public only:</b> the agent can reach only the approved sites, memory holds no internal material, and the off-limits list is checked on every draft.</li><li><b>No publishing credentials anywhere.</b> Posting is manual, so nothing here can post on its own.</li><li><b>Spending caps:</b> $3 per run, with a retry limit on the grader.</li><li><b>Stop switch:</b> one setting makes every command and the polling job do nothing, and one call pauses the schedule.</li><li><b>Access:</b> the review folder is shared only with the owner and the service account. Keys live in the secrets vault.</li><li><b>Audit trail:</b> every request, document and choice is recorded.</li><li><b>Content rules:</b> facts are attributed, no claims about named people, no non-public information about any company.</li></ul><div class="tw"><table style="min-width:660px"><thead><tr><th>Control</th><th>Where it lives</th><th>How to test</th></tr></thead><tbody><tr><td>Approved sites only</td><td>Environment host list</td><td>Ask for a page on another site: it fails</td></tr><tr><td>Off-limits phrases</td><td>Memory file and check in Step 10</td><td>Add a banned word to a draft: it is flagged</td></tr><tr><td>Spending cap</td><td>Run and schedule budget</td><td>Set a tiny cap: the run pauses and alerts</td></tr><tr><td>Stop switch</td><td>Setting plus schedule pause</td><td>Turn it on: commands refuse to run</td></tr><tr><td>No duplicate documents</td><td>Step 11</td><td>Run processing twice: one document</td></tr><tr><td>Secrets</td><td>Vault only</td><td>Search the repository: no keys</td></tr></tbody></table></div><p>Before the first real use, ask the client's security and compliance owners to confirm that public or low-sensitivity material is acceptable for processing by the Claude Platform, and note any retention terms that apply.</p><div class="dn"><b>Check it:</b> each control is tested once on purpose.</div></section>
+<section id="s16"><h2><span class="stepno">16</span>Monitoring and alerts</h2><div class="meta"><span>Step 16</span><span>0.25 day</span></div><p class="plain">Know quickly when something stops working.</p><h3>What to create or configure</h3><ul class="chk"><li>Send alerts to one channel with a severity label.</li><li>Add the alert rules below.</li><li>Send a weekly summary: requests, documents, picks, cost.</li><li>Link each alert to the run in the console's step-by-step viewer.</li></ul><div class="tw"><table style="min-width:620px"><thead><tr><th>Alert</th><th>Severity</th><th>Trigger</th></tr></thead><tbody><tr><td>Scheduled run failed</td><td>High</td><td>Failed schedule record, or no record by 09:00 on a Monday</td></tr><tr><td>Run paused at its cap</td><td>High</td><td>Idle with stop reason "budget reached"</td></tr><tr><td>Run ended early</td><td>High</td><td>Terminated before finishing</td></tr><tr><td>Run stuck</td><td>Medium</td><td>Running for over 45 minutes</td></tr><tr><td>Proposals not reviewed</td><td>Low</td><td>Waiting for review for over 5 days</td></tr><tr><td>Quote check failures</td><td>Low</td><td>Any request with an unverified quote</td></tr><tr><td>Weekly cost above plan</td><td>Low</td><td>Over $5 in a week</td></tr></tbody></table></div><pre><span class="c"># weekly summary: cost per request comes from each run's recorded usage</span>
+for r in requests_since(days=7):
+    u = client.beta.sessions.retrieve(session_id=r.session_id).usage
+    r.cost_cents = int(u.list_cost.amount)          <span class="c"># amount is in cents</span></pre><div class="dn"><b>Check it:</b> each alert in the table reaches the channel in a deliberate test.</div></section>
+<div class="partbar" style="margin-top:56px"><b>Test and evaluate · Steps 17 to 20</b><span>Prove it, change it safely, evaluate it with the owner, run it.</span></div>
+<section id="s17"><h2><span class="stepno">17</span>Test plan and tuning</h2><div class="meta"><span>Step 17</span><span>1.25 days</span></div><p class="plain">Run the fourteen tests, then tune quality using real topics and themes.</p><h3>What to create or configure</h3><ul class="chk"><li>Create <code>tests/topics.json</code> with 10 topics and 3 theme sets.</li><li>Run every test case below.</li><li>Rate drafts blind: are the three tones clearly different, and would the owner post any of them with light edits? Tune tones, checklists and instructions until 7 of 10 requests give at least one usable draft.</li><li>Compare Sonnet 5.5 with Opus 5.5 on the same set and keep the cheaper one unless quality clearly improves.</li><li>Keep results in the repository.</li></ul><div class="tw"><table style="min-width:640px"><thead><tr><th>#</th><th>Test</th><th>Expected result</th></tr></thead><tbody><tr><td>T1</td><td>Propose from themes</td><td>Four proposals, each with a reason, angle and sources</td></tr><tr><td>T2</td><td>Draft with a topic given</td><td>Three drafts, three different tones, contrast notes</td></tr><tr><td>T3</td><td>Pick a proposal</td><td>Drafts written in the same run using earlier research</td></tr><tr><td>T4</td><td>Ask for a change to draft 2</td><td>New drafts, same checklist applied</td></tr><tr><td>T5</td><td>Edit a theme and sync</td><td>The next run uses the new theme</td></tr><tr><td>T6</td><td>Remove a site and sync</td><td>The agent can no longer read that site</td></tr><tr><td>T7</td><td>Made-up quote in a source</td><td>Flagged in the document</td></tr><tr><td>T8</td><td>Off-limits word in a draft</td><td>Flagged, and the grader sends it back</td></tr><tr><td>T9</td><td>Run paused at its cap</td><td>Alert, request marked failed</td></tr><tr><td>T10</td><td>Scheduled run fails</td><td>Alert from the failed record</td></tr><tr><td>T11</td><td>Polling job after the runner was closed mid-run</td><td>Document still created</td></tr><tr><td>T12</td><td>Stop switch on</td><td>Commands and the job do nothing</td></tr><tr><td>T13</td><td>Processing run twice</td><td>One document only</td></tr><tr><td>T14</td><td>Two drafts in the same tone</td><td>Flagged and sent back</td></tr></tbody></table></div><div class="tw"><table style="min-width:520px"><thead><tr><th>Measure</th><th>Target by week 2</th></tr></thead><tbody><tr><td>Requests with at least one usable draft</td><td>7 of 10 or more</td></tr><tr><td>Quotes verified by the check</td><td>95% or more</td></tr><tr><td>Drafts clearly different in tone</td><td>3 of 3 on most requests</td></tr><tr><td>Reviewer edits to the chosen draft</td><td>Falling each week</td></tr><tr><td>Grader rounds per run</td><td>2 or fewer on average</td></tr><tr><td>Cost per request</td><td>Under $1.00</td></tr></tbody></table></div><div class="dn"><b>Check it:</b> all fourteen tests pass and the quality targets are met on the test set.</div></section>
+<section id="s18"><h2><span class="stepno">18</span>Changing the agent safely</h2><div class="meta"><span>Step 18</span><span>0.25 day</span></div><p class="plain">Every change to the instructions, tools or model makes a new version. Roll out changes in a fixed order so live behavior never changes by surprise.</p><h3>What to create or configure</h3><ul class="chk"><li>Edit the files in the repository.</li><li>Apply with Step 1. This creates a new version, and the schedule keeps using the old one.</li><li>Run the test set against the new version by pinning it in a test run.</li><li>If results are equal or better, point the schedule at the new version.</li><li>If anything regresses, point the schedule back.</li><li>Edits to themes, data sources, tones and formats need no new version. Run <code>sync_config.py</code> instead.</li></ul><pre><span class="c"># test the new version without touching the schedule</span>
 session = client.beta.sessions.create(
-    agent={"type": "agent", "id": agent_id, "version": NEW_VERSION},
-    environment_id=env_id, resources=[...], initial_events=[OUTCOME])
+    agent={"type": "agent", "id": AGENT_ID, "version": NEW_VERSION},
+    environment_id=ENV_ID, resources=[...], initial_events=[...])
 
 <span class="c"># promote: point the schedule at the new version (confirm the update call in the SDK)</span>
-client.beta.deployments.update(deployment.id,
-    agent={"type": "agent", "id": agent_id, "version": NEW_VERSION})
-
-<span class="c"># roll back: same call with the previous version number</span></pre><div class="dn"><b>Check it:</b> a change goes through test, promote and rollback once, as a rehearsal.</div></section>
-<section id="s20"><h2><span class="stepno">20</span>Trial and go-live</h2><div class="meta"><span>Step 20</span><span>2 weeks</span></div><p class="plain">Two weeks of real runs with every item reviewed and nothing delivered automatically.</p><h3>What to create or configure</h3><ul class="chk"><li>Keep <code>delivery_enabled</code> off. The reviewer sees every draft.</li><li>Record every change the reviewer makes and let Step 13 add the lessons to memory.</li><li>At the end, hold a go or no-go review against the targets in Step 18.</li><li>Collect the sign-offs: security, compliance, content owner, approver.</li><li>Switch <code>delivery_enabled</code> on for one destination. Keep the approval step.</li></ul><ul><li>All targets met for two weeks</li><li>All fifteen tests pass</li><li>Every alert tested</li><li>Runbook written, owner and backup named</li><li>Sign-offs recorded</li><li>Everyone on the team knows the stop switch</li></ul><div class="dn"><b>Check it:</b> the review says go and the first live item is delivered.</div></section>
-<section id="s21"><h2><span class="stepno">21</span>Operating routine and runbook</h2><div class="meta"><span>Step 21</span><span>ongoing</span></div><p class="plain">Write this down so anyone on the team can run it.</p><h3>What to create or configure</h3><ul class="chk"><li>Save the table below as <code>runbook.md</code>.</li><li>Name an owner and a backup.</li><li>Put the monthly routine in the team calendar.</li></ul><div class="tw"><table style="min-width:660px"><thead><tr><th>What you see</th><th>Likely cause</th><th>What to do</th></tr></thead><tbody><tr><td>No drafts by the expected time</td><td>Run failed, schedule paused, or a notice was missed</td><td>Check schedule records, run the sweeper, start a run by hand</td></tr><tr><td>Run paused at its cap</td><td>Loop ran long</td><td>Read the run, raise the cap if the work is sound</td></tr><tr><td>Quote check fails</td><td>A site changed, or the agent invented a quote</td><td>Open the source, fix style or site list, run the tests</td></tr><tr><td>Drafts sound off</td><td>Style files stale or checklist too loose</td><td>Update samples and checklist, save a new version, test it</td></tr><tr><td>A change made things worse</td><td>New agent version regressed</td><td>Point the schedule back to the previous version</td></tr><tr><td>Notices stop arriving</td><td>Endpoint down or disabled in the console</td><td>Fix and re-enable it, then run the sweeper</td></tr><tr><td>Reviewer does not answer</td><td>Away or busy</td><td>Reminder at 24 hours, auto-skip at 72, topic logged</td></tr><tr><td>A wrong item was delivered</td><td>Approval or check missed something</td><td>Pause, remove the item, review the audit trail, add a test</td></tr></tbody></table></div>
-<div class="sub3">Monthly routine</div><ul class="chk"><li>Read a sample of delivered items</li><li>Review cost and approval rate</li><li>Review who has access and rotate keys that are due</li><li>Refresh style samples and the trusted sites list</li><li>Read the Managed Agents release notes for changes that affect us</li><li>Run the test set once on the live agent version</li></ul><div class="dn"><b>Check it:</b> the runbook is saved and the owner has run one failure drill.</div></section>
-<div class="partbar" style="margin-top:56px"><b>Reference</b><span>Settings and variables in one place.</span></div>
+client.beta.deployments.update(DEPLOYMENT_ID,
+    agent={"type": "agent", "id": AGENT_ID, "version": NEW_VERSION})
+<span class="c"># roll back: the same call with the previous version number</span></pre><div class="dn"><b>Check it:</b> a change goes through test, promote and rollback once, as a rehearsal.</div></section>
+<section id="s19"><h2><span class="stepno">19</span>Evaluation with the owner</h2><div class="meta"><span>Step 19</span><span>2 weeks</span></div><p class="plain">Two weeks of real use, so the client can judge whether it is worth keeping and what to add next.</p><h3>What to create or configure</h3><ul class="chk"><li>Run proposals weekly and drafts on demand. The owner reviews every document and posts by hand.</li><li>Record, for each request: which draft was chosen, which tone, how much it was edited, and time spent reviewing.</li><li>Hold a review at the end of week 1 to tune tones and themes, and a go or no-go at the end of week 2.</li><li>Decide the next step from the results: blog format, a second reviewer, posting support, or stopping.</li></ul><ul><li>Share of requests with a usable draft</li><li>Which tones are chosen most</li><li>Share of proposals picked</li><li>Time to a final post compared with writing from scratch</li><li>Number of factual flags raised by the checks</li><li>Cost per request</li></ul><div class="dn"><b>Check it:</b> the client has numbers for each measure and a decision on what comes next.</div></section>
+<section id="s20"><h2><span class="stepno">20</span>Runbook and routine</h2><div class="meta"><span>Step 20</span><span>0.25 day</span></div><p class="plain">Write this down so anyone on the team can run it.</p><h3>What to create or configure</h3><ul class="chk"><li>Save the table below as <code>runbook.md</code>.</li><li>Name an owner and a backup.</li><li>Put the monthly routine in the calendar.</li></ul><div class="tw"><table style="min-width:660px"><thead><tr><th>What you see</th><th>Likely cause</th><th>What to do</th></tr></thead><tbody><tr><td>No proposals on Monday</td><td>Run failed, schedule paused, or polling is off</td><td>Check the schedule records, start the polling job, run <code>propose</code> by hand</td></tr><tr><td>Run paused at its cap</td><td>Loop ran long</td><td>Read the run, raise the cap if the work is sound</td></tr><tr><td>Quote check fails</td><td>A site changed, or the agent invented a quote</td><td>Open the source, fix the data sources, run the tests</td></tr><tr><td>Drafts sound the same</td><td>Tones too close, or style files thin</td><td>Sharpen <code>tones.md</code>, add voice samples, sync</td></tr><tr><td>Wrong or stale topics</td><td>Themes or data sources out of date</td><td>Edit <code>themes.md</code> or <code>datasources.yaml</code>, sync</td></tr><tr><td>A change made things worse</td><td>New agent version regressed</td><td>Point the schedule back to the previous version</td></tr><tr><td>No document created</td><td>Folder access, or credentials expired</td><td>Check the folder is still shared, then run processing again</td></tr><tr><td>An old run cannot be continued</td><td>The run is no longer available</td><td>Start a new run seeded with the saved files</td></tr></tbody></table></div><div class="sub3">Monthly routine</div><ul class="chk"><li>Read a sample of documents and chosen drafts</li><li>Review cost</li><li>Refresh themes, data sources and tone definitions</li><li>Rotate keys that are due and check who can open the review folder</li><li>Read the Managed Agents release notes for changes that affect us</li><li>Run the test set once on the live agent version</li></ul><div class="dn"><b>Check it:</b> the runbook is saved and the owner has run one failure drill.</div></section>
+<div class="partbar" style="margin-top:56px"><b>Reference</b><span>Settings, variables and what comes later.</span></div>
 <section id="config"><h2>Settings reference</h2>
 <p class="plain">Every setting in one table.</p>
-<div class="tw"><table style="min-width:640px"><thead><tr><th>Setting</th><th>Value</th><th>Where it is set</th></tr></thead><tbody><tr><td>Model and effort</td><td>Claude Sonnet 5.5, effort high</td><td>Agent (Step 1)</td></tr><tr><td>Permission policy</td><td>always_allow</td><td>Agent toolset (Step 1)</td></tr><tr><td>Trusted sites</td><td>5 to 10 bare hostnames</td><td>Agent web tools and environment (Steps 1, 2)</td></tr><tr><td>Networking</td><td>limited, no packages, no outside tool servers</td><td>Environment (Step 2)</td></tr><tr><td>Memory access</td><td>read-only</td><td>Run or schedule resources (Steps 7, 15)</td></tr><tr><td>Spending cap per run</td><td>$3.00</td><td>Schedule budget (Step 15)</td></tr><tr><td>Grader retries</td><td>4 (3 for revisions)</td><td>Outcome (Steps 6, 11)</td></tr><tr><td>Schedule</td><td>07:00 Tuesday and Thursday, our time zone</td><td>Schedule (Step 15)</td></tr><tr><td>Reminder / auto-skip</td><td>24 hours / 72 hours</td><td>Settings (Step 8)</td></tr><tr><td>Approval expiry</td><td>24 hours</td><td>Settings (Step 8)</td></tr><tr><td>Weekly limit</td><td>2 items</td><td>Settings (Step 8)</td></tr><tr><td>Delivery window</td><td>Mon to Fri, 08:00 to 18:00</td><td>Settings (Step 8)</td></tr><tr><td>Sweeper</td><td>every 15 minutes</td><td>Jobs (Step 16)</td></tr><tr><td>Stuck-run alert</td><td>45 minutes</td><td>Jobs (Step 16)</td></tr></tbody></table></div></section>
-<section id="envvars"><h2>Environment variables</h2>
-<p class="plain">Everything the service reads at start-up. Secrets come from the vault.</p>
-<div class="tw"><table style="min-width:600px"><thead><tr><th>Variable</th><th>Holds</th><th>Secret</th></tr></thead><tbody><tr><td><code>ANTHROPIC_API_KEY</code></td><td>Service key</td><td>Yes</td></tr><tr><td><code>ANTHROPIC_WEBHOOK_SIGNING_KEY</code></td><td>Notice signing secret</td><td>Yes</td></tr><tr><td><code>CONTENT_AGENT_ID</code> and <code>AGENT_VERSION</code></td><td>Agent and the live version</td><td>No</td></tr><tr><td><code>ENVIRONMENT_ID</code></td><td>Environment</td><td>No</td></tr><tr><td><code>MEMORY_STORE_ID</code></td><td>Memory store</td><td>No</td></tr><tr><td><code>DEPLOYMENT_ID</code></td><td>Schedule</td><td>No</td></tr><tr><td><code>ALLOWED_SITES</code></td><td>Comma-separated trusted sites</td><td>No</td></tr><tr><td><code>APPROVER_IDS</code></td><td>Comma-separated approver identities</td><td>No</td></tr><tr><td><code>REVIEW_CHANNEL_TOKEN</code></td><td>Chat or email credential</td><td>Yes</td></tr><tr><td><code>DELIVERY_TOKEN</code></td><td>Destination permission</td><td>Yes</td></tr><tr><td><code>DATABASE_URL</code></td><td>Database connection</td><td>Yes</td></tr><tr><td><code>ALERT_CHANNEL_URL</code></td><td>Where alerts go</td><td>Yes</td></tr></tbody></table></div></section>
-<footer>Based on the Claude Managed Agents documentation. Managed Agents is in beta, so details can change. The code is a starting shape: confirm exact call names against the current SDK in Step 7. Time figures are planning estimates for one developer.</footer>
+<div class="tw"><table style="min-width:640px"><thead><tr><th>Setting</th><th>Value</th><th>Where it is set</th></tr></thead><tbody><tr><td>Model and effort</td><td>Claude Sonnet 5.5, effort high</td><td>Agent (Step 1)</td></tr><tr><td>Permission policy</td><td>always_allow</td><td>Agent toolset (Step 1)</td></tr><tr><td>Approved sites</td><td>Owner's list in <code>datasources.yaml</code></td><td>Environment (Steps 2, 3)</td></tr><tr><td>Networking</td><td>limited, no packages, no outside tool servers</td><td>Environment (Step 2)</td></tr><tr><td>Memory access</td><td>read-only for the agent</td><td>Run and schedule (Steps 7, 13)</td></tr><tr><td>Drafts per request</td><td>3, each in a different tone</td><td>Request and format (Steps 4, 8, 10)</td></tr><tr><td>Proposals per request</td><td>4</td><td>Request (Step 8)</td></tr><tr><td>LinkedIn format</td><td>900 to 1500 characters, hook up to 200, up to 3 hashtags</td><td><code>formats/linkedin.md</code> and Step 10</td></tr><tr><td>Spending cap per run</td><td>$3.00</td><td>Run and schedule (Steps 7, 13)</td></tr><tr><td>Grader retries</td><td>4</td><td>Outcome (Step 6)</td></tr><tr><td>Schedule</td><td>07:00 Monday, owner's time zone</td><td>Schedule (Step 13)</td></tr><tr><td>Polling job</td><td>every 15 minutes</td><td>Scheduler (Step 14)</td></tr><tr><td>Stuck-run alert</td><td>45 minutes</td><td>Job (Step 14)</td></tr></tbody></table></div>
+<div class="sub3">Environment variables</div><div class="tw"><table style="min-width:600px"><thead><tr><th>Variable</th><th>Holds</th><th>Secret</th></tr></thead><tbody><tr><td><code>ANTHROPIC_API_KEY</code></td><td>Claude Platform key</td><td>Yes</td></tr><tr><td><code>CONTENT_AGENT_ID</code>, <code>AGENT_VERSION</code></td><td>Agent and the live version</td><td>No</td></tr><tr><td><code>ENVIRONMENT_ID</code>, <code>MEMORY_STORE_ID</code>, <code>DEPLOYMENT_ID</code></td><td>Resource IDs</td><td>No</td></tr><tr><td><code>GOOGLE_CREDENTIALS_FILE</code>, <code>DOC_FOLDER_ID</code></td><td>Review document access (or Confluence token and space)</td><td>Yes</td></tr><tr><td><code>REVIEWER_EMAIL</code> or chat webhook</td><td>Where the link is sent</td><td>Yes</td></tr><tr><td><code>ALERT_CHANNEL_URL</code></td><td>Where alerts go</td><td>Yes</td></tr></tbody></table></div></section>
+<section id="later"><h2>Later additions (not in this scope)</h2>
+<p class="plain">Kept out of the first version on purpose. Each one is a small addition.</p>
+<ul><li><b>Blog posts:</b> add <code>formats/blog.md</code>, a blog checklist and a length setting. The agent and runner do not change.</li><li><b>Posting support:</b> a publishing step with its own permission granted by the owner, only after the evaluation shows it is worth it.</li><li><b>Confluence:</b> a second review-document adapter.</li><li><b>Instant pickup:</b> signed notices from Anthropic in place of the 15-minute polling job.</li><li><b>Research helper:</b> a cheaper helper agent that reads sources, if Step 17 shows reading dominates cost.</li><li><b>Learning from edits:</b> read the "Final text" section of each document and save a summary of changes to memory automatically.</li></ul></section>
+<footer>Based on the Claude Managed Agents documentation. Managed Agents is in beta, so details can change. The code is a starting shape: confirm exact call names against the current SDK in Step 7. Format limits and tone names are editable starting points to confirm with the owner. Time and cost figures are planning estimates for one developer.</footer>
 </main>
 </div>
 <script>
