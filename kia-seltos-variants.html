@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kia Seltos India – All Variants &amp; Features</title>
+<style>
+:root{--bg:#fff;--fg:#1a1a1a;--mut:#666;--line:#e1e1e1;--head:#05141f;--headfg:#fff;--yes:#0a7d3b;--no:#b5b5b5;--at:#b36200;--sec:#f1f4f7;--best:#fff6d6}
+@media(prefers-color-scheme:dark){:root{--bg:#111418;--fg:#e8e8e8;--mut:#9aa0a6;--line:#2a2f36;--head:#05141f;--headfg:#fff;--yes:#4cd47e;--no:#555;--at:#f0a43c;--sec:#1b2027;--best:#3a3315}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.45 system-ui,sans-serif}
+header,.note{padding:16px;max-width:1200px;margin:0 auto}
+h1{margin:0 0 4px;font-size:22px}
+.sub,.note{color:var(--mut);font-size:13px}
+.wrap{overflow:auto;max-height:80vh;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+table{border-collapse:separate;border-spacing:0;min-width:1100px;width:100%}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:center;font-size:13px}
+thead th{position:sticky;top:0;background:var(--head);color:var(--headfg);z-index:2;white-space:nowrap}
+thead th small{display:block;font-weight:400;opacity:.8}
+th.f,td.f{position:sticky;left:0;text-align:left;background:var(--bg);min-width:250px;z-index:1;border-right:1px solid var(--line)}
+thead th.f{background:var(--head);z-index:3}
+tr.sec td{background:var(--sec);font-weight:700;text-align:left;position:sticky;left:0}
+.y{color:var(--yes);font-weight:700}.n{color:var(--no)}.a{color:var(--at);font-weight:700;font-size:11px}
+.best{background:var(--best)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;padding:16px;max-width:1200px;margin:0 auto}
+.card{border:1px solid var(--line);border-radius:10px;padding:12px}
+.card h3{margin:0}.card .p{color:var(--yes);font-weight:700;margin-bottom:6px}
+.card ul{margin:0;padding-left:18px;font-size:13px}
+</style>
+</head>
+<body>
+<header>
+<h1>Kia Seltos (India) – all variants &amp; features</h1>
+<div class="sub">Prices are the "starting" prices shown on kia.com/in (ex-showroom basis not confirmed on page). Highlighted column = suggested best value.</div>
+</header>
+<div class="wrap"><table id="t"></table></div>
+<div class="note">
+<b>How to read:</b> <span class="y">✓</span> = included, <span class="n">—</span> = not listed, <span class="a">AT</span> = included only on the automatic gearbox version.
+Kia's page lists only what each trim <i>adds</i>; features are carried upward to higher trims, so this table assumes that. X-Line mirrors GTX equipment with a different look (two-tone smoky black/green interior on X-Line(A)). The page does not clearly map which engine/gearbox goes with each trim (engines: 1.5 petrol 6MT/IVT, 1.5 T-GDi 6iMT/7DCT, 1.5 diesel 6MT/6AT), so confirm with a dealer. Verify everything on kia.com/in before buying.
+</div>
+<h2 style="max-width:1200px;margin:8px auto;padding:0 16px;font-size:18px">What each trim adds</h2>
+<div class="cards" id="cards"></div>
+<script>
+const cols=[["HTE",11.249,0],["HTE(O)",12.419,1],["HTK",13.419,2],["HTK(O)",14.519,3],["HTX",15.919,4],["HTX(A)",17.019,5],["GTX",18.719,6],["X-Line",18.719,6],["GTX(A)",19.819,7],["X-Line(A)",19.819,7],["GTX(O)",21.569,8],["X-Line(O)",21.569,8]];
+const names=cols.map(c=>c[0]);
+const idx=n=>names.indexOf(n);
+// feature: [label, minLevel | explicit list of trims, atOnly]
+const S=[
+["Safety (all trims)",[
+["6 airbags (front, side, curtain)",0],["ESC, VSM, hill-start assist, ABS + brake assist",0],["Disc brakes on all four wheels",0],["Rear parking sensors + rear camera with guidelines",0],["ISOFIX, child lock, rollover sensor, passenger airbag switch",0]]],
+["ADAS &amp; driver assist",[
+["Cruise control with manual speed-limit assist",0],
+["Smart cruise control with stop-and-go",5,true],
+["ADAS Level 2 (21 features)",["HTX(A)","GTX(A)","X-Line(A)"]],
+["ADAS Level 2+ (28 features)",["GTX(O)","X-Line(O)"]],
+["360° camera + blind-view monitor in cluster",["HTX(A)","GTX(A)","X-Line(A)","GTX(O)","X-Line(O)"]],
+["Side parking sensors (2 per side)",5]]],
+["Exterior",[
+["Ice-cube MFR LED headlamps, digital tiger-face grille",0],
+["Star-map LED tail lamps",0],["Star-map LED <i>connected</i> tail lamps",1],
+["Manual streamline door handles",0],["Automatic (flush) streamline door handles",2],
+["Electric folding outside mirrors, hidden rear wiper",2],
+["Dual-pane panoramic sunroof",3],
+["LED projection headlamps with dynamic welcome, star-map LED DRLs",6],
+["R18 crystal-cut alloy wheels",6]]],
+["Comfort &amp; convenience",[
+["60:40 split rear seat, centre armrest, cup holders",1],
+["Drive mode select (Eco/Normal/Sport)",1],
+["Electric parking brake with auto hold",1,true],
+["Traction modes (sand/mud/snow)",1,true],
+["Paddle shifters",1,true],
+["Smart key, push-button start, proximity unlock",2],
+["Tilt &amp; telescopic steering, dual-tone leatherette steering wheel",3],
+["Smoky black leatherette seats",3],
+["Smartphone wireless charger",3],
+["Front ventilated seats",3,true],
+["64-colour ambient mood lighting",4],
+["5\" touchscreen for dual-zone climate control",4],
+["10-way power driver seat, power lumbar, seat memory",6],
+["Head-up display",8],["Smart air purifier with AQI display",8],["All-door one-touch up/down windows",8]]],
+["Infotainment &amp; connectivity",[
+["10.25\" HD touchscreen, wireless Android Auto / Apple CarPlay",0],
+["6-speaker audio",0],
+["12.3\" HD touchscreen",4],
+["Bose 8-speaker premium sound",4],
+["OTA updates + remote diagnostics (Kia Connect)",4],
+["12.3\" HD digital instrument cluster",5],
+["12.3\" navigation cockpit",8],
+["Digital key",8],["Smart dashcam (front + rear)",8]]]
+];
+const lvl=c=>cols[c][2];
+function has(f,c){const m=f[1];return Array.isArray(m)?m.includes(names[c]):lvl(c)>=m}
+let h='<thead><tr><th class="f">Feature</th>'+cols.map((c,i)=>`<th class="${c[0]=='HTK(O)'?'':''}">${c[0]}<small>₹${c[1].toFixed(2)} L</small></th>`).join('')+'</tr></thead><tbody>';
+// replacement notes: some features superseded in higher trims (shown as not listed above their upgrade)
+const sup={"6-speaker audio":4,"10.25\" HD touchscreen, wireless Android Auto / Apple CarPlay":4,"Manual streamline door handles":2,"Star-map LED tail lamps":1};
+for(const [sec,list] of S){h+=`<tr class="sec"><td colspan="${cols.length+1}">${sec}</td></tr>`;
+ for(const f of list){h+=`<tr><td class="f">${f[0]}</td>`;
+  cols.forEach((c,i)=>{let ok=has(f,i);const s=sup[f[0].replace(/&quot;/g,'"')];
+   if(ok&&s!==undefined&&lvl(i)>=s)ok=false;
+   const cls=c[0]=='HTK(O)'?' best':'';
+   h+=ok?(f[2]?`<td class="a${cls}">AT</td>`:`<td class="y${cls}">✓</td>`):`<td class="n${cls}">—</td>`});
+  h+='</tr>'}}
+document.getElementById('t').innerHTML=h+'</tbody>';
+// cards: what each trim adds
+const adds={"HTE":["Base: LED headlamps, 10.25\" touchscreen, wireless AA/CarPlay, cruise control, 6 speakers, 6 airbags"],"HTE(O)":["60:40 split rear seat","Drive modes","AT: EPB auto-hold, traction modes, paddle shifters"],"HTK":["Smart key + push-button start","Electric folding mirrors","Hidden rear wiper","Auto-flush door handles"],"HTK(O)":["Panoramic sunroof","Wireless charger","Leatherette seats","Tilt &amp; telescopic steering","AT: ventilated front seats"],"HTX":["12.3\" touchscreen","Bose 8-speaker audio","Ambient lighting","OTA updates","5\" climate touchscreen"],"HTX(A)":["ADAS Level 2 (21)","360° camera","12.3\" digital cluster","Side parking sensors","Smart cruise w/ stop-and-go"],"GTX":["LED projection headlamps","R18 alloys","10-way power driver seat + memory"],"X-Line":["GTX equipment in X-Line styling"],"GTX(A)":["GTX + ADAS Level 2, 360° camera, 12.3\" cluster"],"X-Line(A)":["X-Line + ADAS Level 2, two-tone smoky black/green interior"],"GTX(O)":["ADAS Level 2+ (28)","Head-up display","Digital key","Air purifier","Dashcam","12.3\" navigation cockpit"],"X-Line(O)":["Same as GTX(O) in X-Line styling"]};
+document.getElementById('cards').innerHTML=cols.map(c=>`<div class="card${c[0]=='HTK(O)'?' best':''}"><h3>${c[0]}${c[0]=='HTK(O)'?' ⭐':''}</h3><div class="p">₹${c[1].toFixed(2)} lakh</div><ul>${adds[c[0]].map(x=>`<li>${x}</li>`).join('')}</ul></div>`).join('');
+</script>
+</body>
+</html>
